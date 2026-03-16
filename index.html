@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Yomogi&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Yomogi',sans-serif;background:#f5f5f5;display:flex;justify-content:center;}
+body{font-family:Helvetica,Arial,sans-serif;background:#f5f5f5;display:flex;justify-content:center;}
 .app{width:100%;max-width:430px;min-height:100vh;background:#fff;position:relative;overflow-x:hidden;}
 .screen{display:none;}.screen.active{display:block;}
 .red-hd{background:#E24B4A;padding:14px 18px;}
@@ -19,7 +19,7 @@ body{font-family:'Yomogi',sans-serif;background:#f5f5f5;display:flex;justify-con
 .logo-img{width:34px;height:34px;object-fit:contain;border-radius:50%;background:rgba(255,255,255,0.15);padding:2px;}
 .logo-text{font-size:13px;color:#fff;letter-spacing:0.04em;}
 .logo-text span{font-size:10px;color:rgba(255,255,255,0.75);display:block;}
-.back-btn{background:rgba(255,255,255,0.2);border:none;color:#fff;border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer;font-family:'Yomogi',sans-serif;display:inline-block;margin-bottom:10px;}
+.back-btn{background:rgba(255,255,255,0.2);border:none;color:#fff;border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer;font-family:Helvetica,Arial,sans-serif;display:inline-block;margin-bottom:10px;}
 
 /* PIN */
 .pin-wrap{padding:30px 24px 20px;display:flex;flex-direction:column;align-items:center;}
@@ -33,15 +33,15 @@ body{font-family:'Yomogi',sans-serif;background:#f5f5f5;display:flex;justify-con
 .hira-display{width:100%;background:#fff;border:1px solid #eee;border-radius:10px;padding:12px;font-size:24px;color:#333;text-align:center;min-height:52px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
 .hira-display.placeholder{color:#bbb;font-size:14px;line-height:28px;}
 .hira-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;width:100%;margin-bottom:14px;}
-.hira-key{background:#fff;border:1px solid #eee;border-radius:10px;padding:10px 4px;font-size:16px;cursor:pointer;font-family:'Yomogi',sans-serif;color:#333;transition:all 0.1s;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.06);}
+.hira-key{background:#fff;border:1px solid #eee;border-radius:10px;padding:10px 4px;font-size:16px;cursor:pointer;font-family:Helvetica,Arial,sans-serif;color:#333;transition:all 0.1s;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.06);}
 .hira-key:active,.hira-key.selected{background:#FCEBEB;border-color:#E24B4A;color:#A32D2D;}
-.next-btn{width:100%;background:#E24B4A;color:#fff;border:none;border-radius:12px;padding:15px;font-size:16px;cursor:pointer;font-family:'Yomogi',sans-serif;}
+.next-btn{width:100%;background:#E24B4A;color:#fff;border:none;border-radius:12px;padding:15px;font-size:16px;cursor:pointer;font-family:Helvetica,Arial,sans-serif;}
 .next-btn:disabled{opacity:0.35;cursor:default;}
 .pin-dots{display:flex;gap:16px;margin-bottom:24px;}
 .pin-dot{width:18px;height:18px;border-radius:50%;border:2px solid #ddd;background:transparent;transition:all 0.15s;}
 .pin-dot.filled{background:#E24B4A;border-color:#E24B4A;}
 .pin-keypad{display:grid;grid-template-columns:repeat(3,72px);gap:12px;}
-.pin-key{width:72px;height:72px;border-radius:50%;border:1px solid #eee;background:#fff;font-size:22px;color:#333;cursor:pointer;font-family:'Yomogi',sans-serif;transition:background 0.1s;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+.pin-key{width:72px;height:72px;border-radius:50%;border:1px solid #eee;background:#fff;font-size:22px;color:#333;cursor:pointer;font-family:Helvetica,Arial,sans-serif;transition:background 0.1s;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
 .pin-key:active{background:#f5f5f5;}
 .pin-key.del{font-size:13px;color:#888;}
 .pin-key.empty{background:transparent;border:none;cursor:default;box-shadow:none;}
@@ -51,7 +51,7 @@ body{font-family:'Yomogi',sans-serif;background:#f5f5f5;display:flex;justify-con
 /* HOME */
 .home-hd{background:linear-gradient(135deg,#E24B4A,#c0392b);padding:20px 18px;}
 .home-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
-.logout-btn{background:rgba(255,255,255,0.2);border:none;color:#fff;border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:'Yomogi',sans-serif;}
+.logout-btn{background:rgba(255,255,255,0.2);border:none;color:#fff;border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:Helvetica,Arial,sans-serif;}
 .name-row{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
 .member-av{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;}
 .member-hello{font-size:12px;color:rgba(255,255,255,0.8);}
@@ -85,7 +85,7 @@ body{font-family:'Yomogi',sans-serif;background:#f5f5f5;display:flex;justify-con
 .cur-item{background:#fff;border:1px solid #f0f0f0;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
 .item-nm{flex:1;font-size:14px;color:#333;}
 .st-group{display:flex;gap:8px;}
-.st-btn{font-size:11px;border-radius:20px;padding:5px 12px;border:1px solid #eee;cursor:pointer;background:#f8f8f8;color:#999;font-family:'Yomogi',sans-serif;transition:all 0.12s;}
+.st-btn{font-size:11px;border-radius:20px;padding:5px 12px;border:1px solid #eee;cursor:pointer;background:#f8f8f8;color:#999;font-family:Helvetica,Arial,sans-serif;transition:all 0.12s;}
 .st-btn.ch{background:#E6F1FB;color:#185FA5;border-color:#378ADD;}
 .st-btn.ok{background:#EAF3DE;color:#3B6D11;border-color:#639922;}
 
@@ -100,12 +100,12 @@ body{font-family:'Yomogi',sans-serif;background:#f5f5f5;display:flex;justify-con
 <div class="screen active" id="s-hira">
   <div class="red-hd">
     <div class="logo-bar">
-      <img class="logo-img" src="logo.png" alt="logo">
+      <img class="logo-img" src="logo.jpg" alt="logo">
       <div class="logo-text">one-BALANCE BOXING GYM<span>会員ページ</span></div>
     </div>
   </div>
   <div class="pin-wrap">
-    <div class="pin-logo-wrap"><img src="logo.png" alt="logo"></div>
+    <div class="pin-logo-wrap"><img src="logo.jpg" alt="logo"></div>
     <div class="pin-title">会員ページにログイン</div>
     <div class="pin-sub">名前の頭文字（ひらがな）を<br>選んでください</div>
     <div class="step-dots"><div class="step-dot active"></div><div class="step-dot"></div></div>
@@ -119,12 +119,12 @@ body{font-family:'Yomogi',sans-serif;background:#f5f5f5;display:flex;justify-con
 <div class="screen" id="s-pin">
   <div class="red-hd">
     <div class="logo-bar">
-      <img class="logo-img" src="logo.png" alt="logo">
+      <img class="logo-img" src="logo.jpg" alt="logo">
       <div class="logo-text">one-BALANCE BOXING GYM<span>会員ページ</span></div>
     </div>
   </div>
   <div class="pin-wrap">
-    <div class="pin-logo-wrap"><img src="logo.png" alt="logo"></div>
+    <div class="pin-logo-wrap"><img src="logo.jpg" alt="logo"></div>
     <div class="pin-title">暗証番号を入力</div>
     <div class="pin-sub">頭文字「<span id="pin-hira-show"></span>」の<br>4桁PINを入力してください</div>
     <div class="step-dots"><div class="step-dot"></div><div class="step-dot active"></div></div>
@@ -150,7 +150,7 @@ body{font-family:'Yomogi',sans-serif;background:#f5f5f5;display:flex;justify-con
   <div class="home-hd">
     <div class="home-top">
       <div class="logo-bar">
-        <img class="logo-img" src="logo.png" alt="logo">
+        <img class="logo-img" src="logo.jpg" alt="logo">
         <div class="logo-text">one-BALANCE BOXING GYM<span>会員ページ</span></div>
       </div>
       <button class="logout-btn" onclick="logout()">ログアウト</button>
@@ -245,7 +245,7 @@ body{font-family:'Yomogi',sans-serif;background:#f5f5f5;display:flex;justify-con
 </div>
 <script>
 const GAS_URL='https://script.google.com/macros/s/AKfycbyuzVrcogYqq8SjjRn98c2_M9X8wJuA7mGOnt9Ac0cPcm6bK9JuGyX76MpMmmKB01IMiw/exec';
-const FB_URL='https://www.facebook.com/groups/yourgroup';
+const FB_URL='https://www.facebook.com/share/g/1CWGbwdZmm/';
 const hiraRows=['あいうえお','かきくけこ','さしすせそ','たちつてと','なにぬねの','はひふへほ','まみむめも','やゆよ','らりるれろ','わをん'];
 const curItems=['ジャブ','ワンツー','フック','ワンツーステップ','アッパー','サンドバックポジション','パンチ時のガード','同時ステップ','ランダムシャドー','ボディアッパー','ロープ Level.1','ロープ Level.2','ロープ Level.3','ロープ Level.4'];
 let selHira='',curPin='',currentMember=null,statuses=curItems.map(()=>'none');
