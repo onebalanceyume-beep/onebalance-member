@@ -365,7 +365,7 @@ body{background:var(--bg);color:var(--white);font-family:'Noto Sans JP',sans-ser
 
 <script>
 // ===== CONFIG =====
-let GAS_URL = localStorage.getItem('gasUrl') || '';
+let GAS_URL = 'https://script.google.com/macros/s/AKfycbzmQcrxRSvccB6LbWKWgrymU3nZBYhYWXY0Gi-Jy05-ldfv0hKyYKwXwZuIQpYMOZYyWg/exec';
 let allMembers = [];
 let gradeData = {};
 let collectionData = {};
@@ -384,7 +384,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('collectionMonth').value = ym;
   document.getElementById('collectionMonth').addEventListener('change', renderCollection);
 
-  // 設定を復元
   if (GAS_URL) {
     document.getElementById('gasUrl').value = GAS_URL;
   }
@@ -743,7 +742,6 @@ function saveConfig() {
   const url = document.getElementById('gasUrl').value.trim();
   if (!url) { document.getElementById('config-status').textContent = '❌ URLを入力してください'; return; }
   GAS_URL = url;
-  localStorage.setItem('gasUrl', url);
   document.getElementById('config-status').innerHTML = '✅ 保存しました。接続テスト中...';
   loadData();
 }
