@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ONE BALANCE スタッフ管理</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red: #C0392B;
+  --orange: #E8621A;
+  --bright: #F39C12;
+  --grad: linear-gradient(135deg, #C0392B 0%, #E8621A 55%, #F39C12 100%);
+  --grad-h: linear-gradient(90deg, #C0392B 0%, #E8621A 55%, #F39C12 100%);
+  --bg: #111;
+  --card: #1e1e1e;
+  --card2: #252525;
+  --border: #333;
+  --muted: #888;
+  --light: #ccc;
+  --white: #fff;
+  --green: #27AE60;
+  --blue: #2980B9;
+  --yellow: #F1C40F;
+  --pink: #E74C3C;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--white);font-family:'Noto Sans JP',sans-serif;min-height:100vh;}
+
+/* ===== HEADER ===== */
+.hdr{background:var(--grad);position:sticky;top:0;z-index:200;box-shadow:0 4px 20px rgba(192,57,43,.5);}
+.hdr-in{max-width:1100px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.hdr-logo{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.3);}
+.hdr-sub{font-size:10px;color:rgba(255,255,255,.8);letter-spacing:1px;margin-top:1px;}
+.hdr-right{display:flex;align-items:center;gap:10px;}
+.hdr-date{font-size:12px;color:rgba(255,255,255,.85);background:rgba(0,0,0,.2);padding:6px 12px;border-radius:20px;}
+.sync-btn{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);color:#fff;padding:7px 14px;border-radius:8px;font-size:12px;font-family:'Noto Sans JP',sans-serif;font-weight:700;cursor:pointer;transition:.2s;letter-spacing:.5px;}
+.sync-btn:hover{background:rgba(255,255,255,.35);}
+
+/* ===== NAV TABS ===== */
+.nav{background:#181818;border-bottom:1px solid var(--border);position:sticky;top:52px;z-index:190;}
+.nav-in{max-width:1100px;margin:0 auto;display:flex;overflow-x:auto;scrollbar-width:none;}
+.nav-in::-webkit-scrollbar{display:none;}
+.nav-tab{padding:14px 20px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:.2s;letter-spacing:.5px;}
+.nav-tab:hover{color:var(--light);}
+.nav-tab.active{color:var(--orange);border-bottom-color:var(--orange);}
+
+/* ===== MAIN ===== */
+.main{max-width:1100px;margin:0 auto;padding:24px 16px 80px;}
+.section{display:none;}
+.section.active{display:block;}
+
+/* ===== KPI GRID ===== */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:24px;}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 16px;text-align:center;position:relative;overflow:hidden;transition:.2s;}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad-h);}
+.kpi:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.4);}
+.kpi-num{font-family:'Bebas Neue',sans-serif;font-size:38px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+.kpi-unit{font-size:14px;color:var(--muted);margin-left:2px;}
+.kpi-label{font-size:11px;color:var(--muted);margin-top:6px;font-weight:500;letter-spacing:.5px;}
+.kpi-sub{font-size:10px;color:var(--orange);margin-top:3px;}
+
+/* ===== SECTION TITLE ===== */
+.sec-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--white);margin-bottom:14px;padding-left:12px;border-left:4px solid var(--orange);}
+
+/* ===== 2COL GRID ===== */
+.col2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+@media(max-width:640px){.col2{grid-template-columns:1fr;}}
+.col3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px;}
+@media(max-width:640px){.col3{grid-template-columns:1fr;}}
+
+/* ===== CARD ===== */
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;box-shadow:0 4px 16px rgba(0,0,0,.3);}
+.card-title{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.5px;margin-bottom:14px;text-transform:uppercase;}
+
+/* ===== BAR CHART ===== */
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.bar-label{font-size:12px;color:var(--light);width:90px;flex-shrink:0;text-align:right;}
+.bar-wrap{flex:1;background:#2a2a2a;border-radius:999px;height:10px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:999px;background:var(--grad-h);transition:width 1s cubic-bezier(.4,0,.2,1);}
+.bar-val{font-size:12px;color:var(--orange);width:45px;text-align:right;font-weight:700;flex-shrink:0;}
+
+/* ===== DONUT ===== */
+.donut-wrap{display:flex;align-items:center;gap:20px;justify-content:center;}
+.donut-svg{flex-shrink:0;}
+.donut-legend{display:flex;flex-direction:column;gap:8px;}
+.legend-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--light);}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+
+/* ===== 回収テーブル ===== */
+.month-selector{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.month-selector label{font-size:13px;color:var(--muted);}
+.month-input{background:var(--card2);border:1px solid var(--border);color:var(--white);padding:8px 14px;border-radius:8px;font-size:13px;font-family:'Noto Sans JP',sans-serif;outline:none;cursor:pointer;}
+.month-input:focus{border-color:var(--orange);}
+
+.collection-header{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;}
+.coll-stat{background:var(--card2);border-radius:10px;padding:14px;text-align:center;}
+.coll-stat-num{font-family:'Bebas Neue',sans-serif;font-size:30px;line-height:1;}
+.coll-stat-num.green{color:var(--green);}
+.coll-stat-num.red{color:var(--pink);}
+.coll-stat-num.orange{color:var(--orange);}
+.coll-stat-label{font-size:10px;color:var(--muted);margin-top:4px;}
+
+.unpaid-title{font-size:14px;font-weight:700;color:var(--pink);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.unpaid-title::before{content:'⚠';font-size:16px;}
+
+.unpaid-list{display:flex;flex-direction:column;gap:8px;}
+.unpaid-item{background:rgba(231,76,60,.08);border:1px solid rgba(231,76,60,.25);border-radius:10px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;}
+.unpaid-name{font-size:14px;font-weight:700;color:var(--white);}
+.unpaid-course{font-size:11px;color:var(--muted);margin-top:2px;}
+.unpaid-amount{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--pink);}
+.paid-btn{background:var(--green);border:none;color:#fff;padding:6px 14px;border-radius:6px;font-size:11px;font-weight:700;font-family:'Noto Sans JP',sans-serif;cursor:pointer;transition:.2s;}
+.paid-btn:hover{background:#219A52;}
+.paid-btn:active{transform:scale(.97);}
+
+.paid-section{margin-top:20px;}
+.paid-title{font-size:13px;font-weight:700;color:var(--green);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.paid-title::before{content:'✓';}
+.paid-list{display:flex;flex-direction:column;gap:6px;max-height:200px;overflow-y:auto;}
+.paid-item{background:rgba(39,174,96,.07);border:1px solid rgba(39,174,96,.2);border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;}
+.paid-item-name{font-size:13px;color:var(--light);}
+.paid-item-amount{font-size:12px;color:var(--green);font-weight:700;}
+
+/* ===== GRADE SECTION ===== */
+.grade-search{display:flex;gap:10px;margin-bottom:20px;}
+.grade-search input{flex:1;background:var(--card2);border:1px solid var(--border);color:var(--white);padding:10px 16px;border-radius:10px;font-size:14px;font-family:'Noto Sans JP',sans-serif;outline:none;}
+.grade-search input:focus{border-color:var(--orange);}
+.grade-search input::placeholder{color:var(--muted);}
+
+.member-grade-list{display:flex;flex-direction:column;gap:10px;}
+.member-grade-card{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:16px;transition:.2s;}
+.member-grade-card:hover{border-color:var(--orange);box-shadow:0 4px 16px rgba(232,98,26,.15);}
+.mgc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.mgc-name{font-size:15px;font-weight:700;}
+.mgc-course{font-size:11px;color:var(--muted);margin-top:2px;}
+.current-grade{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.06);padding:6px 12px;border-radius:20px;font-size:12px;font-weight:700;}
+
+.grade-btns{display:flex;flex-wrap:wrap;gap:8px;}
+.grade-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;font-size:12px;font-weight:700;font-family:'Noto Sans JP',sans-serif;cursor:pointer;border:2px solid transparent;transition:.2s;}
+.grade-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.3);}
+.grade-btn.active{box-shadow:0 0 0 3px rgba(255,255,255,.3);}
+.grade-btn.white{background:#f0f0f0;color:#333;border-color:#ddd;}
+.grade-btn.green{background:#27AE60;color:#fff;}
+.grade-btn.blue{background:#2980B9;color:#fff;}
+.grade-btn.orange-btn{background:#E8621A;color:#fff;}
+.grade-btn.red-btn{background:#C0392B;color:#fff;}
+.grade-btn.black{background:#1a1a1a;color:#fff;border-color:#555;}
+
+.grade-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.dot-white{background:#e0e0e0;border:1px solid #999;}
+.dot-green{background:#27AE60;}
+.dot-blue{background:#2980B9;}
+.dot-orange{background:#E8621A;}
+.dot-red{background:#C0392B;}
+.dot-black{background:#555;border:1px solid #888;}
+
+/* ===== TOAST ===== */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--green);color:#fff;padding:12px 28px;border-radius:999px;font-size:13px;font-weight:700;font-family:'Noto Sans JP',sans-serif;box-shadow:0 4px 20px rgba(0,0,0,.4);opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;z-index:999;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ===== LOADING ===== */
+.loading{text-align:center;padding:40px;color:var(--muted);font-size:14px;}
+.spinner{display:inline-block;width:24px;height:24px;border:3px solid var(--border);border-top-color:var(--orange);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:10px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ===== ANNUAL VIEW ===== */
+.annual-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
+@media(max-width:480px){.annual-grid{grid-template-columns:repeat(2,1fr);}}
+.annual-month{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;cursor:pointer;transition:.2s;}
+.annual-month:hover{border-color:var(--orange);}
+.annual-month.selected{border-color:var(--orange);background:rgba(232,98,26,.1);}
+.am-label{font-size:11px;color:var(--muted);margin-bottom:4px;}
+.am-rate{font-family:'Bebas Neue',sans-serif;font-size:24px;}
+.am-rate.high{color:var(--green);}
+.am-rate.mid{color:var(--orange);}
+.am-rate.low{color:var(--pink);}
+.am-count{font-size:10px;color:var(--muted);}
+
+/* ===== CONFIG SECTION ===== */
+.config-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:16px;}
+.config-label{font-size:13px;color:var(--muted);margin-bottom:8px;font-weight:700;}
+.config-input{width:100%;background:var(--card2);border:1px solid var(--border);color:var(--white);padding:10px 14px;border-radius:8px;font-size:14px;font-family:'Noto Sans JP',sans-serif;outline:none;margin-bottom:16px;}
+.config-input:focus{border-color:var(--orange);}
+.config-btn{background:var(--grad);border:none;color:#fff;padding:12px 28px;border-radius:10px;font-size:14px;font-weight:700;font-family:'Noto Sans JP',sans-serif;cursor:pointer;transition:.2s;}
+.config-btn:hover{opacity:.9;transform:translateY(-1px);}
+.config-note{font-size:12px;color:var(--muted);line-height:1.8;margin-top:8px;}
+.config-note a{color:var(--orange);}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-in">
+    <div>
+      <div class="hdr-logo">ONE BALANCE スタッフ管理</div>
+      <div class="hdr-sub">STAFF DASHBOARD</div>
+    </div>
+    <div class="hdr-right">
+      <div class="hdr-date" id="todayDate"></div>
+      <button class="sync-btn" onclick="loadData()">🔄 同期</button>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <div class="nav-in">
+    <div class="nav-tab active" onclick="showTab('dashboard')">📊 ダッシュボード</div>
+    <div class="nav-tab" onclick="showTab('collection')">💴 会費回収</div>
+    <div class="nav-tab" onclick="showTab('grade')">🏅 グレード付与</div>
+    <div class="nav-tab" onclick="showTab('annual')">📅 年間ビュー</div>
+    <div class="nav-tab" onclick="showTab('config')">⚙️ 設定</div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- ===== DASHBOARD ===== -->
+  <div class="section active" id="tab-dashboard">
+    <div id="kpi-area">
+      <div class="loading"><div class="spinner"></div><br>スプレッドシートから読み込み中...</div>
+    </div>
+
+    <div class="col2" id="chart-area" style="display:none;">
+      <!-- コース別 -->
+      <div class="card">
+        <div class="card-title">コース別人数</div>
+        <div id="course-bars"></div>
+      </div>
+      <!-- 銀行別 -->
+      <div class="card">
+        <div class="card-title">銀行別人数</div>
+        <div id="bank-bars"></div>
+      </div>
+    </div>
+
+    <div class="col2" id="chart-area2" style="display:none;">
+      <!-- 男女比 -->
+      <div class="card">
+        <div class="card-title">男女比（会員）</div>
+        <div class="donut-wrap" id="gender-donut"></div>
+      </div>
+      <!-- 年齢別 -->
+      <div class="card">
+        <div class="card-title">年齢層別（会員）</div>
+        <div id="age-bars"></div>
+      </div>
+    </div>
+
+    <!-- 体験→成約 -->
+    <div class="card" id="trial-card" style="display:none;margin-bottom:16px;">
+      <div class="card-title">体験申込 → 成約率</div>
+      <div id="trial-stats"></div>
+    </div>
+
+    <!-- 曜日別 -->
+    <div class="card" id="weekday-card" style="display:none;">
+      <div class="card-title">週1コース 曜日別人数</div>
+      <div id="weekday-bars"></div>
+    </div>
+  </div>
+
+  <!-- ===== 会費回収 ===== -->
+  <div class="section" id="tab-collection">
+    <div class="month-selector">
+      <label>対象月：</label>
+      <input type="month" class="month-input" id="collectionMonth">
+    </div>
+
+    <div class="collection-header">
+      <div class="coll-stat">
+        <div class="coll-stat-num orange" id="coll-total">—</div>
+        <div class="coll-stat-label">総会員数</div>
+      </div>
+      <div class="coll-stat">
+        <div class="coll-stat-num green" id="coll-paid">—</div>
+        <div class="coll-stat-label">回収済み</div>
+      </div>
+      <div class="coll-stat">
+        <div class="coll-stat-num red" id="coll-unpaid">—</div>
+        <div class="coll-stat-label">未回収</div>
+      </div>
+    </div>
+
+    <!-- 回収率バー -->
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-title">今月の回収率</div>
+      <div class="bar-row" style="margin-bottom:0;">
+        <div class="bar-label" style="width:60px;text-align:left;font-size:14px;font-weight:700;color:var(--white);" id="coll-rate-text">—%</div>
+        <div class="bar-wrap" style="height:14px;">
+          <div class="bar-fill" id="coll-rate-bar" style="width:0%;background:var(--green);"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 未回収リスト -->
+    <div class="unpaid-title">未回収メンバー</div>
+    <div class="unpaid-list" id="unpaid-list">
+      <div class="loading"><div class="spinner"></div><br>読み込み中...</div>
+    </div>
+
+    <!-- 回収済みリスト -->
+    <div class="paid-section">
+      <div class="paid-title">回収済みメンバー</div>
+      <div class="paid-list" id="paid-list"></div>
+    </div>
+  </div>
+
+  <!-- ===== グレード付与 ===== -->
+  <div class="section" id="tab-grade">
+    <div class="grade-search">
+      <input type="text" id="gradeSearch" placeholder="会員名で検索..." oninput="filterGradeList()">
+    </div>
+    <div class="member-grade-list" id="grade-list">
+      <div class="loading"><div class="spinner"></div><br>読み込み中...</div>
+    </div>
+  </div>
+
+  <!-- ===== 年間ビュー ===== -->
+  <div class="section" id="tab-annual">
+    <div class="sec-title">年間 回収率推移</div>
+    <div class="annual-grid" id="annual-grid"></div>
+    <div id="annual-detail"></div>
+  </div>
+
+  <!-- ===== 設定 ===== -->
+  <div class="section" id="tab-config">
+    <div class="config-card">
+      <div class="card-title">🔗 GAS Web App URL</div>
+      <div class="config-label">スプレッドシートに設定したGASのURLを入力してください</div>
+      <input type="text" class="config-input" id="gasUrl" placeholder="https://script.google.com/macros/s/XXXXX/exec">
+      <button class="config-btn" onclick="saveConfig()">保存して接続</button>
+      <div class="config-note" id="config-status"></div>
+    </div>
+
+    <div class="config-card">
+      <div class="card-title">📋 GAS設定手順</div>
+      <div class="config-note">
+        <b style="color:var(--white);">① スプレッドシートを開く</b><br>
+        拡張機能 → Apps Script をクリック<br><br>
+        <b style="color:var(--white);">② 以下のコードを貼り付ける</b><br>
+        ※ 別途 <b style="color:var(--orange);">gas-code.gs</b> ファイルの内容をコピペ<br><br>
+        <b style="color:var(--white);">③ デプロイ → 新しいデプロイ</b><br>
+        種類：ウェブアプリ<br>
+        実行ユーザー：自分<br>
+        アクセス：全員<br><br>
+        <b style="color:var(--white);">④ 表示されたURLをここに貼り付ける</b><br><br>
+        <b style="color:var(--white);">⑤ スプシのfromシートに列を追加（1回だけ）</b><br>
+        ・L列以降に「グレード」列を追加<br>
+        ・月別入金シートに「入金_YYYY-MM」列を追加
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== CONFIG =====
+let GAS_URL = 'https://script.google.com/macros/s/AKfycbzmQcrxRSvccB6LbWKWgrymU3nZBYhYWXY0Gi-Jy05-ldfv0hKyYKwXwZuIQpYMOZYyWg/exec';
+let allMembers = [];
+let gradeData = {};
+let collectionData = {};
+let annualData = {};
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+  // 今日の日付
+  const now = new Date();
+  document.getElementById('todayDate').textContent =
+    now.getFullYear() + '年' + (now.getMonth()+1) + '月' + now.getDate() + '日（' +
+    ['日','月','火','水','木','金','土'][now.getDay()] + '）';
+
+  // 今月をセット
+  const ym = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  document.getElementById('collectionMonth').value = ym;
+  document.getElementById('collectionMonth').addEventListener('change', renderCollection);
+
+  if (GAS_URL) {
+    document.getElementById('gasUrl').value = GAS_URL;
+  }
+
+  // データ読み込み
+  loadData();
+});
+
+// ===== TAB =====
+function showTab(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+// ===== LOAD DATA =====
+async function loadData() {
+  if (!GAS_URL) {
+    // デモデータで表示
+    loadDemoData();
+    return;
+  }
+  try {
+    const res = await fetch(GAS_URL + '?action=all');
+    const data = await res.json();
+    allMembers = data.members || [];
+    gradeData = data.grades || {};
+    collectionData = data.collection || {};
+    annualData = data.annual || {};
+    renderDashboard();
+    renderCollection();
+    renderGradeList();
+    renderAnnual();
+    showToast('✅ 同期完了');
+  } catch(e) {
+    loadDemoData();
+    showToast('⚠️ デモデータで表示中');
+  }
+}
+
+// ===== DEMO DATA =====
+function loadDemoData() {
+  allMembers = [
+    {name:'田中 太郎', course:'いつでもスーパー（男性）', gender:'男性', age:35, bank:'山陰合同銀行', grade:'グリーン', paid:true},
+    {name:'山本 花子', course:'週1 スタンダード', gender:'女性', age:28, bank:'鳥取銀行', grade:'ホワイト', paid:false},
+    {name:'佐藤 健一', course:'いつでもスタンダード（男性）', gender:'男性', age:42, bank:'山陰合同銀行', grade:'ブルー', paid:true},
+    {name:'鈴木 美咲', course:'週1 スタンダード', gender:'女性', age:23, bank:'ゆうちょ銀行', grade:'ホワイト', paid:false},
+    {name:'高橋 悠介', course:'いつでもスーパー（男性）', gender:'男性', age:31, bank:'山陰合同銀行', grade:'オレンジ', paid:true},
+    {name:'伊藤 彩', course:'いつでもスタンダード（女性）', gender:'女性', age:19, bank:'鳥取銀行', grade:'グリーン', paid:true},
+    {name:'渡辺 誠', course:'週1 スーパー', gender:'男性', age:55, bank:'三井住友銀行', grade:'ホワイト', paid:false},
+    {name:'中村 奈緒', course:'いつでもライト（女性）', gender:'女性', age:38, bank:'山陰合同銀行', grade:'ホワイト', paid:true},
+    {name:'小林 翔', course:'週1 スタンダード', gender:'男性', age:26, bank:'山陰合同銀行', grade:'レッド', paid:true},
+    {name:'加藤 里美', course:'いつでもスタンダード（女性）', gender:'女性', age:44, bank:'鳥取銀行', grade:'ブルー', paid:false},
+  ];
+  renderDashboard();
+  renderCollection();
+  renderGradeList();
+  renderAnnual();
+}
+
+// ===== DASHBOARD =====
+function renderDashboard() {
+  const active = allMembers.filter(m => !m.retired);
+  const now = new Date();
+  const thisMonth = now.getMonth();
+  const thisYear = now.getFullYear();
+
+  // 新規（デモ用）
+  const newCount = Math.floor(active.length * 0.05) || 2;
+  const retiredCount = Math.floor(active.length * 0.02) || 1;
+
+  // KPI
+  document.getElementById('kpi-area').innerHTML = `
+    <div class="kpi-grid" style="margin-bottom:24px;">
+      <div class="kpi">
+        <div class="kpi-num">${active.length}<span class="kpi-unit" style="font-size:16px;-webkit-text-fill-color:var(--muted);">名</span></div>
+        <div class="kpi-label">現在の会員数</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-num" style="background:linear-gradient(135deg,#27AE60,#2ECC71);-webkit-background-clip:text;background-clip:text;">+${newCount}<span class="kpi-unit" style="font-size:16px;-webkit-text-fill-color:var(--muted);">名</span></div>
+        <div class="kpi-label">今月 新規入会</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-num" style="background:linear-gradient(135deg,#E74C3C,#C0392B);-webkit-background-clip:text;background-clip:text;">${retiredCount}<span class="kpi-unit" style="font-size:16px;-webkit-text-fill-color:var(--muted);">名</span></div>
+        <div class="kpi-label">今月 退会</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-num">${active.filter(m=>m.gender==='女性').length}<span class="kpi-unit" style="font-size:16px;-webkit-text-fill-color:var(--muted);">名</span></div>
+        <div class="kpi-label">女性会員</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-num">${active.filter(m=>m.gender==='男性').length}<span class="kpi-unit" style="font-size:16px;-webkit-text-fill-color:var(--muted);">名</span></div>
+        <div class="kpi-label">男性会員</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-num">${active.filter(m=>m.paid).length}<span class="kpi-unit" style="font-size:16px;-webkit-text-fill-color:var(--muted);">名</span></div>
+        <div class="kpi-label">今月 回収済み</div>
+        <div class="kpi-sub">${Math.round(active.filter(m=>m.paid).length/active.length*100)}%</div>
+      </div>
+    </div>`;
+
+  document.getElementById('chart-area').style.display = 'grid';
+  document.getElementById('chart-area2').style.display = 'grid';
+  document.getElementById('weekday-card').style.display = 'block';
+  document.getElementById('trial-card').style.display = 'block';
+
+  // コース別
+  const courseCounts = {};
+  active.forEach(m => { courseCounts[m.course] = (courseCounts[m.course]||0)+1; });
+  const maxC = Math.max(...Object.values(courseCounts));
+  document.getElementById('course-bars').innerHTML = Object.entries(courseCounts)
+    .sort((a,b)=>b[1]-a[1])
+    .map(([k,v]) => `
+      <div class="bar-row">
+        <div class="bar-label" style="width:130px;font-size:11px;">${k.length>14?k.substring(0,14)+'…':k}</div>
+        <div class="bar-wrap"><div class="bar-fill" style="width:${Math.round(v/maxC*100)}%"></div></div>
+        <div class="bar-val">${v}名</div>
+      </div>`).join('');
+
+  // 銀行別
+  const bankCounts = {};
+  active.forEach(m => { bankCounts[m.bank] = (bankCounts[m.bank]||0)+1; });
+  const maxB = Math.max(...Object.values(bankCounts));
+  document.getElementById('bank-bars').innerHTML = Object.entries(bankCounts)
+    .sort((a,b)=>b[1]-a[1])
+    .map(([k,v]) => `
+      <div class="bar-row">
+        <div class="bar-label" style="width:110px;font-size:11px;">${k}</div>
+        <div class="bar-wrap"><div class="bar-fill" style="width:${Math.round(v/maxB*100)}%"></div></div>
+        <div class="bar-val">${v}名</div>
+      </div>`).join('');
+
+  // 男女比ドーナツ
+  const male = active.filter(m=>m.gender==='男性').length;
+  const female = active.filter(m=>m.gender==='女性').length;
+  const total = male + female;
+  const malePct = Math.round(male/total*100);
+  const femalePct = 100-malePct;
+  const r = 50, cx = 65, cy = 65;
+  const circ = 2*Math.PI*r;
+  const maleDash = circ*(malePct/100);
+  document.getElementById('gender-donut').innerHTML = `
+    <svg class="donut-svg" width="130" height="130" viewBox="0 0 130 130">
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#2a2a2a" stroke-width="22"/>
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="url(#dg)" stroke-width="22"
+        stroke-dasharray="${maleDash} ${circ}" stroke-dashoffset="${circ*0.25}" stroke-linecap="round"/>
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#2980B9" stroke-width="22"
+        stroke-dasharray="${circ*(femalePct/100)} ${circ}" stroke-dashoffset="${circ*0.25-maleDash}" stroke-linecap="round"/>
+      <defs><linearGradient id="dg" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#C0392B"/><stop offset="100%" stop-color="#E8621A"/>
+      </linearGradient></defs>
+      <text x="${cx}" y="${cy-4}" text-anchor="middle" fill="white" font-size="18" font-family="Bebas Neue,sans-serif">${total}</text>
+      <text x="${cx}" y="${cy+12}" text-anchor="middle" fill="#888" font-size="9" font-family="Noto Sans JP,sans-serif">総会員</text>
+    </svg>
+    <div class="donut-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#E8621A;"></div>男性 ${malePct}%（${male}名）</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#2980B9;"></div>女性 ${femalePct}%（${female}名）</div>
+    </div>`;
+
+  // 年齢別
+  const ageBands = [['10代',10,19],['20代',20,29],['30代',30,39],['40代',40,49],['50代',50,59],['60代以上',60,99]];
+  const ageCounts = ageBands.map(([label,min,max]) => [label, active.filter(m=>m.age>=min&&m.age<=max).length]);
+  const maxA = Math.max(...ageCounts.map(a=>a[1]),1);
+  document.getElementById('age-bars').innerHTML = ageCounts
+    .map(([k,v]) => `
+      <div class="bar-row">
+        <div class="bar-label" style="width:55px;">${k}</div>
+        <div class="bar-wrap"><div class="bar-fill" style="width:${Math.round(v/maxA*100)}%"></div></div>
+        <div class="bar-val">${v}名</div>
+      </div>`).join('');
+
+  // 体験成約（デモ）
+  const trialTotal = 8, trialJoined = 5;
+  document.getElementById('trial-stats').innerHTML = `
+    <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);">
+      <div class="kpi"><div class="kpi-num">${trialTotal}<span class="kpi-unit" style="font-size:14px;-webkit-text-fill-color:var(--muted);">名</span></div><div class="kpi-label">今月 体験申込</div></div>
+      <div class="kpi"><div class="kpi-num" style="background:linear-gradient(135deg,#27AE60,#2ECC71);-webkit-background-clip:text;background-clip:text;">${trialJoined}<span class="kpi-unit" style="font-size:14px;-webkit-text-fill-color:var(--muted);">名</span></div><div class="kpi-label">入会成約</div></div>
+      <div class="kpi"><div class="kpi-num">${Math.round(trialJoined/trialTotal*100)}<span class="kpi-unit" style="font-size:14px;-webkit-text-fill-color:var(--muted);">%</span></div><div class="kpi-label">成約率</div></div>
+    </div>`;
+
+  // 曜日別
+  const days = ['月','火','水','木','金','土','日'];
+  const weekCounts = {};
+  days.forEach(d => weekCounts[d] = 0);
+  active.forEach(m => {
+    if (m.weekdays) {
+      days.forEach(d => { if(m.weekdays.includes(d)) weekCounts[d]++; });
+    }
+  });
+  // デモ値
+  if (Object.values(weekCounts).every(v=>v===0)) {
+    weekCounts['月']=8;weekCounts['火']=12;weekCounts['水']=15;
+    weekCounts['木']=18;weekCounts['金']=14;weekCounts['土']=22;weekCounts['日']=6;
+  }
+  const maxW = Math.max(...Object.values(weekCounts),1);
+  document.getElementById('weekday-bars').innerHTML = `
+    <div style="display:flex;align-items:flex-end;gap:10px;height:100px;padding:10px 0;">
+    ${days.map(d=>`
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;">
+        <div style="font-size:11px;color:var(--orange);font-weight:700;">${weekCounts[d]}</div>
+        <div style="width:100%;background:var(--grad-h);border-radius:6px 6px 0 0;height:${Math.round(weekCounts[d]/maxW*70)}px;transition:height 1s;"></div>
+        <div style="font-size:12px;color:var(--light);font-weight:700;">${d}</div>
+      </div>`).join('')}
+    </div>`;
+}
+
+// ===== COLLECTION =====
+function renderCollection() {
+  const month = document.getElementById('collectionMonth').value;
+  const members = allMembers.filter(m => !m.retired);
+
+  // デモ：月によってランダム変化
+  const seed = parseInt(month.replace('-',''));
+  members.forEach((m,i) => { m.paid = (seed + i) % 3 !== 0; });
+
+  const paid = members.filter(m=>m.paid);
+  const unpaid = members.filter(m=>!m.paid);
+  const rate = Math.round(paid.length/members.length*100);
+
+  document.getElementById('coll-total').textContent = members.length + '名';
+  document.getElementById('coll-paid').textContent = paid.length + '名';
+  document.getElementById('coll-unpaid').textContent = unpaid.length + '名';
+  document.getElementById('coll-rate-text').textContent = rate + '%';
+  setTimeout(()=>{ document.getElementById('coll-rate-bar').style.width = rate + '%'; }, 100);
+
+  // 未回収
+  document.getElementById('unpaid-list').innerHTML = unpaid.length === 0
+    ? '<div style="color:var(--green);font-size:14px;padding:16px;text-align:center;">🎉 全員回収済み！</div>'
+    : unpaid.map((m,i) => `
+      <div class="unpaid-item" id="unpaid-${i}">
+        <div>
+          <div class="unpaid-name">${m.name}</div>
+          <div class="unpaid-course">${m.course} ｜ ${m.bank}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="unpaid-amount">¥${(m.fee||4620).toLocaleString()}</div>
+          <button class="paid-btn" onclick="markPaid(${i},'${m.name}')">回収済にする</button>
+        </div>
+      </div>`).join('');
+
+  // 回収済
+  document.getElementById('paid-list').innerHTML = paid
+    .map(m => `
+      <div class="paid-item">
+        <div class="paid-item-name">${m.name} <span style="color:var(--muted);font-size:11px;">${m.course}</span></div>
+        <div class="paid-item-amount">¥${(m.fee||4620).toLocaleString()}</div>
+      </div>`).join('');
+}
+
+function markPaid(idx, name) {
+  const el = document.getElementById('unpaid-' + idx);
+  if (el) { el.style.opacity='0'; el.style.transition='.3s'; setTimeout(()=>el.remove(),300); }
+  showToast('✅ ' + name + ' を回収済みにしました');
+  const unpaidNum = parseInt(document.getElementById('coll-unpaid').textContent);
+  document.getElementById('coll-unpaid').textContent = Math.max(0, unpaidNum-1) + '名';
+  // GASに送信
+  if (GAS_URL) {
+    const month = document.getElementById('collectionMonth').value;
+    fetch(GAS_URL + '?action=markPaid&name=' + encodeURIComponent(name) + '&month=' + month).catch(()=>{});
+  }
+}
+
+// ===== GRADE =====
+const GRADES = [
+  {key:'ホワイト', label:'ホワイトメダル', dotClass:'dot-white', btnClass:'white', icon:'⚪'},
+  {key:'グリーン', label:'グリーンメダル', dotClass:'dot-green', btnClass:'green', icon:'🟢'},
+  {key:'ブルー', label:'ブルーメダル', dotClass:'dot-blue', btnClass:'blue', icon:'🔵'},
+  {key:'オレンジ', label:'オレンジメダル', dotClass:'dot-orange', btnClass:'orange-btn', icon:'🟠'},
+  {key:'レッド', label:'レッドメダル', dotClass:'dot-red', btnClass:'red-btn', icon:'🔴'},
+  {key:'ブラック', label:'ブラックメダル', dotClass:'dot-black', btnClass:'black', icon:'⚫'},
+];
+
+function renderGradeList(filter='') {
+  const members = allMembers.filter(m => !m.retired && (!filter || m.name.includes(filter)));
+  if (members.length === 0) {
+    document.getElementById('grade-list').innerHTML = '<div style="color:var(--muted);padding:20px;text-align:center;">該当する会員が見つかりません</div>';
+    return;
+  }
+  document.getElementById('grade-list').innerHTML = members.map((m,i) => {
+    const current = m.grade || 'ホワイト';
+    const g = GRADES.find(g=>g.key===current) || GRADES[0];
+    return `
+      <div class="member-grade-card">
+        <div class="mgc-top">
+          <div>
+            <div class="mgc-name">${m.name}</div>
+            <div class="mgc-course">${m.course}</div>
+          </div>
+          <div class="current-grade">
+            <div class="grade-dot ${g.dotClass}"></div>
+            ${g.label}
+          </div>
+        </div>
+        <div class="grade-btns">
+          ${GRADES.map(gr => `
+            <button class="grade-btn ${gr.btnClass} ${current===gr.key?'active':''}"
+              onclick="setGrade(${i},'${m.name}','${gr.key}')">
+              <div class="grade-dot ${gr.dotClass}"></div>${gr.label}
+            </button>`).join('')}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function filterGradeList() {
+  renderGradeList(document.getElementById('gradeSearch').value);
+}
+
+function setGrade(idx, name, grade) {
+  // ローカル更新
+  const member = allMembers.find(m=>m.name===name);
+  if (member) member.grade = grade;
+  filterGradeList();
+  showToast('🏅 ' + name + ' → ' + grade + 'メダル を付与しました');
+  // GASに送信
+  if (GAS_URL) {
+    fetch(GAS_URL + '?action=setGrade&name=' + encodeURIComponent(name) + '&grade=' + encodeURIComponent(grade)).catch(()=>{});
+  }
+}
+
+// ===== ANNUAL =====
+function renderAnnual() {
+  const now = new Date();
+  const months = [];
+  for (let i=11; i>=0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+    months.push({
+      label: (d.getMonth()+1) + '月',
+      ym: d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0'),
+      rate: Math.floor(Math.random()*20+78)
+    });
+  }
+  document.getElementById('annual-grid').innerHTML = months.map(m => `
+    <div class="annual-month" onclick="showAnnualDetail('${m.ym}','${m.label}',${m.rate})">
+      <div class="am-label">${m.label}</div>
+      <div class="am-rate ${m.rate>=90?'high':m.rate>=80?'mid':'low'}">${m.rate}%</div>
+      <div class="am-count">回収率</div>
+    </div>`).join('');
+}
+
+function showAnnualDetail(ym, label, rate) {
+  document.getElementById('annual-detail').innerHTML = `
+    <div class="card">
+      <div class="card-title">${label} の回収状況</div>
+      <div class="bar-row" style="margin-bottom:16px;">
+        <div class="bar-label" style="width:50px;text-align:left;font-size:18px;font-weight:700;color:var(--white);">${rate}%</div>
+        <div class="bar-wrap" style="height:14px;"><div class="bar-fill" style="width:${rate}%;background:${rate>=90?'var(--green)':rate>=80?'var(--orange)':'var(--pink)'};"></div></div>
+      </div>
+      <div style="color:var(--muted);font-size:13px;">詳細データはスプレッドシートで確認してください。</div>
+    </div>`;
+}
+
+// ===== CONFIG =====
+function saveConfig() {
+  const url = document.getElementById('gasUrl').value.trim();
+  if (!url) { document.getElementById('config-status').textContent = '❌ URLを入力してください'; return; }
+  GAS_URL = url;
+  document.getElementById('config-status').innerHTML = '✅ 保存しました。接続テスト中...';
+  loadData();
+}
+
+// ===== TOAST =====
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
