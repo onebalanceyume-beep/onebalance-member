@@ -8,11 +8,10 @@
 <meta name="theme-color" content="#E24B4A">
 <title>one-BALANCE BOXING GYM</title>
 <link rel="manifest" href="manifest.json">
-<link href="https://fonts.googleapis.com/css2?family=Yomogi&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:Helvetica,Arial,sans-serif;background:#f5f5f5;display:flex;justify-content:center;}
-.app{width:100%;max-width:430px;min-height:100vh;background:#fff;position:relative;overflow-x:hidden;}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Helvetica,Arial,sans-serif;}
+body{background:#f5f5f5;display:flex;justify-content:center;}
+.app{width:100%;max-width:430px;min-height:100vh;background:#fff;}
 .screen{display:none;}.screen.active{display:block;}
 .red-hd{background:#E24B4A;padding:14px 18px;}
 .logo-bar{display:flex;align-items:center;gap:10px;}
@@ -81,16 +80,41 @@ body{font-family:Helvetica,Arial,sans-serif;background:#f5f5f5;display:flex;just
 .prog-fill{background:#fff;border-radius:20px;height:10px;transition:width 0.5s;}
 .prog-stats{display:flex;justify-content:space-between;font-size:13px;color:rgba(255,255,255,0.9);}
 .pass-badge{display:inline-flex;align-items:center;gap:6px;background:#EF9F27;border-radius:20px;padding:8px 16px;font-size:14px;color:#fff;margin-top:12px;}
-.cur-list{padding:16px 18px;display:flex;flex-direction:column;gap:10px;padding-bottom:40px;}
-.cur-item{background:#fff;border:1px solid #f0f0f0;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
-.item-nm{flex:1;font-size:14px;color:#333;}
-.st-group{display:flex;gap:8px;}
-.st-btn{font-size:11px;border-radius:20px;padding:5px 12px;border:1px solid #eee;cursor:pointer;background:#f8f8f8;color:#999;font-family:Helvetica,Arial,sans-serif;transition:all 0.12s;}
+.cur-list{padding:14px 16px;display:flex;flex-direction:column;gap:10px;padding-bottom:40px;}
+.cur-item{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+.cur-main{display:flex;align-items:center;gap:10px;padding:12px 14px;}
+.item-nm{flex:1;font-size:14px;color:#333;font-weight:500;}
+.st-group{display:flex;gap:6px;flex-shrink:0;}
+.st-btn{font-size:10px;border-radius:20px;padding:5px 10px;border:1px solid #eee;cursor:pointer;background:#f8f8f8;color:#999;font-family:Helvetica,Arial,sans-serif;transition:all 0.12s;white-space:nowrap;}
 .st-btn.ch{background:#E6F1FB;color:#185FA5;border-color:#378ADD;}
 .st-btn.ok{background:#EAF3DE;color:#3B6D11;border-color:#639922;}
+.yt-section{background:#fafafa;border-top:1px solid #f0f0f0;padding:10px 14px;display:flex;flex-direction:column;gap:6px;}
+.yt-link{display:flex;align-items:center;gap:8px;text-decoration:none;background:#fff;border:1px solid #f0f0f0;border-radius:8px;padding:8px 10px;transition:all 0.15s;}
+.yt-link:active{border-color:#FF0000;background:#fff5f5;}
+.yt-icon{width:24px;height:18px;background:#FF0000;border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.yt-icon::after{content:'▶';color:#fff;font-size:8px;}
+.yt-text{font-size:11px;color:#333;font-weight:500;flex:1;}
+.no-yt{font-size:11px;color:#bbb;padding:4px 0;}
 
 /* GRADE */
-.grade-card{border-radius:16px;padding:18px;display:flex;align-items:center;gap:16px;margin-bottom:12px;box-shadow:0 2px 10px rgba(0,0,0,0.06);}
+.grade-card{border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:0 2px 10px rgba(0,0,0,0.08);}
+.grade-top{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.grade-icon-wrap{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.grade-name{font-size:16px;font-weight:500;margin-bottom:2px;}
+.grade-desc{font-size:12px;opacity:0.8;}
+.grade-status{display:inline-block;font-size:11px;border-radius:20px;padding:3px 10px;margin-bottom:10px;background:rgba(255,255,255,0.4);}
+.grade-yt-btn{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.35);border:none;border-radius:8px;padding:8px 12px;font-size:12px;cursor:pointer;font-family:Helvetica,Arial,sans-serif;width:100%;margin-bottom:6px;text-decoration:none;color:inherit;}
+.grade-yt-btn:last-child{margin-bottom:0;}
+.grade-yt-icon{width:20px;height:16px;background:#FF0000;border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.grade-yt-icon::after{content:'▶';color:#fff;font-size:7px;}
+.g-white{background:#F5F5F0;}.g-white .grade-name{color:#555;}.g-white .grade-icon-wrap{background:#E8E8E0;}
+.g-green{background:#D4EDDA;}.g-green .grade-name{color:#1A5C2A;}.g-green .grade-icon-wrap{background:#A8D5B0;}
+.g-blue{background:#CCE5FF;}.g-blue .grade-name{color:#0A3D6B;}.g-blue .grade-icon-wrap{background:#99CAFF;}
+.g-orange{background:#FFE5CC;}.g-orange .grade-name{color:#7A3500;}.g-orange .grade-icon-wrap{background:#FFB980;}
+.g-red{background:#FFCCCC;}.g-red .grade-name{color:#7A0000;}.g-red .grade-icon-wrap{background:#FF9999;}
+.g-gold{background:#FFF3CC;}.g-gold .grade-name{color:#7A5500;}.g-gold .grade-icon-wrap{background:#FFD966;}
+.locked{opacity:0.4;}
+.current-badge{display:inline-block;background:#E24B4A;color:#fff;font-size:10px;border-radius:20px;padding:2px 8px;margin-left:8px;vertical-align:middle;}
 </style>
 </head>
 <body>
@@ -188,7 +212,7 @@ body{font-family:Helvetica,Arial,sans-serif;background:#f5f5f5;display:flex;just
         <div class="menu-nm">お知らせ</div>
         <div class="menu-desc">キャンペーン情報</div>
       </div>
-      <div class="menu-item" onclick="openFacebook()">
+      <div class="menu-item" onclick="window.open('https://www.facebook.com/share/g/1CWGbwdZmm/','_blank')">
         <div class="menu-icon" style="background:#EAF3DE;">👥</div>
         <div class="menu-nm">コミュニティ</div>
         <div class="menu-desc">Facebookグループ</div>
@@ -222,9 +246,9 @@ body{font-family:Helvetica,Arial,sans-serif;background:#f5f5f5;display:flex;just
   <div style="padding-bottom:40px;">
     <div class="red-hd">
       <button class="back-btn" onclick="showScreen('s-home')">← 戻る</button>
-      <div style="font-size:18px;color:#fff;">グレード認定</div>
+      <div style="font-size:18px;color:#fff;font-weight:500;">グレード認定</div>
     </div>
-    <div style="padding:20px;" id="grade-wrap"></div>
+    <div style="padding:16px;" id="grade-wrap"></div>
   </div>
 </div>
 
@@ -233,7 +257,7 @@ body{font-family:Helvetica,Arial,sans-serif;background:#f5f5f5;display:flex;just
   <div style="padding-bottom:40px;">
     <div class="red-hd">
       <button class="back-btn" onclick="showScreen('s-home')">← 戻る</button>
-      <div style="font-size:18px;color:#fff;">お知らせ</div>
+      <div style="font-size:18px;color:#fff;font-weight:500;">お知らせ</div>
     </div>
     <div style="padding:20px;">
       <div class="notice-card"><div class="notice-tag">キャンペーン</div><div class="notice-title">春の入会金いっしょ割キャンペーン開催中！</div><div class="notice-date">2026年3月16日</div></div>
@@ -245,11 +269,49 @@ body{font-family:Helvetica,Arial,sans-serif;background:#f5f5f5;display:flex;just
 </div>
 <script>
 const GAS_URL='https://script.google.com/macros/s/AKfycbyuzVrcogYqq8SjjRn98c2_M9X8wJuA7mGOnt9Ac0cPcm6bK9JuGyX76MpMmmKB01IMiw/exec';
-const FB_URL='https://www.facebook.com/share/g/1CWGbwdZmm/';
-const hiraRows=['あいうえお','かきくけこ','さしすせそ','たちつてと','なにぬねの','はひふへほ','まみむめも','やゆよ','らりるれろ','わをん'];
-const curItems=['ジャブ','ワンツー','フック','ワンツーステップ','アッパー','サンドバックポジション','パンチ時のガード','同時ステップ','ランダムシャドー','ボディアッパー','ロープ Level.1','ロープ Level.2','ロープ Level.3','ロープ Level.4'];
+
+const curItems=[
+  {name:'ジャブ',videos:[{url:'https://youtu.be/Aqvc5L3u1so',label:'動画①'},{url:'https://youtu.be/zHveV-_FKGg',label:'動画②'},{url:'https://youtu.be/Ja6mVvvPV4w',label:'動画③'},{url:'https://youtu.be/HxGKebXOCbM',label:'動画④'}]},
+  {name:'ワンツー',videos:[{url:'https://youtu.be/zHveV-_FKGg',label:'動画①'},{url:'https://youtu.be/KNTLVDEeVvk',label:'動画②'},{url:'https://youtu.be/Ja6mVvvPV4w',label:'動画③'}]},
+  {name:'フック',videos:[{url:'https://youtu.be/oeAQGLeDL08',label:'動画①'}]},
+  {name:'ワンツーステップ',videos:[{url:'https://youtu.be/KNTLVDEeVvk',label:'動画①'},{url:'https://youtu.be/AY_WR3gSufo',label:'動画②'}]},
+  {name:'アッパー',videos:[{url:'https://youtu.be/wmzNv_7lhA0',label:'動画①'}]},
+  {name:'サンドバックポジション',videos:[{url:'https://youtu.be/88TP05BcvBI',label:'動画①'},{url:'https://youtu.be/JljZti__-WI',label:'動画②'},{url:'https://youtu.be/NDJFsTGVsFg',label:'動画③'}]},
+  {name:'パンチ時のガード',videos:[{url:'https://youtu.be/i-MO11b83CQ',label:'動画①'}]},
+  {name:'同時ステップ',videos:[{url:'https://youtu.be/AY_WR3gSufo',label:'動画①'},{url:'https://youtu.be/M-JKtBUlDos',label:'動画②'}]},
+  {name:'ランダムシャドー',videos:[]},
+  {name:'ボディアッパー',videos:[{url:'https://youtu.be/w9cjTuBFxJ4',label:'動画①'}]},
+  {name:'ロープ Level.1',videos:[{url:'https://youtu.be/WPROg0dUmsU',label:'動画①'},{url:'https://youtu.be/NDJFsTGVsFg',label:'動画②'}]},
+  {name:'ロープ Level.2',videos:[{url:'https://youtu.be/WPROg0dUmsU',label:'動画①'},{url:'https://youtu.be/NDJFsTGVsFg',label:'動画②'}]},
+  {name:'ロープ Level.3',videos:[{url:'https://youtu.be/WPROg0dUmsU',label:'動画①'},{url:'https://youtu.be/NDJFsTGVsFg',label:'動画②'}]},
+  {name:'ロープ Level.4',videos:[{url:'https://youtu.be/WPROg0dUmsU',label:'動画①'},{url:'https://youtu.be/NDJFsTGVsFg',label:'動画②'}]},
+];
+
+const YT_COMMON='https://youtube.com/playlist?list=PL-gAc3kb2RX0Hi8o4EbN72ctSgA9n907w';
+const YT_BEGINNER='https://youtube.com/playlist?list=PL-gAc3kb2RX1ZGy_oCGjkpYizMPnBOpPh';
+const YT_MID='https://youtube.com/playlist?list=PL-gAc3kb2RX0NYI76_QWgQga2Xfva9kEE';
+const YT_ADV='https://youtube.com/playlist?list=PL-gAc3kb2RX3hX6n2UibkCHN9b6F_VHZC';
+
+const grades=[
+  {key:'white',cls:'g-white',icon:'⚪',name:'ホワイトメダル',desc:'基本カリキュラム80%合格',
+   yt:[{url:YT_BEGINNER,label:'初級 再生リスト'},{url:YT_COMMON,label:'全クラス共通'}]},
+  {key:'green',cls:'g-green',icon:'🟢',name:'グリーンメダル',desc:'守る技術',
+   yt:[{url:YT_BEGINNER,label:'初級 再生リスト'},{url:YT_COMMON,label:'全クラス共通'}]},
+  {key:'blue',cls:'g-blue',icon:'🔵',name:'ブルーメダル',desc:'マスボクシングができること',
+   yt:[{url:YT_MID,label:'中級 再生リスト'},{url:YT_COMMON,label:'全クラス共通'}]},
+  {key:'orange',cls:'g-orange',icon:'🟠',name:'オレンジメダル',desc:'当てマスボクシングができること',
+   yt:[{url:YT_MID,label:'中級 再生リスト'},{url:YT_COMMON,label:'全クラス共通'}]},
+  {key:'red',cls:'g-red',icon:'🔴',name:'レッドメダル',desc:'スパーリングができること',
+   yt:[{url:YT_BEGINNER,label:'初級 再生リスト'},{url:YT_MID,label:'中級 再生リスト'},{url:YT_ADV,label:'上級 再生リスト'},{url:YT_COMMON,label:'全クラス共通'}]},
+  {key:'gold',cls:'g-gold',icon:'🥇',name:'ゴールドメダル',desc:'ボクシングを理解してスパーリングができること',
+   yt:[{url:YT_BEGINNER,label:'初級 再生リスト'},{url:YT_MID,label:'中級 再生リスト'},{url:YT_ADV,label:'上級 再生リスト'},{url:YT_COMMON,label:'全クラス共通'}]},
+];
+
+const gradeOrder=['white','green','blue','orange','red','gold'];
+
 let selHira='',curPin='',currentMember=null,statuses=curItems.map(()=>'none');
 
+const hiraRows=['あいうえお','かきくけこ','さしすせそ','たちつてと','なにぬねの','はひふへほ','まみむめも','やゆよ','らりるれろ','わをん'];
 const grid=document.getElementById('hira-grid');
 hiraRows.forEach(row=>{
   row.split('').forEach(ch=>{
@@ -282,7 +344,7 @@ async function checkPin(){
       currentMember=data.member;
       const name=data.member['お名前']||'';
       const grade=data.member['グレード']||'ホワイトメダル';
-      const gmap={'ホワイトメダル':'⚪','グリーンメダル':'🟢','ゴールドメダル':'🏅'};
+      const gmap={'ホワイトメダル':'⚪','グリーンメダル':'🟢','ブルーメダル':'🔵','オレンジメダル':'🟠','レッドメダル':'🔴','ゴールドメダル':'🥇'};
       document.getElementById('h-name').textContent=name;
       document.getElementById('h-av').textContent=name.charAt(0);
       document.getElementById('h-gicon').textContent=gmap[grade]||'⚪';
@@ -300,7 +362,6 @@ async function checkPin(){
 }
 
 function logout(){currentMember=null;selHira='';curPin='';document.querySelectorAll('.hira-key').forEach(b=>b.classList.remove('selected'));const d=document.getElementById('hira-display');d.textContent='未選択';d.classList.add('placeholder');document.getElementById('hira-next').disabled=true;updateDots();showScreen('s-hira');}
-function openFacebook(){window.open(FB_URL,'_blank');}
 
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -315,7 +376,7 @@ async function loadCurriculum(){
   try{
     const res=await fetch(GAS_URL+'?action=getCurriculumByMember&name='+encodeURIComponent(currentMember['お名前']));
     const data=await res.json();
-    if(data.success)statuses=curItems.map(item=>data.items[item]||'none');
+    if(data.success)statuses=curItems.map((item,i)=>data.items[item.name]||'none');
   }catch(e){}
   renderCurriculum();
 }
@@ -329,34 +390,47 @@ function renderCurriculum(){
   document.getElementById('prog-pct').textContent=pct+'%';
   document.getElementById('pass-bdg').style.display=pct>=78?'block':'none';
   curItems.forEach((item,i)=>{
-    const div=document.createElement('div');div.className='cur-item';
     const st=statuses[i];
-    div.innerHTML='<div class="item-nm">'+item+'</div><div class="st-group"><button class="st-btn '+(st==='ch'?'ch':'')+'" onclick="setSt('+i+',\'ch\')">挑戦中</button><button class="st-btn '+(st==='ok'?'ok':'')+'" onclick="setSt('+i+',\'ok\')">合格</button></div>';
-    list.appendChild(div);
+    const card=document.createElement('div');card.className='cur-item';
+    const main=document.createElement('div');main.className='cur-main';
+    main.innerHTML='<div class="item-nm">'+item.name+'</div><div class="st-group"><button class="st-btn '+(st==='ch'?'ch':'')+'" onclick="setSt('+i+',\'ch\')">挑戦中</button><button class="st-btn '+(st==='ok'?'ok':'')+'" onclick="setSt('+i+',\'ok\')">合格</button></div>';
+    card.appendChild(main);
+    const ytSec=document.createElement('div');ytSec.className='yt-section';
+    if(item.videos.length===0){
+      ytSec.innerHTML='<div class="no-yt">📹 動画は準備中です</div>';
+    }else{
+      item.videos.forEach(v=>{
+        const a=document.createElement('a');a.className='yt-link';a.href=v.url;a.target='_blank';
+        a.innerHTML='<div class="yt-icon"></div><span class="yt-text">'+v.label+'</span>';
+        ytSec.appendChild(a);
+      });
+    }
+    card.appendChild(ytSec);
+    list.appendChild(card);
   });
 }
 
 async function setSt(i,v){
   statuses[i]=statuses[i]===v?'none':v;renderCurriculum();
   if(!currentMember)return;
-  try{await fetch(GAS_URL+'?action=updateCurriculum&name='+encodeURIComponent(currentMember['お名前'])+'&item='+encodeURIComponent(curItems[i])+'&status='+encodeURIComponent(statuses[i]));}catch(e){}
+  try{await fetch(GAS_URL+'?action=updateCurriculum&name='+encodeURIComponent(currentMember['お名前'])+'&item='+encodeURIComponent(curItems[i].name)+'&status='+encodeURIComponent(statuses[i]));}catch(e){}
 }
 
 function renderGrade(){
-  const pc=statuses.filter(s=>s==='ok').length;
-  const pct=pc/curItems.length*100;
-  const gs=[
-    {name:'ホワイトメダル',icon:'⚪',desc:'入会直後に取得',bg:'#F5F5F0',tc:'#666',ok:true},
-    {name:'グリーンメダル',icon:'🟢',desc:'基本カリキュラム80%達成',bg:'#EAF3DE',tc:'#3B6D11',ok:pct>=78},
-    {name:'ゴールドメダル',icon:'🏅',desc:'全項目＋トレーナー認定',bg:'#FAEEDA',tc:'#854F0B',ok:pc===curItems.length},
-  ];
+  const memberGrade=currentMember?currentMember['グレード']||'ホワイトメダル':'ホワイトメダル';
+  const currentIdx=grades.findIndex(g=>g.name===memberGrade);
   const w=document.getElementById('grade-wrap');w.innerHTML='';
-  gs.forEach(g=>{
-    const d=document.createElement('div');
-    d.className='grade-card';
-    d.style.cssText='background:'+g.bg+';opacity:'+(g.ok?'1':'0.4')+';';
-    d.innerHTML='<div style="font-size:32px;">'+g.icon+'</div><div><div style="font-size:16px;color:'+g.tc+';">'+g.name+'</div><div style="font-size:12px;color:'+g.tc+';margin-top:4px;">'+g.desc+'</div><div style="font-size:12px;color:'+g.tc+';margin-top:4px;">'+(g.ok?'✓ 達成済み':'未達成')+'</div></div>';
-    w.appendChild(d);
+  grades.forEach((g,i)=>{
+    const isCurrent=g.name===memberGrade;
+    const isAchieved=i<=currentIdx;
+    const card=document.createElement('div');
+    card.className='grade-card '+g.cls+(isAchieved?'':' locked');
+    let ytHTML='';
+    g.yt.forEach(y=>{
+      ytHTML+='<a class="grade-yt-btn" href="'+y.url+'" target="_blank"><div class="grade-yt-icon"></div>'+y.label+'</a>';
+    });
+    card.innerHTML='<div class="grade-top"><div class="grade-icon-wrap">'+g.icon+'</div><div><div class="grade-name">'+g.name+(isCurrent?'<span class="current-badge">現在</span>':'')+'</div><div class="grade-desc">'+g.desc+'</div></div></div><div class="grade-status">'+(isAchieved?'✓ 達成済み':'未達成')+'</div>'+ytHTML;
+    w.appendChild(card);
   });
 }
 </script>
