@@ -400,7 +400,7 @@ const curItems=[
     {url:'https://youtu.be/zHveV-_FKGg',label:'動画②'},
     {url:'https://youtu.be/Ja6mVvvPV4w',label:'動画③'},
     {url:'https://youtu.be/HxGKebXOCbM',label:'動画④'},
-    {url:'https://youtube.com/shorts/Pe2-FXuJNqs?feature=share',label:'動画⑤ 基礎編'},
+    {url:'https://youtube.com/shorts/yyws6QQ3rww?feature=share',label:'動画⑤ 基礎編'},
   ]},
   {name:'ワンツー',videos:[{url:'https://youtu.be/zHveV-_FKGg',label:'動画①'},{url:'https://youtu.be/KNTLVDEeVvk',label:'動画②'},{url:'https://youtu.be/Ja6mVvvPV4w',label:'動画③'}]},
   {name:'フック',videos:[{url:'https://youtu.be/oeAQGLeDL08',label:'動画①'}]},
@@ -463,7 +463,7 @@ async function checkPin(){
       currentMember=data.member;
       const name=data.member['お名前']||'';
       const grade=data.member['グレード']||'ホワイトメダル';
-      const gmap={'ホワイトメダル':'⚪','グリーンメダル':'🟢','ブルーメダル':'🔵','オレンジメダル':'🟠','レッドメダル':'🔴','ゴールドメダル':'🥇'};
+      const gmap={'ホワイトメダル':'⚪','グリーンメダル':'🟢','ブルーメダル':'🔵','オレンジメダル':'🟠','レッドメダル':'🔴','ゴールドメダル':'🥇','ホワイト':'⚪','グリーン':'🟢','ブルー':'🔵','オレンジ':'🟠','レッド':'🔴','ゴールド':'🥇'};
       document.getElementById('h-name').textContent=name;
       document.getElementById('h-gicon').textContent=gmap[grade]||'⚪';
       document.getElementById('h-gname').textContent=grade;
@@ -517,7 +517,9 @@ async function setSt(i,v){
 }
 
 function renderGrade(){
-  const mg=currentMember?currentMember['グレード']||'ホワイトメダル':'ホワイトメダル';
+  let mg=currentMember?currentMember['グレード']||'ホワイトメダル':'ホワイトメダル';
+  const shortToFull={'ホワイト':'ホワイトメダル','グリーン':'グリーンメダル','ブルー':'ブルーメダル','オレンジ':'オレンジメダル','レッド':'レッドメダル','ゴールド':'ゴールドメダル'};
+  if(shortToFull[mg]) mg=shortToFull[mg];
   const ci=grades.findIndex(g=>g.name===mg);
   const w=document.getElementById('grade-wrap');w.innerHTML='';
   grades.forEach((g,i)=>{
