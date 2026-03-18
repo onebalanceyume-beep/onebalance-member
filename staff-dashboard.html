@@ -505,7 +505,7 @@ function setGrade(idx, name, grade) {
   const g = GRADES.find(g=>g.key===grade);
   showToast('🏅 ' + name + ' → ' + (g?g.label:grade) + ' を付与しました');
   if (GAS_URL) {
-    fetch(GAS_URL + '?action=setGrade&name=' + encodeURIComponent(name) + '&grade=' + encodeURIComponent(grade)).catch(()=>{});
+    fetch(GAS_URL + '?action=updateGrade&name=' + encodeURIComponent(name) + '&grade=' + encodeURIComponent(grade)).catch(()=>{});
   }
 }
 
