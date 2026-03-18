@@ -12,25 +12,18 @@
 body{background:#f5f5f5;display:flex;justify-content:center;}
 .app{width:100%;max-width:430px;min-height:100vh;background:#f5f5f5;}
 .screen{display:none;}.screen.active{display:block;}
-
-/* 共通グラデーション */
 :root{--grad:linear-gradient(135deg,#E24B4A 0%,#e8632a 50%,#f0922a 100%);}
-
 .grad-hd{background:var(--grad);padding:14px 18px;}
 .logo-bar{display:flex;align-items:center;gap:10px;}
 .logo-img{width:34px;height:34px;object-fit:contain;border-radius:50%;background:rgba(255,255,255,0.2);padding:2px;}
 .logo-text{font-size:13px;color:#fff;letter-spacing:0.04em;font-weight:600;}
 .logo-text span{font-size:10px;color:rgba(255,255,255,0.8);display:block;font-weight:400;}
 .back-btn{background:rgba(255,255,255,0.25);border:none;color:#fff;border-radius:8px;padding:5px 14px;font-size:12px;cursor:pointer;font-family:Helvetica,Arial,sans-serif;display:inline-block;margin-bottom:10px;}
-
-/* 説明カード */
 .info-card{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:12px;padding:14px 16px;margin:0 18px 0;}
 .info-card-title{font-size:13px;font-weight:700;color:#fff;margin-bottom:8px;}
 .info-card-body{font-size:12px;color:rgba(255,255,255,0.9);line-height:1.8;}
 .info-card-body ol{padding-left:16px;}
 .info-card-body li{margin-bottom:4px;}
-
-/* PIN */
 .pin-wrap{padding:24px 24px 20px;display:flex;flex-direction:column;align-items:center;}
 .pin-logo-wrap{width:80px;height:80px;margin-bottom:14px;border-radius:50%;background:#fff;padding:8px;box-shadow:0 4px 20px rgba(226,75,74,0.25);}
 .pin-logo-wrap img{width:100%;height:100%;object-fit:contain;}
@@ -62,8 +55,6 @@ body{background:#f5f5f5;display:flex;justify-content:center;}
 .pin-key.empty{background:transparent;border:none;cursor:default;box-shadow:none;}
 .pin-err{margin-top:12px;font-size:13px;color:#A32D2D;min-height:20px;text-align:center;}
 .loading-msg{margin-top:8px;font-size:12px;color:#888;text-align:center;}
-
-/* HOME */
 .home-hero{background:var(--grad);padding:20px 18px 28px;}
 .home-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
 .logout-btn{background:rgba(255,255,255,0.25);border:none;color:#fff;border-radius:8px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:Helvetica,Arial,sans-serif;font-weight:600;}
@@ -73,7 +64,6 @@ body{background:#f5f5f5;display:flex;justify-content:center;}
 .grade-icon{font-size:26px;}
 .grade-lbl{font-size:11px;color:rgba(255,255,255,0.8);}
 .grade-nm{font-size:16px;color:#fff;font-weight:600;}
-
 .home-content{padding:20px;margin-top:-12px;}
 .sec-lbl{font-size:11px;color:#aaa;margin-bottom:10px;margin-top:20px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;}
 .sec-lbl:first-child{margin-top:0;}
@@ -83,8 +73,6 @@ body{background:#f5f5f5;display:flex;justify-content:center;}
 .menu-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
 .menu-nm{font-size:14px;color:#333;font-weight:600;}
 .menu-desc{font-size:11px;color:#aaa;}
-
-/* CURRICULUM */
 .cur-hero{background:var(--grad);padding:20px 18px;}
 .cur-hero h2{font-size:18px;color:#fff;margin-bottom:6px;font-weight:700;}
 .cur-hero-desc{font-size:12px;color:rgba(255,255,255,0.9);margin-bottom:14px;line-height:1.6;}
@@ -114,8 +102,6 @@ body{background:#f5f5f5;display:flex;justify-content:center;}
 .yt-icon::after{content:'▶';color:#fff;font-size:8px;}
 .yt-text{font-size:12px;color:#333;font-weight:600;flex:1;}
 .no-yt{font-size:11px;color:#bbb;padding:4px 0;}
-
-/* GRADE */
 .grade-howto{background:#fff;border-radius:14px;margin:14px 16px 0;padding:14px 16px;box-shadow:0 2px 10px rgba(0,0,0,0.06);}
 .grade-howto-title{font-size:13px;font-weight:700;color:#333;margin-bottom:8px;}
 .grade-howto-body{font-size:12px;color:#666;line-height:1.8;}
@@ -143,8 +129,6 @@ body{background:#f5f5f5;display:flex;justify-content:center;}
 .g-gold .grade-icon-wrap{background:rgba(255,255,255,0.5);}
 .locked{opacity:0.38;}
 .current-badge{display:inline-block;background:var(--grad);color:#fff;font-size:10px;border-radius:20px;padding:2px 10px;margin-left:8px;vertical-align:middle;font-weight:700;}
-
-/* WEIGHT */
 .weight-hero{background:var(--grad);padding:20px 18px 28px;}
 .weight-hero-title{font-size:20px;color:#fff;font-weight:700;}
 .weight-hero-sub{font-size:12px;color:rgba(255,255,255,0.85);margin-top:4px;}
@@ -206,7 +190,6 @@ body{background:#f5f5f5;display:flex;justify-content:center;}
 <body>
 <div class="app">
 
-<!-- STEP1 -->
 <div class="screen active" id="s-hira">
   <div class="grad-hd" style="padding-bottom:18px;">
     <div class="logo-bar">
@@ -241,7 +224,6 @@ body{background:#f5f5f5;display:flex;justify-content:center;}
   </div>
 </div>
 
-<!-- STEP2 -->
 <div class="screen" id="s-pin">
   <div class="grad-hd">
     <div class="logo-bar">
@@ -275,7 +257,6 @@ body{background:#f5f5f5;display:flex;justify-content:center;}
   </div>
 </div>
 
-<!-- HOME -->
 <div class="screen" id="s-home">
   <div class="home-hero">
     <div class="home-top">
@@ -322,7 +303,6 @@ body{background:#f5f5f5;display:flex;justify-content:center;}
   </div>
 </div>
 
-<!-- CURRICULUM -->
 <div class="screen" id="s-cur">
   <div style="padding-bottom:40px;">
     <div class="cur-hero">
@@ -343,7 +323,6 @@ body{background:#f5f5f5;display:flex;justify-content:center;}
   </div>
 </div>
 
-<!-- GRADE -->
 <div class="screen" id="s-grade">
   <div style="padding-bottom:40px;">
     <div class="grad-hd">
@@ -358,7 +337,6 @@ body{background:#f5f5f5;display:flex;justify-content:center;}
   </div>
 </div>
 
-<!-- WEIGHT -->
 <div class="screen" id="s-weight">
   <div style="padding-bottom:48px;">
     <div class="weight-hero">
@@ -414,8 +392,16 @@ body{background:#f5f5f5;display:flex;justify-content:center;}
 <script>
 const GAS_URL='https://script.google.com/macros/s/AKfycbyuzVrcogYqq8SjjRn98c2_M9X8wJuA7mGOnt9Ac0cPcm6bK9JuGyX76MpMmmKB01IMiw/exec';
 const WKEY='ob_wt';const GKEY='ob_wg';
+
+// ===== カリキュラム（ジャブに動画⑤を追加） =====
 const curItems=[
-  {name:'ジャブ',videos:[{url:'https://youtu.be/Aqvc5L3u1so',label:'動画①'},{url:'https://youtu.be/zHveV-_FKGg',label:'動画②'},{url:'https://youtu.be/Ja6mVvvPV4w',label:'動画③'},{url:'https://youtu.be/HxGKebXOCbM',label:'動画④'}]},
+  {name:'ジャブ',videos:[
+    {url:'https://youtu.be/Aqvc5L3u1so',label:'動画①'},
+    {url:'https://youtu.be/zHveV-_FKGg',label:'動画②'},
+    {url:'https://youtu.be/Ja6mVvvPV4w',label:'動画③'},
+    {url:'https://youtu.be/HxGKebXOCbM',label:'動画④'},
+    {url:'https://youtube.com/shorts/Pe2-FXuJNqs?feature=share',label:'動画⑤ 基礎編'},
+  ]},
   {name:'ワンツー',videos:[{url:'https://youtu.be/zHveV-_FKGg',label:'動画①'},{url:'https://youtu.be/KNTLVDEeVvk',label:'動画②'},{url:'https://youtu.be/Ja6mVvvPV4w',label:'動画③'}]},
   {name:'フック',videos:[{url:'https://youtu.be/oeAQGLeDL08',label:'動画①'}]},
   {name:'ワンツーステップ',videos:[{url:'https://youtu.be/KNTLVDEeVvk',label:'動画①'},{url:'https://youtu.be/AY_WR3gSufo',label:'動画②'}]},
@@ -430,10 +416,13 @@ const curItems=[
   {name:'ロープ Level.3',videos:[{url:'https://youtu.be/WPROg0dUmsU',label:'動画①'},{url:'https://youtu.be/NDJFsTGVsFg',label:'動画②'}]},
   {name:'ロープ Level.4',videos:[{url:'https://youtu.be/WPROg0dUmsU',label:'動画①'},{url:'https://youtu.be/NDJFsTGVsFg',label:'動画②'}]},
 ];
+
 const YT_C='https://youtube.com/playlist?list=PL-gAc3kb2RX0Hi8o4EbN72ctSgA9n907w';
 const YT_B='https://youtube.com/playlist?list=PL-gAc3kb2RX1ZGy_oCGjkpYizMPnBOpPh';
 const YT_M='https://youtube.com/playlist?list=PL-gAc3kb2RX0NYI76_QWgQga2Xfva9kEE';
 const YT_A='https://youtube.com/playlist?list=PL-gAc3kb2RX3hX6n2UibkCHN9b6F_VHZC';
+
+// ===== グレード（ゴールドに統一） =====
 const grades=[
   {cls:'g-white',icon:'⚪',name:'ホワイトメダル',desc:'基本カリキュラム80%合格',yt:[{url:YT_B,label:'初級'},{url:YT_C,label:'全クラス共通'}]},
   {cls:'g-green',icon:'🟢',name:'グリーンメダル',desc:'守る技術',yt:[{url:YT_B,label:'初級'},{url:YT_C,label:'全クラス共通'}]},
@@ -442,6 +431,7 @@ const grades=[
   {cls:'g-red',icon:'🔴',name:'レッドメダル',desc:'スパーリングができること',yt:[{url:YT_B,label:'初級'},{url:YT_M,label:'中級'},{url:YT_A,label:'上級'},{url:YT_C,label:'全クラス共通'}]},
   {cls:'g-gold',icon:'🥇',name:'ゴールドメダル',desc:'ボクシングを理解してスパーリングができること',yt:[{url:YT_B,label:'初級'},{url:YT_M,label:'中級'},{url:YT_A,label:'上級'},{url:YT_C,label:'全クラス共通'}]},
 ];
+
 const hiraRows=['あいうえお','かきくけこ','さしすせそ','たちつてと','なにぬねの','はひふへほ','まみむめも','やゆよ','らりるれろ','わをん'];
 let selHira='',curPin='',currentMember=null,statuses=curItems.map(()=>'none');
 const now=new Date();const days=['日','月','火','水','木','金','土'];
@@ -539,7 +529,6 @@ function renderGrade(){
   });
 }
 
-// 体重
 document.getElementById('today-label').textContent=now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日（'+days[now.getDay()]+'）';
 function initWeight(){
   if(wData[todayKey])document.getElementById('weight-input').value=wData[todayKey];
