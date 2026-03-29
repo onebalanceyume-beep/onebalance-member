@@ -144,7 +144,6 @@ body{background:#f5f5f5;display:flex;justify-content:center;}
 .goal-label{font-size:12px;color:#888;flex:1;}
 .goal-input{width:72px;border:1.5px solid #eee;border-radius:8px;padding:6px 8px;font-size:16px;font-weight:700;color:#333;text-align:center;font-family:Helvetica,Arial,sans-serif;outline:none;background:#fff;}
 .goal-input:focus{border-color:#E24B4A;}
-.goal-unit{font-size:12px;color:#bbb;}
 .goal-diff{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;}
 .goal-over{background:#FCEBEB;color:#E24B4A;}
 .goal-clear{background:#EAF3DE;color:#3B6D11;}
@@ -201,7 +200,7 @@ body{background:#f5f5f5;display:flex;justify-content:center;}
         <div class="info-card-title">📌 はじめての方へ</div>
         <div class="info-card-body">
           <ol>
-            <li>名前の頭文字（ひらがな）を選んでください</li>
+            <li>【名前】の頭文字（ひらがな）を選んでください</li>
             <li>入会時にお伝えした4桁のPINを入力してください</li>
             <li>ホーム画面からカリキュラムやグレードを確認できます</li>
           </ol>
@@ -212,7 +211,8 @@ body{background:#f5f5f5;display:flex;justify-content:center;}
   <div class="pin-wrap">
     <div class="pin-logo-wrap"><img src="logo.jpg" alt="logo"></div>
     <div class="pin-title">会員ページにログイン</div>
-    <div class="pin-sub">名前の頭文字（ひらがな）を選んでください</div>
+    <!-- ★変更：苗字→名前 -->
+    <div class="pin-sub">【名前】の頭文字（ひらがな）を選んでください<br><span style="font-size:11px;color:#E24B4A;">例：田中 健太 →「け」を選ぶ</span></div>
     <div class="step-indicator">
       <div class="step-item active"><div class="step-circle">1</div>頭文字</div>
       <div class="step-line"></div>
@@ -393,7 +393,6 @@ body{background:#f5f5f5;display:flex;justify-content:center;}
 const GAS_URL='https://script.google.com/macros/s/AKfycbyuzVrcogYqq8SjjRn98c2_M9X8wJuA7mGOnt9Ac0cPcm6bK9JuGyX76MpMmmKB01IMiw/exec';
 const WKEY='ob_wt';const GKEY='ob_wg';
 
-// ===== カリキュラム（ジャブに動画⑤を追加） =====
 const curItems=[
   {name:'ジャブ',videos:[
     {url:'https://youtu.be/Aqvc5L3u1so',label:'動画①'},
@@ -422,7 +421,6 @@ const YT_B='https://youtube.com/playlist?list=PL-gAc3kb2RX1ZGy_oCGjkpYizMPnBOpPh
 const YT_M='https://youtube.com/playlist?list=PL-gAc3kb2RX0NYI76_QWgQga2Xfva9kEE';
 const YT_A='https://youtube.com/playlist?list=PL-gAc3kb2RX3hX6n2UibkCHN9b6F_VHZC';
 
-// ===== グレード（ゴールドに統一） =====
 const grades=[
   {cls:'g-white',icon:'⚪',name:'ホワイトメダル',desc:'基本カリキュラム80%合格',yt:[{url:YT_B,label:'初級'},{url:YT_C,label:'全クラス共通'}]},
   {cls:'g-green',icon:'🟢',name:'グリーンメダル',desc:'守る技術',yt:[{url:YT_B,label:'初級'},{url:YT_C,label:'全クラス共通'}]},
