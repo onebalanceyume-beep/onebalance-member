@@ -211,7 +211,6 @@ body{background:#f5f5f5;display:flex;justify-content:center;}
   <div class="pin-wrap">
     <div class="pin-logo-wrap"><img src="logo.jpg" alt="logo"></div>
     <div class="pin-title">会員ページにログイン</div>
-    <!-- ★変更：苗字→名前 -->
     <div class="pin-sub">【名前】の頭文字（ひらがな）を選んでください<br><span style="font-size:11px;color:#E24B4A;">例：田中 健太 →「け」を選ぶ</span></div>
     <div class="step-indicator">
       <div class="step-item active"><div class="step-circle">1</div>頭文字</div>
@@ -267,7 +266,7 @@ body{background:#f5f5f5;display:flex;justify-content:center;}
       <button class="logout-btn" onclick="logout()">ログアウト</button>
     </div>
     <div class="member-hello">ようこそ</div>
-    <div class="member-name" id="h-name">田中 健太</div>
+    <div class="member-name" id="h-name"></div>
     <div class="grade-chip">
       <div class="grade-icon" id="h-gicon">⚪</div>
       <div>
@@ -392,7 +391,6 @@ body{background:#f5f5f5;display:flex;justify-content:center;}
 <script>
 const GAS_URL='https://script.google.com/macros/s/AKfycbwlpvA4Sv1Po6n3QfNiFsbMVuF9or_-qswq6xKVo3ElnCJayEgZMvvztFtMIlomJu8jww/exec';
 const WKEY='ob_wt';const GKEY='ob_wg';
-
 const curItems=[
   {name:'ジャブ',videos:[
     {url:'https://youtu.be/Aqvc5L3u1so',label:'動画①'},
@@ -415,12 +413,10 @@ const curItems=[
   {name:'ロープ Level.3',videos:[{url:'https://youtu.be/WPROg0dUmsU',label:'動画①'},{url:'https://youtu.be/NDJFsTGVsFg',label:'動画②'}]},
   {name:'ロープ Level.4',videos:[{url:'https://youtu.be/WPROg0dUmsU',label:'動画①'},{url:'https://youtu.be/NDJFsTGVsFg',label:'動画②'}]},
 ];
-
 const YT_C='https://youtube.com/playlist?list=PL-gAc3kb2RX0Hi8o4EbN72ctSgA9n907w';
 const YT_B='https://youtube.com/playlist?list=PL-gAc3kb2RX1ZGy_oCGjkpYizMPnBOpPh';
 const YT_M='https://youtube.com/playlist?list=PL-gAc3kb2RX0NYI76_QWgQga2Xfva9kEE';
 const YT_A='https://youtube.com/playlist?list=PL-gAc3kb2RX3hX6n2UibkCHN9b6F_VHZC';
-
 const grades=[
   {cls:'g-white',icon:'⚪',name:'ホワイトメダル',desc:'基本カリキュラム80%合格',yt:[{url:YT_B,label:'初級'},{url:YT_C,label:'全クラス共通'}]},
   {cls:'g-green',icon:'🟢',name:'グリーンメダル',desc:'守る技術',yt:[{url:YT_B,label:'初級'},{url:YT_C,label:'全クラス共通'}]},
@@ -429,7 +425,6 @@ const grades=[
   {cls:'g-red',icon:'🔴',name:'レッドメダル',desc:'スパーリングができること',yt:[{url:YT_B,label:'初級'},{url:YT_M,label:'中級'},{url:YT_A,label:'上級'},{url:YT_C,label:'全クラス共通'}]},
   {cls:'g-gold',icon:'🥇',name:'ゴールドメダル',desc:'ボクシングを理解してスパーリングができること',yt:[{url:YT_B,label:'初級'},{url:YT_M,label:'中級'},{url:YT_A,label:'上級'},{url:YT_C,label:'全クラス共通'}]},
 ];
-
 const hiraRows=['あいうえお','かきくけこ','さしすせそ','たちつてと','なにぬねの','はひふへほ','まみむめも','やゆよ','らりるれろ','わをん'];
 let selHira='',curPin='',currentMember=null,statuses=curItems.map(()=>'none');
 const now=new Date();const days=['日','月','火','水','木','金','土'];
@@ -438,19 +433,16 @@ const todayKey=fmtKey(now);
 let wData={},goalW=null,calYear=now.getFullYear(),calMonth=now.getMonth();
 try{const r=localStorage.getItem(WKEY);wData=r?JSON.parse(r):{};}catch(e){}
 try{const g=localStorage.getItem(GKEY);goalW=g?parseFloat(g):null;}catch(e){}
-
 const grid=document.getElementById('hira-grid');
 hiraRows.forEach(row=>{row.split('').forEach(ch=>{
   const btn=document.createElement('button');btn.className='hira-key';btn.textContent=ch;
   btn.onclick=()=>{selHira=ch;document.querySelectorAll('.hira-key').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');const d=document.getElementById('hira-display');d.textContent='「'+ch+'」を選択';d.classList.remove('placeholder');d.classList.add('selected');document.getElementById('hira-next').disabled=false;};
   grid.appendChild(btn);
 });});
-
 function goToPin(){document.getElementById('pin-hira-show').textContent=selHira;curPin='';updateDots();document.getElementById('pin-err').textContent='';document.getElementById('loading-msg').textContent='';showScreen('s-pin');}
 function pk(k){if(curPin.length>=4)return;curPin+=k;updateDots();if(curPin.length===4)setTimeout(checkPin,120);}
 function pd(){curPin=curPin.slice(0,-1);updateDots();document.getElementById('pin-err').textContent='';}
 function updateDots(){for(let i=0;i<4;i++)document.getElementById('d'+i).classList.toggle('filled',i<curPin.length);}
-
 async function checkPin(){
   document.getElementById('loading-msg').textContent='確認中...';
   try{
@@ -472,9 +464,7 @@ async function checkPin(){
     }
   }catch(e){document.getElementById('loading-msg').textContent='';document.getElementById('pin-err').textContent='通信エラーが発生しました。';setTimeout(()=>{curPin='';updateDots();document.getElementById('pin-err').textContent='';},1500);}
 }
-
 function logout(){currentMember=null;selHira='';curPin='';document.querySelectorAll('.hira-key').forEach(b=>b.classList.remove('selected'));const d=document.getElementById('hira-display');d.textContent='タップして選んでください';d.classList.add('placeholder');d.classList.remove('selected');document.getElementById('hira-next').disabled=true;updateDots();showScreen('s-hira');}
-
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');window.scrollTo(0,0);
@@ -482,13 +472,11 @@ function showScreen(id){
   if(id==='s-grade')renderGrade();
   if(id==='s-weight')initWeight();
 }
-
 async function loadCurriculum(){
   if(!currentMember)return;
   try{const res=await fetch(GAS_URL+'?action=getCurriculumByMember&name='+encodeURIComponent(currentMember['お名前']));const data=await res.json();if(data.success)statuses=curItems.map(item=>data.items[item.name]||'none');}catch(e){}
   renderCurriculum();
 }
-
 function renderCurriculum(){
   const list=document.getElementById('cur-list');list.innerHTML='';
   const pc=statuses.filter(s=>s==='ok').length;const pct=Math.round(pc/curItems.length*100);
@@ -507,13 +495,11 @@ function renderCurriculum(){
     card.appendChild(ytSec);list.appendChild(card);
   });
 }
-
 async function setSt(i,v){
   statuses[i]=statuses[i]===v?'none':v;renderCurriculum();
   if(!currentMember)return;
   try{await fetch(GAS_URL+'?action=updateCurriculum&name='+encodeURIComponent(currentMember['お名前'])+'&item='+encodeURIComponent(curItems[i].name)+'&status='+encodeURIComponent(statuses[i]));}catch(e){}
 }
-
 function renderGrade(){
   let mg=currentMember?currentMember['グレード']||'ホワイトメダル':'ホワイトメダル';
   const shortToFull={'ホワイト':'ホワイトメダル','グリーン':'グリーンメダル','ブルー':'ブルーメダル','オレンジ':'オレンジメダル','レッド':'レッドメダル','ゴールド':'ゴールドメダル'};
@@ -528,7 +514,6 @@ function renderGrade(){
     w.appendChild(card);
   });
 }
-
 document.getElementById('today-label').textContent=now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日（'+days[now.getDay()]+'）';
 function initWeight(){
   if(wData[todayKey])document.getElementById('weight-input').value=wData[todayKey];
