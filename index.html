@@ -2,593 +2,779 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#E24B4A">
-<title>one-BALANCE BOXING GYM</title>
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="one-BALANCE">
+<meta name="theme-color" content="#DB444C">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192x192.png">
+<title>one-BALANCE</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Helvetica,Arial,sans-serif;}
-body{background:#f5f5f5;display:flex;justify-content:center;}
-.app{width:100%;max-width:430px;min-height:100vh;background:#f5f5f5;}
-.screen{display:none;}.screen.active{display:block;}
-:root{--grad:linear-gradient(135deg,#E24B4A 0%,#e8632a 50%,#f0922a 100%);}
-.grad-hd{background:var(--grad);padding:14px 18px;}
-.logo-bar{display:flex;align-items:center;gap:10px;}
-.logo-img{width:34px;height:34px;object-fit:contain;border-radius:50%;background:rgba(255,255,255,0.2);padding:2px;}
-.logo-text{font-size:13px;color:#fff;letter-spacing:0.04em;font-weight:600;}
-.logo-text span{font-size:10px;color:rgba(255,255,255,0.8);display:block;font-weight:400;}
-.back-btn{background:rgba(255,255,255,0.25);border:none;color:#fff;border-radius:8px;padding:5px 14px;font-size:12px;cursor:pointer;font-family:Helvetica,Arial,sans-serif;display:inline-block;margin-bottom:10px;}
-.info-card{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:12px;padding:14px 16px;margin:0 18px 0;}
-.info-card-title{font-size:13px;font-weight:700;color:#fff;margin-bottom:8px;}
-.info-card-body{font-size:12px;color:rgba(255,255,255,0.9);line-height:1.8;}
-.info-card-body ol{padding-left:16px;}
-.info-card-body li{margin-bottom:4px;}
-.pin-wrap{padding:24px 24px 20px;display:flex;flex-direction:column;align-items:center;}
-.pin-logo-wrap{width:80px;height:80px;margin-bottom:14px;border-radius:50%;background:#fff;padding:8px;box-shadow:0 4px 20px rgba(226,75,74,0.25);}
-.pin-logo-wrap img{width:100%;height:100%;object-fit:contain;}
-.pin-title{font-size:18px;color:#333;margin-bottom:6px;font-weight:700;}
-.pin-sub{font-size:13px;color:#888;margin-bottom:16px;text-align:center;line-height:1.7;}
-.step-indicator{display:flex;align-items:center;gap:8px;margin-bottom:20px;}
-.step-item{display:flex;align-items:center;gap:4px;font-size:11px;color:#bbb;}
-.step-item.active{color:#E24B4A;font-weight:700;}
-.step-item.done{color:#3B6D11;}
-.step-circle{width:22px;height:22px;border-radius:50%;border:2px solid #ddd;display:flex;align-items:center;justify-content:center;font-size:10px;color:#bbb;font-weight:700;}
-.step-item.active .step-circle{border-color:#E24B4A;color:#E24B4A;background:#FCEBEB;}
-.step-item.done .step-circle{border-color:#3B6D11;background:#EAF3DE;color:#3B6D11;}
-.step-line{width:24px;height:2px;background:#eee;}
-.hira-display{width:100%;background:#fff;border:2px solid #eee;border-radius:12px;padding:12px;font-size:22px;font-weight:700;color:#333;text-align:center;min-height:54px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,0.06);transition:border-color 0.2s;}
-.hira-display.selected{border-color:#E24B4A;}
-.hira-display.placeholder{color:#bbb;font-size:14px;line-height:30px;font-weight:400;}
-.hira-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;width:100%;margin-bottom:14px;}
-.hira-key{background:#fff;border:1px solid #eee;border-radius:10px;padding:10px 4px;font-size:16px;cursor:pointer;font-family:Helvetica,Arial,sans-serif;color:#333;transition:all 0.1s;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.06);}
-.hira-key:active,.hira-key.selected{background:#FCEBEB;border-color:#E24B4A;color:#A32D2D;}
-.next-btn{width:100%;background:var(--grad);color:#fff;border:none;border-radius:12px;padding:15px;font-size:16px;cursor:pointer;font-family:Helvetica,Arial,sans-serif;font-weight:700;box-shadow:0 4px 14px rgba(226,75,74,0.3);}
-.next-btn:disabled{opacity:0.35;cursor:default;}
-.pin-dots{display:flex;gap:16px;margin-bottom:24px;}
-.pin-dot{width:18px;height:18px;border-radius:50%;border:2px solid #ddd;background:transparent;transition:all 0.15s;}
-.pin-dot.filled{background:#E24B4A;border-color:#E24B4A;}
-.pin-keypad{display:grid;grid-template-columns:repeat(3,72px);gap:12px;}
-.pin-key{width:72px;height:72px;border-radius:50%;border:1px solid #eee;background:#fff;font-size:22px;color:#333;cursor:pointer;font-family:Helvetica,Arial,sans-serif;transition:background 0.1s;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
-.pin-key:active{background:#f5f5f5;}
-.pin-key.del{font-size:13px;color:#888;}
-.pin-key.empty{background:transparent;border:none;cursor:default;box-shadow:none;}
-.pin-err{margin-top:12px;font-size:13px;color:#A32D2D;min-height:20px;text-align:center;}
-.loading-msg{margin-top:8px;font-size:12px;color:#888;text-align:center;}
-.home-hero{background:var(--grad);padding:20px 18px 28px;}
-.home-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
-.logout-btn{background:rgba(255,255,255,0.25);border:none;color:#fff;border-radius:8px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:Helvetica,Arial,sans-serif;font-weight:600;}
-.member-hello{font-size:12px;color:rgba(255,255,255,0.85);margin-bottom:4px;}
-.member-name{font-size:24px;color:#fff;font-weight:700;margin-bottom:14px;}
-.grade-chip{background:rgba(255,255,255,0.2);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px;backdrop-filter:blur(4px);}
-.grade-icon{font-size:26px;}
-.grade-lbl{font-size:11px;color:rgba(255,255,255,0.8);}
-.grade-nm{font-size:16px;color:#fff;font-weight:600;}
-.home-content{padding:20px;margin-top:-12px;}
-.sec-lbl{font-size:11px;color:#aaa;margin-bottom:10px;margin-top:20px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;}
-.sec-lbl:first-child{margin-top:0;}
-.menu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
-.menu-item{background:#fff;border-radius:16px;padding:16px;cursor:pointer;transition:all 0.15s;display:flex;flex-direction:column;gap:8px;box-shadow:0 2px 10px rgba(0,0,0,0.06);}
-.menu-item:active{transform:scale(0.97);}
-.menu-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
-.menu-nm{font-size:14px;color:#333;font-weight:600;}
-.menu-desc{font-size:11px;color:#aaa;}
-.cur-hero{background:var(--grad);padding:20px 18px;}
-.cur-hero h2{font-size:18px;color:#fff;margin-bottom:6px;font-weight:700;}
-.cur-hero-desc{font-size:12px;color:rgba(255,255,255,0.9);margin-bottom:14px;line-height:1.6;}
-.prog-wrap{background:rgba(255,255,255,0.25);border-radius:20px;height:10px;margin-bottom:8px;}
-.prog-fill{background:#fff;border-radius:20px;height:10px;transition:width 0.5s;box-shadow:0 0 8px rgba(255,255,255,0.5);}
-.prog-stats{display:flex;justify-content:space-between;font-size:13px;color:rgba(255,255,255,0.95);font-weight:600;}
-.pass-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.25);border:1px solid rgba(255,255,255,0.5);border-radius:20px;padding:8px 16px;font-size:14px;color:#fff;margin-top:12px;font-weight:700;}
-.cur-howto{background:#fff;border-radius:14px;margin:14px 16px 0;padding:14px 16px;box-shadow:0 2px 10px rgba(0,0,0,0.06);}
-.cur-howto-title{font-size:13px;font-weight:700;color:#333;margin-bottom:10px;}
-.cur-howto-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;font-size:12px;color:#666;line-height:1.6;}
-.cur-howto-item:last-child{margin-bottom:0;}
-.howto-badge{display:inline-flex;align-items:center;justify-content:center;border-radius:20px;padding:2px 10px;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;}
-.badge-ch{background:#E6F1FB;color:#185FA5;}
-.badge-ok{background:#EAF3DE;color:#3B6D11;}
-.cur-list{padding:14px 16px;display:flex;flex-direction:column;gap:10px;padding-bottom:40px;}
-.cur-item{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
-.cur-main{display:flex;align-items:center;gap:10px;padding:12px 14px;}
-.item-nm{flex:1;font-size:14px;color:#333;font-weight:600;}
-.st-group{display:flex;gap:6px;flex-shrink:0;}
-.st-btn{font-size:10px;border-radius:20px;padding:5px 10px;border:1px solid #eee;cursor:pointer;background:#f8f8f8;color:#aaa;font-family:Helvetica,Arial,sans-serif;transition:all 0.12s;white-space:nowrap;font-weight:600;}
-.st-btn.ch{background:#E6F1FB;color:#185FA5;border-color:#378ADD;}
-.st-btn.ok{background:#EAF3DE;color:#3B6D11;border-color:#639922;}
-.yt-section{background:#fafafa;border-top:1px solid #f0f0f0;padding:10px 14px;display:flex;flex-direction:column;gap:6px;}
-.yt-link{display:flex;align-items:center;gap:8px;text-decoration:none;background:#fff;border:1px solid #f0f0f0;border-radius:8px;padding:8px 12px;transition:all 0.15s;}
-.yt-link:active{border-color:#FF0000;}
-.yt-icon{width:24px;height:18px;background:#FF0000;border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.yt-icon::after{content:'▶';color:#fff;font-size:8px;}
-.yt-text{font-size:12px;color:#333;font-weight:600;flex:1;}
-.no-yt{font-size:11px;color:#bbb;padding:4px 0;}
-.grade-howto{background:#fff;border-radius:14px;margin:14px 16px 0;padding:14px 16px;box-shadow:0 2px 10px rgba(0,0,0,0.06);}
-.grade-howto-title{font-size:13px;font-weight:700;color:#333;margin-bottom:8px;}
-.grade-howto-body{font-size:12px;color:#666;line-height:1.8;}
-.grade-card{border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 3px 12px rgba(0,0,0,0.08);}
-.grade-top{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
-.grade-icon-wrap{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
-.grade-name{font-size:16px;font-weight:700;margin-bottom:2px;}
-.grade-desc{font-size:12px;opacity:0.85;line-height:1.5;}
-.grade-status{display:inline-block;font-size:11px;border-radius:20px;padding:3px 12px;margin-bottom:10px;background:rgba(255,255,255,0.45);font-weight:600;}
-.grade-yt-btn{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.3);border:none;border-radius:8px;padding:8px 12px;font-size:12px;cursor:pointer;font-family:Helvetica,Arial,sans-serif;width:100%;margin-bottom:6px;text-decoration:none;color:inherit;font-weight:600;}
-.grade-yt-btn:last-child{margin-bottom:0;}
-.grade-yt-icon{width:20px;height:16px;background:#FF0000;border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.grade-yt-icon::after{content:'▶';color:#fff;font-size:7px;}
-.g-white{background:linear-gradient(135deg,#F5F5F0,#E8E8E0);}.g-white .grade-name{color:#444;}
-.g-white .grade-icon-wrap{background:rgba(255,255,255,0.6);}
-.g-green{background:linear-gradient(135deg,#D4EDDA,#A8D5B0);}.g-green .grade-name{color:#1A5C2A;}
-.g-green .grade-icon-wrap{background:rgba(255,255,255,0.5);}
-.g-blue{background:linear-gradient(135deg,#CCE5FF,#99CAFF);}.g-blue .grade-name{color:#0A3D6B;}
-.g-blue .grade-icon-wrap{background:rgba(255,255,255,0.5);}
-.g-orange{background:linear-gradient(135deg,#FFE5CC,#FFB980);}.g-orange .grade-name{color:#7A3500;}
-.g-orange .grade-icon-wrap{background:rgba(255,255,255,0.5);}
-.g-red{background:linear-gradient(135deg,#FFCCCC,#FF9999);}.g-red .grade-name{color:#7A0000;}
-.g-red .grade-icon-wrap{background:rgba(255,255,255,0.5);}
-.g-gold{background:linear-gradient(135deg,#FFF3CC,#FFD966);}.g-gold .grade-name{color:#7A5500;}
-.g-gold .grade-icon-wrap{background:rgba(255,255,255,0.5);}
-.locked{opacity:0.38;}
-.current-badge{display:inline-block;background:var(--grad);color:#fff;font-size:10px;border-radius:20px;padding:2px 10px;margin-left:8px;vertical-align:middle;font-weight:700;}
-.weight-hero{background:var(--grad);padding:20px 18px 28px;}
-.weight-hero-title{font-size:20px;color:#fff;font-weight:700;}
-.weight-hero-sub{font-size:12px;color:rgba(255,255,255,0.85);margin-top:4px;}
-.w-content{padding:16px;margin-top:-12px;padding-bottom:48px;}
-.w-card{background:#fff;border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:0 3px 14px rgba(0,0,0,0.07);}
-.w-card-title{font-size:13px;font-weight:700;color:#555;margin-bottom:12px;letter-spacing:0.04em;}
-.today-date{font-size:12px;color:#bbb;margin-bottom:10px;}
-.weight-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
-.weight-input{flex:1;border:2px solid #f0f0f0;border-radius:12px;padding:12px;font-size:28px;font-weight:700;color:#333;text-align:center;font-family:Helvetica,Arial,sans-serif;outline:none;transition:all 0.2s;background:#fafafa;}
-.weight-input:focus{border-color:#E24B4A;background:#fff;box-shadow:0 0 0 4px rgba(226,75,74,0.08);}
-.weight-unit{font-size:18px;color:#bbb;font-weight:600;}
-.goal-row{display:flex;align-items:center;gap:8px;margin-bottom:12px;background:#fafafa;border-radius:10px;padding:10px 12px;}
-.goal-label{font-size:12px;color:#888;flex:1;}
-.goal-input{width:72px;border:1.5px solid #eee;border-radius:8px;padding:6px 8px;font-size:16px;font-weight:700;color:#333;text-align:center;font-family:Helvetica,Arial,sans-serif;outline:none;background:#fff;}
-.goal-input:focus{border-color:#E24B4A;}
-.goal-diff{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;}
-.goal-over{background:#FCEBEB;color:#E24B4A;}
-.goal-clear{background:#EAF3DE;color:#3B6D11;}
-.w-save-btn{width:100%;background:var(--grad);color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:Helvetica,Arial,sans-serif;box-shadow:0 4px 14px rgba(226,75,74,0.3);}
-.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
-.stat-box{background:#fff;border-radius:14px;padding:12px 8px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
-.stat-box.hl{background:var(--grad);box-shadow:0 4px 14px rgba(226,75,74,0.25);}
-.stat-lbl{font-size:10px;color:#bbb;margin-bottom:6px;font-weight:700;letter-spacing:0.04em;}
-.stat-box.hl .stat-lbl{color:rgba(255,255,255,0.8);}
-.stat-val{font-size:18px;font-weight:700;color:#333;}
-.stat-val span{font-size:11px;font-weight:400;color:#bbb;}
-.stat-box.hl .stat-val{color:#fff;}
-.stat-box.hl .stat-val span{color:rgba(255,255,255,0.7);}
-.graph-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-.graph-lbl{font-size:13px;font-weight:700;color:#333;}
-.trend-tag{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;}
-.t-down{background:#EAF3DE;color:#3B6D11;}.t-up{background:#FCEBEB;color:#E24B4A;}.t-flat{background:#f0f0f0;color:#888;}
-.cal-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-.cal-month{font-size:15px;font-weight:700;color:#333;}
-.cal-nav{background:#f5f5f5;border:none;border-radius:8px;padding:5px 12px;font-size:13px;cursor:pointer;color:#555;font-family:Helvetica,Arial,sans-serif;}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
-.cal-dow{text-align:center;font-size:10px;font-weight:700;color:#bbb;padding:6px 0;}
-.cal-dow:first-child{color:#E24B4A;}.cal-dow:last-child{color:#378ADD;}
-.cal-day{border-radius:8px;padding:3px 2px;text-align:center;cursor:pointer;min-height:46px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;transition:background 0.15s;}
-.cal-day:not(.empty):hover{background:#f5f5f5;}
-.cal-day.today{background:linear-gradient(135deg,#FCEBEB,#ffe0d0);}
-.cal-day.today .dn{color:#E24B4A;font-weight:700;}
-.cal-day.hd{background:#f0f8f0;}
-.dn{font-size:12px;color:#333;}
-.dw{font-size:9px;font-weight:700;color:#E24B4A;}
-.gdot{width:5px;height:5px;border-radius:50%;background:#3B6D11;margin:0 auto;}
-.log-hd{font-size:13px;font-weight:700;color:#333;margin-bottom:12px;}
-.log-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f8f8f8;}
-.log-item:last-child{border-bottom:none;}
-.log-date{font-size:13px;color:#666;}
-.log-right{display:flex;align-items:center;gap:8px;}
-.log-w{font-size:16px;font-weight:700;color:#333;}
-.log-w span{font-size:11px;font-weight:400;color:#bbb;}
-.log-diff{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;}
-.log-del{background:none;border:none;color:#ddd;font-size:14px;cursor:pointer;}
+:root {
+  --red: #DB444C;
+  --blue: #5BB9CD;
+  --red-light: #FFF0F0;
+  --red-border: #FFCDD2;
+  --blue-light: #E8F8FB;
+  --blue-border: #B2EBF2;
+  --bg: #F5F5F5;
+  --white: #ffffff;
+  --text: #1a1a1a;
+  --sub: #888;
+  --radius: 16px;
+  --card-shadow: 0 2px 12px rgba(0,0,0,0.07);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; overflow-x: hidden; }
+body { font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+input { font-family: inherit; }
+
+/* ===== PAGES ===== */
+.page { display: none; min-height: 100vh; padding-bottom: 32px; }
+.page.active { display: block; }
+
+/* ===== LOADING ===== */
+#loading {
+  position: fixed; inset: 0; background: var(--red);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999;
+  transition: opacity 0.4s;
+}
+#loading img { width: 80px; height: 80px; border-radius: 50%; background: white; padding: 8px; margin-bottom: 16px; }
+#loading p { color: white; font-size: 13px; font-weight: 700; opacity: 0.85; }
+#loading.hide { opacity: 0; pointer-events: none; }
+
+/* ===== ERROR ===== */
+#error-screen {
+  display: none; position: fixed; inset: 0; background: var(--red);
+  flex-direction: column; align-items: center; justify-content: center; z-index: 9998; padding: 32px;
+}
+#error-screen.show { display: flex; }
+#error-screen p { color: white; text-align: center; font-size: 14px; line-height: 1.7; }
+#error-screen .err-title { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+
+/* ===== HEADER ===== */
+.header {
+  background: var(--red);
+  padding: 52px 16px 24px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+.header::after {
+  content: ''; position: absolute;
+  bottom: -40px; right: -40px;
+  width: 140px; height: 140px;
+  border-radius: 50%; background: rgba(255,255,255,0.07);
+}
+.header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.header-brand { display: flex; align-items: center; gap: 10px; }
+.header-logo { width: 38px; height: 38px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
+.header-logo img { width: 32px; height: 32px; object-fit: contain; }
+.header-gym { font-size: 11px; font-weight: 700; line-height: 1.3; }
+.header-gym span { display: block; font-size: 9px; opacity: 0.75; font-weight: 400; }
+.btn-logout { background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.35); color: white; font-size: 11px; font-weight: 700; padding: 6px 14px; border-radius: 99px; }
+.header-welcome { font-size: 11px; opacity: 0.85; margin-bottom: 2px; }
+.header-name { font-size: 26px; font-weight: 700; margin-bottom: 14px; }
+.grade-chip { background: white; border-radius: 12px; padding: 9px 14px; display: inline-flex; align-items: center; gap: 9px; }
+.grade-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+.grade-label { font-size: 9px; color: var(--sub); }
+.grade-name { font-size: 13px; font-weight: 700; }
+
+/* ===== SUB HEADER ===== */
+.sub-header { background: var(--red); padding: 52px 16px 22px; color: white; }
+.sub-header.blue { background: var(--blue); }
+.btn-back { background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.35); color: white; font-size: 11px; font-weight: 700; padding: 6px 14px; border-radius: 99px; margin-bottom: 12px; display: inline-block; }
+.sub-header h1 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+.sub-header p { font-size: 11px; opacity: 0.85; line-height: 1.5; }
+
+/* ===== MENU ===== */
+.menu-wrap { padding: 20px 14px; }
+.menu-section-label { font-size: 10px; font-weight: 700; color: var(--sub); margin-bottom: 12px; letter-spacing: 0.08em; }
+.menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.menu-card { background: white; border-radius: var(--radius); padding: 16px 14px; box-shadow: var(--card-shadow); text-align: left; transition: transform 0.12s; border: 1.5px solid transparent; }
+.menu-card:active { transform: scale(0.97); }
+.menu-card.red { background: var(--red-light); border-color: var(--red-border); }
+.menu-card.blue { background: var(--blue-light); border-color: var(--blue-border); }
+.menu-card.yellow { background: #FFF8E8; border-color: #FFE082; }
+.menu-card.green { background: #F0FBF4; border-color: #C8E6C9; }
+.menu-icon { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+.menu-icon.red { background: var(--red); }
+.menu-icon.blue { background: var(--blue); }
+.menu-icon.yellow { background: #F5A623; }
+.menu-icon.green { background: #4CAF50; }
+.menu-card-title { font-size: 12px; font-weight: 700; margin-bottom: 3px; }
+.menu-card-sub { font-size: 10px; color: var(--sub); }
+
+/* ===== CONTENT WRAP ===== */
+.content { padding: 14px; }
+
+/* ===== PROGRESS ===== */
+.progress-wrap { margin-top: 14px; }
+.progress-bar { background: rgba(255,255,255,0.28); border-radius: 99px; height: 7px; overflow: hidden; }
+.progress-fill { background: white; height: 100%; border-radius: 99px; transition: width 0.6s ease; }
+.progress-labels { display: flex; justify-content: space-between; margin-top: 5px; }
+.progress-labels span { font-size: 10px; color: rgba(255,255,255,0.9); font-weight: 600; }
+
+/* ===== HOW TO CARD ===== */
+.howto-card { background: white; border-radius: var(--radius); padding: 14px; box-shadow: var(--card-shadow); margin-bottom: 10px; }
+.howto-title { font-size: 12px; font-weight: 700; margin-bottom: 9px; }
+.howto-row { display: flex; align-items: flex-start; gap: 7px; margin-bottom: 6px; font-size: 11px; color: #555; line-height: 1.5; }
+.tag { display: inline-flex; align-items: center; padding: 2px 9px; border-radius: 99px; font-size: 10px; font-weight: 700; flex-shrink: 0; }
+.tag-challenge { background: #EEF2FF; color: #4A6CF7; }
+.tag-pass { background: #E6F7EE; color: #1E8A4A; }
+
+/* ===== SKILL CARD ===== */
+.skill-card { background: white; border-radius: var(--radius); box-shadow: var(--card-shadow); margin-bottom: 9px; overflow: hidden; }
+.skill-card.done { background: #F0FBF4; border: 1px solid #C8E6C9; }
+.skill-header { display: flex; align-items: center; justify-content: space-between; padding: 13px 14px; border-bottom: 1px solid #F0F0F0; }
+.skill-card.done .skill-header { border-bottom-color: #C8E6C9; }
+.skill-name { font-size: 14px; font-weight: 700; }
+.skill-btns { display: flex; gap: 5px; }
+.skill-btn { padding: 4px 11px; border-radius: 99px; font-size: 10px; font-weight: 700; border: 1.5px solid #ddd; color: #bbb; background: white; transition: all 0.15s; }
+.skill-btn.challenge.active { background: #EEF2FF; color: #4A6CF7; border-color: #4A6CF7; }
+.skill-btn.pass.active { background: #E6F7EE; color: #1E8A4A; border-color: #1E8A4A; }
+.skill-videos { }
+.video-row { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-bottom: 1px solid #F5F5F5; background: none; width: 100%; text-align: left; font-size: 12px; color: var(--text); }
+.video-row:last-child { border-bottom: none; }
+.yt-btn { width: 26px; height: 26px; background: var(--red); border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.video-preparing { padding: 9px 14px; font-size: 11px; color: var(--sub); }
+
+/* ===== GRADE CARDS ===== */
+.grade-info { background: white; border-radius: var(--radius); padding: 12px 14px; box-shadow: var(--card-shadow); margin-bottom: 10px; font-size: 11px; color: #666; line-height: 1.6; }
+.medal-card { border-radius: var(--radius); padding: 12px 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+.medal-card.current { border: 2px solid var(--red); }
+.medal-card.locked { opacity: 0.6; border: 1px dashed #ddd; }
+.medal-dot { width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0; border: 2px solid rgba(0,0,0,0.15); }
+.medal-info { flex: 1; }
+.medal-title { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+.medal-sub { font-size: 10px; margin-top: 2px; opacity: 0.75; }
+.medal-now { background: var(--red); color: white; font-size: 9px; font-weight: 700; padding: 1px 7px; border-radius: 99px; }
+.achieved-tag { font-size: 9px; background: var(--blue-light); color: var(--blue); font-weight: 700; padding: 2px 8px; border-radius: 99px; border: 1px solid var(--blue-border); white-space: nowrap; }
+.not-achieved-tag { font-size: 9px; background: #F5F5F5; color: #bbb; font-weight: 700; padding: 2px 8px; border-radius: 99px; white-space: nowrap; }
+.medal-videos-wrap { padding: 8px 14px 10px; border-top: 1px solid rgba(0,0,0,0.06); display: flex; flex-direction: column; gap: 5px; }
+.medal-video-btn { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.6); border-radius: 8px; padding: 7px 10px; font-size: 11px; color: var(--text); width: 100%; text-align: left; border: 0.5px solid rgba(0,0,0,0.08); }
+
+/* ===== WEIGHT PAGE ===== */
+.weight-input-card { background: var(--blue-light); border: 1px solid var(--blue-border); border-radius: var(--radius); padding: 16px; margin-bottom: 10px; }
+.weight-date { font-size: 10px; color: var(--blue); font-weight: 600; margin-bottom: 10px; }
+.weight-private-note { font-size: 10px; color: var(--blue); background: white; border-radius: 8px; padding: 7px 10px; margin-bottom: 12px; border: 1px solid var(--blue-border); line-height: 1.5; }
+.weight-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.weight-input { flex: 1; font-size: 32px; font-weight: 700; text-align: center; border: 2px solid var(--blue); border-radius: 12px; padding: 10px; color: var(--text); outline: none; background: white; }
+.weight-unit { font-size: 16px; color: var(--blue); font-weight: 700; }
+.target-row { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+.target-label { font-size: 11px; font-weight: 700; color: #00838F; }
+.target-input { width: 68px; font-size: 18px; font-weight: 700; text-align: center; border: 2px solid var(--blue); border-radius: 10px; padding: 5px; color: var(--text); outline: none; background: white; }
+.target-diff { background: var(--red-light); color: var(--red); font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 99px; }
+.btn-record { width: 100%; background: var(--blue); color: white; border-radius: 12px; padding: 14px; font-size: 15px; font-weight: 700; transition: opacity 0.15s; }
+.btn-record:active { opacity: 0.82; }
+.stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 7px; margin-bottom: 10px; }
+.stat-card { background: white; border-radius: 12px; padding: 11px 8px; text-align: center; box-shadow: var(--card-shadow); }
+.stat-card.hl { background: var(--red); color: white; }
+.stat-label { font-size: 9px; opacity: 0.75; margin-bottom: 3px; }
+.stat-value { font-size: 18px; font-weight: 700; }
+.stat-unit { font-size: 10px; }
+.chart-card { background: white; border-radius: var(--radius); padding: 14px; box-shadow: var(--card-shadow); }
+.chart-title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.chart-title { font-size: 13px; font-weight: 700; }
+.no-data-badge { background: #F5F5F5; font-size: 9px; color: var(--sub); padding: 3px 9px; border-radius: 99px; border: 0.5px solid #eee; }
+.chart-empty { height: 60px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #ccc; }
+
+/* ===== COMMUNITY ===== */
+.community-card { background: white; border-radius: var(--radius); padding: 24px; box-shadow: var(--card-shadow); text-align: center; }
+.community-icon-wrap { width: 64px; height: 64px; background: var(--blue-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; }
+.community-title { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+.community-desc { font-size: 12px; color: #666; line-height: 1.7; margin-bottom: 20px; }
+.btn-fb { width: 100%; background: #1877f2; color: white; border-radius: 12px; padding: 14px; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+/* ===== TOAST ===== */
+.toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(16px); background: #222; color: white; padding: 10px 20px; border-radius: 99px; font-size: 12px; font-weight: 700; opacity: 0; transition: all 0.28s; pointer-events: none; z-index: 999; white-space: nowrap; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* medal backgrounds */
+.bg-white-medal { background: #F5F5F5; }
+.bg-green-medal { background: #E8F5EC; }
+.bg-blue-medal { background: #E3F0FB; }
+.bg-orange-medal { background: #FFF3E0; }
+.bg-red-medal { background: var(--red-light); }
+.bg-gold-medal { background: #FFFDE8; }
 </style>
 </head>
 <body>
-<div class="app">
 
-<div class="screen active" id="s-hira">
-  <div class="grad-hd" style="padding-bottom:18px;">
-    <div class="logo-bar">
-      <img class="logo-img" src="logo.jpg" alt="logo">
-      <div class="logo-text">one-BALANCE BOXING GYM<span>会員ページ</span></div>
-    </div>
-    <div style="margin-top:14px;">
-      <div class="info-card">
-        <div class="info-card-title">📌 はじめての方へ</div>
-        <div class="info-card-body">
-          <ol>
-            <li>【名前】の頭文字（ひらがな）を選んでください</li>
-            <li>入会時にお伝えした4桁のPINを入力してください</li>
-            <li>ホーム画面からカリキュラムやグレードを確認できます</li>
-          </ol>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="pin-wrap">
-    <div class="pin-logo-wrap"><img src="logo.jpg" alt="logo"></div>
-    <div class="pin-title">会員ページにログイン</div>
-    <div class="pin-sub">【名前】の頭文字（ひらがな）を選んでください<br><span style="font-size:11px;color:#E24B4A;">例：田中 健太 →「け」を選ぶ</span></div>
-    <div class="step-indicator">
-      <div class="step-item active"><div class="step-circle">1</div>頭文字</div>
-      <div class="step-line"></div>
-      <div class="step-item"><div class="step-circle">2</div>PIN入力</div>
-    </div>
-    <div class="hira-display placeholder" id="hira-display">タップして選んでください</div>
-    <div class="hira-grid" id="hira-grid"></div>
-    <button class="next-btn" id="hira-next" disabled onclick="goToPin()">次へ進む →</button>
-  </div>
+<!-- LOADING -->
+<div id="loading">
+  <img src="icons/icon-192x192.png" alt="logo">
+  <p>読み込み中...</p>
 </div>
 
-<div class="screen" id="s-pin">
-  <div class="grad-hd">
-    <div class="logo-bar">
-      <img class="logo-img" src="logo.jpg" alt="logo">
-      <div class="logo-text">one-BALANCE BOXING GYM<span>会員ページ</span></div>
-    </div>
-  </div>
-  <div class="pin-wrap">
-    <div class="pin-logo-wrap"><img src="logo.jpg" alt="logo"></div>
-    <div class="pin-title">暗証番号を入力</div>
-    <div class="pin-sub">4桁のPINを入力してください<br><span style="font-size:11px;color:#E24B4A;">※初期PINは生年月日の月日（例：5月19日→0519）</span></div>
-    <div class="step-indicator">
-      <div class="step-item done"><div class="step-circle">✓</div>「<span id="pin-hira-show"></span>」</div>
-      <div class="step-line"></div>
-      <div class="step-item active"><div class="step-circle">2</div>PIN入力</div>
-    </div>
-    <div class="pin-dots">
-      <div class="pin-dot" id="d0"></div><div class="pin-dot" id="d1"></div>
-      <div class="pin-dot" id="d2"></div><div class="pin-dot" id="d3"></div>
-    </div>
-    <div class="pin-keypad">
-      <button class="pin-key" onclick="pk('1')">1</button><button class="pin-key" onclick="pk('2')">2</button><button class="pin-key" onclick="pk('3')">3</button>
-      <button class="pin-key" onclick="pk('4')">4</button><button class="pin-key" onclick="pk('5')">5</button><button class="pin-key" onclick="pk('6')">6</button>
-      <button class="pin-key" onclick="pk('7')">7</button><button class="pin-key" onclick="pk('8')">8</button><button class="pin-key" onclick="pk('9')">9</button>
-      <button class="pin-key" onclick="showScreen('s-hira')" style="font-size:12px;color:#888;">← 戻る</button>
-      <button class="pin-key" onclick="pk('0')">0</button>
-      <button class="pin-key del" onclick="pd()">削除</button>
-    </div>
-    <div class="pin-err" id="pin-err"></div>
-    <div class="loading-msg" id="loading-msg"></div>
-  </div>
+<!-- ERROR -->
+<div id="error-screen">
+  <p class="err-title">⚠️ アクセスエラー</p>
+  <p>URLが正しくありません。<br>LINEから届いたURLを<br>もう一度タップしてください。</p>
 </div>
 
-<div class="screen" id="s-home">
-  <div class="home-hero">
-    <div class="home-top">
-      <div class="logo-bar">
-        <img class="logo-img" src="logo.jpg" alt="logo">
-        <div class="logo-text">one-BALANCE BOXING GYM<span>会員ページ</span></div>
+<!-- ===== TOP PAGE ===== -->
+<div id="page-top" class="page">
+  <div class="header">
+    <div class="header-top">
+      <div class="header-brand">
+        <div class="header-logo"><img src="icons/icon-192x192.png" alt="logo"></div>
+        <div class="header-gym">one-BALANCE<span>BOXING GYM 会員ページ</span></div>
       </div>
-      <button class="logout-btn" onclick="logout()">ログアウト</button>
+      <button class="btn-logout" onclick="logout()">ログアウト</button>
     </div>
-    <div class="member-hello">ようこそ</div>
-    <div class="member-name" id="h-name"></div>
+    <div class="header-welcome">ようこそ</div>
+    <div class="header-name" id="top-name">---</div>
     <div class="grade-chip">
-      <div class="grade-icon" id="h-gicon">⚪</div>
+      <div class="grade-dot" id="top-grade-dot"></div>
       <div>
-        <div class="grade-lbl">現在のグレード</div>
-        <div class="grade-nm" id="h-gname">ホワイトメダル</div>
+        <div class="grade-label">現在のグレード</div>
+        <div class="grade-name" id="top-grade-name">---</div>
       </div>
     </div>
   </div>
-  <div class="home-content">
-    <div class="sec-lbl">メニュー</div>
+  <div class="menu-wrap">
+    <div class="menu-section-label">メニュー</div>
     <div class="menu-grid">
-      <div class="menu-item" onclick="showScreen('s-cur')">
-        <div class="menu-icon" style="background:#FCEBEB;">📋</div>
-        <div class="menu-nm">基本カリキュラム</div>
-        <div class="menu-desc">進捗を確認する</div>
-      </div>
-      <div class="menu-item" onclick="showScreen('s-grade')">
-        <div class="menu-icon" style="background:#FFF3CC;">🏅</div>
-        <div class="menu-nm">グレード認定</div>
-        <div class="menu-desc">取得バッジを見る</div>
-      </div>
-      <div class="menu-item" onclick="showScreen('s-weight')">
-        <div class="menu-icon" style="background:#FFE5CC;">⚖️</div>
-        <div class="menu-nm">体重記録</div>
-        <div class="menu-desc">目標に向けて記録</div>
-      </div>
-      <div class="menu-item" onclick="window.open('https://www.facebook.com/share/g/1CWGbwdZmm/','_blank')">
-        <div class="menu-icon" style="background:#EAF3DE;">👥</div>
-        <div class="menu-nm">コミュニティ</div>
-        <div class="menu-desc">Facebookグループ</div>
-      </div>
+      <button class="menu-card red" onclick="showPage('curriculum')">
+        <div class="menu-icon red">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><rect x="4" y="3" width="16" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="13" y2="16"/></svg>
+        </div>
+        <div class="menu-card-title">基本カリキュラム</div>
+        <div class="menu-card-sub">進捗を確認する</div>
+      </button>
+      <button class="menu-card yellow" onclick="showPage('grade')">
+        <div class="menu-icon yellow">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M8 14l-2 7h12l-2-7"/></svg>
+        </div>
+        <div class="menu-card-title">グレード認定</div>
+        <div class="menu-card-sub">取得バッジを見る</div>
+      </button>
+      <button class="menu-card blue" onclick="showPage('weight')">
+        <div class="menu-icon blue">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><path d="M3 17h18M8 17V9m4 8V5m4 12v-6"/></svg>
+        </div>
+        <div class="menu-card-title">体重記録</div>
+        <div class="menu-card-sub">目標に向けて記録</div>
+      </button>
+      <button class="menu-card green" onclick="showPage('community')">
+        <div class="menu-icon green">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><circle cx="9" cy="7" r="3"/><circle cx="15" cy="7" r="3"/><path d="M3 21v-1a6 6 0 016-6h6a6 6 0 016 6v1"/></svg>
+        </div>
+        <div class="menu-card-title">コミュニティ</div>
+        <div class="menu-card-sub">Facebookグループ</div>
+      </button>
     </div>
   </div>
 </div>
 
-<div class="screen" id="s-cur">
-  <div style="padding-bottom:40px;">
-    <div class="cur-hero">
-      <button class="back-btn" onclick="showScreen('s-home')">← 戻る</button>
-      <h2>基本カリキュラム</h2>
-      <div class="cur-hero-desc">各項目を練習して、できたら「挑戦中」→「合格」を自分でタップしてください。78%以上合格で基本動作クリアです！</div>
-      <div class="prog-wrap"><div class="prog-fill" id="prog-bar" style="width:0%"></div></div>
-      <div class="prog-stats"><span id="prog-txt">合格: 0 / 14</span><span id="prog-pct">0%</span></div>
-      <div id="pass-bdg" style="display:none;"><div class="pass-badge">🏅 基本カリキュラム修了！</div></div>
-    </div>
-    <div class="cur-howto">
-      <div class="cur-howto-title">📖 使い方</div>
-      <div class="cur-howto-item"><span class="howto-badge badge-ch">挑戦中</span>練習を始めたらタップ</div>
-      <div class="cur-howto-item"><span class="howto-badge badge-ok">合格</span>できるようになったらタップ。判断はトレーナーに確認しましょう</div>
-      <div class="cur-howto-item">📹 各項目の下の動画ボタンでお手本動画を確認できます</div>
-    </div>
-    <div class="cur-list" id="cur-list"></div>
-  </div>
-</div>
-
-<div class="screen" id="s-grade">
-  <div style="padding-bottom:40px;">
-    <div class="grad-hd">
-      <button class="back-btn" onclick="showScreen('s-home')">← 戻る</button>
-      <div style="font-size:18px;color:#fff;font-weight:700;">グレード認定</div>
-    </div>
-    <div class="grade-howto">
-      <div class="grade-howto-title">🏅 グレードについて</div>
-      <div class="grade-howto-body">グレードはトレーナーが認定します。上がりたいと思ったらトレーナーに声をかけてください。各グレードの学習動画も確認できます。</div>
-    </div>
-    <div style="padding:14px 16px;" id="grade-wrap"></div>
-  </div>
-</div>
-
-<div class="screen" id="s-weight">
-  <div style="padding-bottom:48px;">
-    <div class="weight-hero">
-      <button class="back-btn" onclick="showScreen('s-home')">← 戻る</button>
-      <div class="weight-hero-title">⚖️ 体重記録</div>
-      <div class="weight-hero-sub">毎日記録して目標を達成しよう！</div>
-    </div>
-    <div class="w-content">
-      <div class="w-card">
-        <div class="w-card-title">📝 今日の体重</div>
-        <div class="today-date" id="today-label"></div>
-        <div class="weight-row">
-          <input class="weight-input" type="number" id="weight-input" placeholder="00.0" step="0.1" min="30" max="200">
-          <span class="weight-unit">kg</span>
-        </div>
-        <div class="goal-row">
-          <span class="goal-label">🎯 目標体重</span>
-          <input class="goal-input" type="number" id="goal-input" placeholder="60.0" step="0.1" min="30" max="200" onchange="saveGoal()">
-          <span class="goal-unit">kg</span>
-          <span id="goal-diff" style="display:none;" class="goal-diff"></span>
-        </div>
-        <button class="w-save-btn" onclick="saveWeight()">記録する</button>
-      </div>
-      <div class="stats-row">
-        <div class="stat-box hl"><div class="stat-lbl">最新</div><div class="stat-val" id="stat-latest">--<span>kg</span></div></div>
-        <div class="stat-box"><div class="stat-lbl">目標まで</div><div class="stat-val" id="stat-goal">--</div></div>
-        <div class="stat-box"><div class="stat-lbl">30日変化</div><div class="stat-val" id="stat-change">--</div></div>
-      </div>
-      <div class="w-card">
-        <div class="graph-hd">
-          <span class="graph-lbl">📈 30日間の推移</span>
-          <span class="trend-tag t-flat" id="trend-tag">データなし</span>
-        </div>
-        <canvas id="weight-chart" height="160"></canvas>
-      </div>
-      <div class="w-card">
-        <div class="cal-hd">
-          <button class="cal-nav" onclick="changeMonth(-1)">◀</button>
-          <div class="cal-month" id="cal-title"></div>
-          <button class="cal-nav" onclick="changeMonth(1)">▶</button>
-        </div>
-        <div class="cal-grid" id="cal-grid"></div>
-      </div>
-      <div class="w-card">
-        <div class="log-hd">📋 記録一覧（直近10件）</div>
-        <div id="log-list"></div>
+<!-- ===== CURRICULUM PAGE ===== -->
+<div id="page-curriculum" class="page">
+  <div class="sub-header">
+    <button class="btn-back" onclick="showPage('top')">← 戻る</button>
+    <h1>基本カリキュラム</h1>
+    <p>各項目を練習して「挑戦中」→「合格」をタップ。78%以上で基本動作クリア！</p>
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+      <div class="progress-labels">
+        <span id="progress-text">合格: 0 / 14</span>
+        <span id="progress-pct">0%</span>
       </div>
     </div>
   </div>
+  <div class="content">
+    <div class="howto-card">
+      <div class="howto-title">📖 使い方</div>
+      <div class="howto-row"><span class="tag tag-challenge">挑戦中</span>練習を始めたらタップ</div>
+      <div class="howto-row"><span class="tag tag-pass">合格</span>トレーナー確認後にタップ</div>
+      <div class="howto-row" style="margin-top:4px;font-size:11px;color:var(--sub);">🎬 各項目の動画ボタンでお手本を確認できます</div>
+    </div>
+    <div id="skill-list"></div>
+  </div>
 </div>
 
+<!-- ===== GRADE PAGE ===== -->
+<div id="page-grade" class="page">
+  <div class="sub-header">
+    <button class="btn-back" onclick="showPage('top')">← 戻る</button>
+    <h1>グレード認定</h1>
+  </div>
+  <div class="content">
+    <div class="grade-info">🏅 グレードはトレーナーが認定します。上がりたいと思ったらトレーナーに声をかけてください。各グレードの学習動画も確認できます。</div>
+    <div id="grade-list"></div>
+  </div>
 </div>
+
+<!-- ===== WEIGHT PAGE ===== -->
+<div id="page-weight" class="page">
+  <div class="sub-header blue">
+    <button class="btn-back" onclick="showPage('top')">← 戻る</button>
+    <h1>体重記録</h1>
+    <p>毎日記録して目標を達成しよう！</p>
+  </div>
+  <div class="content">
+    <div class="weight-input-card">
+      <div class="weight-date" id="today-date"></div>
+      <div class="weight-private-note">🔒 この記録はあなたのスマホにのみ保存されます。トレーナーには見えません。</div>
+      <div class="weight-row">
+        <input class="weight-input" type="number" id="weight-input" placeholder="00.0" step="0.1" min="20" max="200" inputmode="decimal">
+        <span class="weight-unit">kg</span>
+      </div>
+      <div class="target-row">
+        <span class="target-label">🎯 目標体重</span>
+        <input class="target-input" type="number" id="target-input" step="0.5" inputmode="decimal">
+        <span class="weight-unit" style="font-size:13px">kg</span>
+        <span class="target-diff" id="target-diff" style="display:none">--</span>
+      </div>
+      <button class="btn-record" onclick="recordWeight()">記録する</button>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card hl">
+        <div class="stat-label">最新</div>
+        <div class="stat-value"><span id="stat-latest">--</span><span class="stat-unit">kg</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">目標まで</div>
+        <div class="stat-value"><span id="stat-diff">--</span><span class="stat-unit">kg</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">30日変化</div>
+        <div class="stat-value"><span id="stat-change">--</span></div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title-row">
+        <span class="chart-title">📈 30日間の推移</span>
+        <span class="no-data-badge" id="no-data-badge">データなし</span>
+      </div>
+      <div class="chart-empty" id="chart-empty">記録するとグラフが表示されます</div>
+      <canvas id="weight-chart" style="display:none;width:100%;"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ===== COMMUNITY PAGE ===== -->
+<div id="page-community" class="page">
+  <div class="sub-header">
+    <button class="btn-back" onclick="showPage('top')">← 戻る</button>
+    <h1>コミュニティ</h1>
+  </div>
+  <div class="content">
+    <div class="community-card">
+      <div class="community-icon-wrap">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#5BB9CD" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="7" r="3"/><circle cx="15" cy="7" r="3"/><path d="M3 21v-1a6 6 0 016-6h6a6 6 0 016 6v1"/></svg>
+      </div>
+      <div class="community-title">Facebookグループ</div>
+      <div class="community-desc">会員同士の交流・情報共有はFacebookグループで行っています。下のボタンからグループに参加してください。</div>
+      <button class="btn-fb" onclick="openFB()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        Facebookグループを開く
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
 <script>
-const GAS_URL='https://script.google.com/macros/s/AKfycbwlpvA4Sv1Po6n3QfNiFsbMVuF9or_-qswq6xKVo3ElnCJayEgZMvvztFtMIlomJu8jww/exec';
-const WKEY='ob_wt';const GKEY='ob_wg';
-const curItems=[
-  {name:'ジャブ',videos:[
-    {url:'https://youtu.be/Aqvc5L3u1so',label:'動画①'},
-    {url:'https://youtu.be/zHveV-_FKGg',label:'動画②'},
-    {url:'https://youtu.be/Ja6mVvvPV4w',label:'動画③'},
-    {url:'https://youtu.be/HxGKebXOCbM',label:'動画④'},
-    {url:'https://youtube.com/shorts/yyws6QQ3rww?feature=share',label:'動画⑤ 基礎編'},
+// ===== CONFIG =====
+// GASのデプロイURLをここに入れる
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzbm4yvcHXJsZdHYZY7rUgchaL1wKXwgy_X7e5jZYRcwGDINC1MLHX5AVtJwZtM4y5FUg/exec';
+const FB_URL = 'https://fb.me/g/7RMcsXxDy/045c9UWq';
+
+// ===== SKILLS DATA =====
+const SKILLS = [
+  { id: 'jab', name: 'ジャブ', videos: [
+    { label: '動画① を見る', url: '' },
+    { label: '動画② を見る', url: '' },
+    { label: '動画③ を見る', url: '' },
+    { label: '動画④ を見る', url: '' },
+    { label: '動画⑤ 基礎編 を見る', url: '' }
   ]},
-  {name:'ワンツー',videos:[{url:'https://youtu.be/zHveV-_FKGg',label:'動画①'},{url:'https://youtu.be/KNTLVDEeVvk',label:'動画②'},{url:'https://youtu.be/Ja6mVvvPV4w',label:'動画③'}]},
-  {name:'フック',videos:[{url:'https://youtu.be/oeAQGLeDL08',label:'動画①'}]},
-  {name:'ワンツーステップ',videos:[{url:'https://youtu.be/KNTLVDEeVvk',label:'動画①'},{url:'https://youtu.be/AY_WR3gSufo',label:'動画②'}]},
-  {name:'アッパー',videos:[{url:'https://youtu.be/wmzNv_7lhA0',label:'動画①'}]},
-  {name:'サンドバックポジション',videos:[{url:'https://youtu.be/88TP05BcvBI',label:'動画①'},{url:'https://youtu.be/JljZti__-WI',label:'動画②'},{url:'https://youtu.be/NDJFsTGVsFg',label:'動画③'}]},
-  {name:'パンチ時のガード',videos:[{url:'https://youtu.be/i-MO11b83CQ',label:'動画①'}]},
-  {name:'同時ステップ',videos:[{url:'https://youtu.be/AY_WR3gSufo',label:'動画①'},{url:'https://youtu.be/M-JKtBUlDos',label:'動画②'}]},
-  {name:'ランダムシャドー',videos:[]},
-  {name:'ボディアッパー',videos:[{url:'https://youtu.be/w9cjTuBFxJ4',label:'動画①'}]},
-  {name:'ロープ Level.1',videos:[{url:'https://youtu.be/WPROg0dUmsU',label:'動画①'},{url:'https://youtu.be/NDJFsTGVsFg',label:'動画②'}]},
-  {name:'ロープ Level.2',videos:[{url:'https://youtu.be/WPROg0dUmsU',label:'動画①'},{url:'https://youtu.be/NDJFsTGVsFg',label:'動画②'}]},
-  {name:'ロープ Level.3',videos:[{url:'https://youtu.be/WPROg0dUmsU',label:'動画①'},{url:'https://youtu.be/NDJFsTGVsFg',label:'動画②'}]},
-  {name:'ロープ Level.4',videos:[{url:'https://youtu.be/WPROg0dUmsU',label:'動画①'},{url:'https://youtu.be/NDJFsTGVsFg',label:'動画②'}]},
+  { id: 'onetwo', name: 'ワンツー', videos: [
+    { label: '動画① を見る', url: '' },
+    { label: '動画② を見る', url: '' },
+    { label: '動画③ を見る', url: '' }
+  ]},
+  { id: 'hook', name: 'フック', videos: [{ label: '動画① を見る', url: '' }]},
+  { id: 'onetwostep', name: 'ワンツーステップ', videos: [
+    { label: '動画① を見る', url: '' },
+    { label: '動画② を見る', url: '' }
+  ]},
+  { id: 'upper', name: 'アッパー', videos: [{ label: '動画① を見る', url: '' }]},
+  { id: 'sandbag', name: 'サンドバックポジション', videos: [
+    { label: '動画① を見る', url: '' },
+    { label: '動画② を見る', url: '' },
+    { label: '動画③ を見る', url: '' }
+  ]},
+  { id: 'guard', name: 'パンチ時のガード', videos: [{ label: '動画① を見る', url: '' }]},
+  { id: 'simstep', name: '同時ステップ', videos: [
+    { label: '動画① を見る', url: '' },
+    { label: '動画② を見る', url: '' }
+  ]},
+  { id: 'random', name: 'ランダムシャドー', videos: []},
+  { id: 'bodyupper', name: 'ボディアッパー', videos: [{ label: '動画① を見る', url: '' }]},
+  { id: 'rope1', name: 'ロープ Level.1', videos: [
+    { label: '動画① を見る', url: '' },
+    { label: '動画② を見る', url: '' }
+  ]},
+  { id: 'rope2', name: 'ロープ Level.2', videos: [
+    { label: '動画① を見る', url: '' },
+    { label: '動画② を見る', url: '' }
+  ]},
+  { id: 'rope3', name: 'ロープ Level.3', videos: [
+    { label: '動画① を見る', url: '' },
+    { label: '動画② を見る', url: '' }
+  ]},
+  { id: 'rope4', name: 'ロープ Level.4', videos: [
+    { label: '動画① を見る', url: '' },
+    { label: '動画② を見る', url: '' }
+  ]}
 ];
-const YT_C='https://youtube.com/playlist?list=PL-gAc3kb2RX0Hi8o4EbN72ctSgA9n907w';
-const YT_B='https://youtube.com/playlist?list=PL-gAc3kb2RX1ZGy_oCGjkpYizMPnBOpPh';
-const YT_M='https://youtube.com/playlist?list=PL-gAc3kb2RX0NYI76_QWgQga2Xfva9kEE';
-const YT_A='https://youtube.com/playlist?list=PL-gAc3kb2RX3hX6n2UibkCHN9b6F_VHZC';
-const grades=[
-  {cls:'g-white',icon:'⚪',name:'ホワイトメダル',desc:'基本カリキュラム80%合格',yt:[{url:YT_B,label:'初級'},{url:YT_C,label:'全クラス共通'}]},
-  {cls:'g-green',icon:'🟢',name:'グリーンメダル',desc:'守る技術',yt:[{url:YT_B,label:'初級'},{url:YT_C,label:'全クラス共通'}]},
-  {cls:'g-blue',icon:'🔵',name:'ブルーメダル',desc:'マスボクシングができること',yt:[{url:YT_M,label:'中級'},{url:YT_C,label:'全クラス共通'}]},
-  {cls:'g-orange',icon:'🟠',name:'オレンジメダル',desc:'当てマスボクシングができること',yt:[{url:YT_M,label:'中級'},{url:YT_C,label:'全クラス共通'}]},
-  {cls:'g-red',icon:'🔴',name:'レッドメダル',desc:'スパーリングができること',yt:[{url:YT_B,label:'初級'},{url:YT_M,label:'中級'},{url:YT_A,label:'上級'},{url:YT_C,label:'全クラス共通'}]},
-  {cls:'g-gold',icon:'🥇',name:'ゴールドメダル',desc:'ボクシングを理解してスパーリングができること',yt:[{url:YT_B,label:'初級'},{url:YT_M,label:'中級'},{url:YT_A,label:'上級'},{url:YT_C,label:'全クラス共通'}]},
+
+const GRADES = [
+  { id: 'white', name: 'ホワイトメダル', sub: '基本カリキュラム78%以上合格', bg: 'bg-white-medal', dotColor: '#D0D0D0', dotBorder: '#BDBDBD', textColor: '#555', videos: [{label:'初級',url:''},{label:'全クラス共通',url:''}]},
+  { id: 'green', name: 'グリーンメダル', sub: '守る技術', bg: 'bg-green-medal', dotColor: '#4CAF50', dotBorder: '#388E3C', textColor: '#2E7D32', videos: [{label:'初級',url:''},{label:'全クラス共通',url:''}]},
+  { id: 'blue', name: 'ブルーメダル', sub: 'マスボクシングができること', bg: 'bg-blue-medal', dotColor: '#2196F3', dotBorder: '#1565C0', textColor: '#1565C0', videos: [{label:'中級',url:''},{label:'全クラス共通',url:''}]},
+  { id: 'orange', name: 'オレンジメダル', sub: '当てマスボクシングができること', bg: 'bg-orange-medal', dotColor: '#FF9800', dotBorder: '#E65100', textColor: '#E65100', videos: [{label:'中級',url:''},{label:'全クラス共通',url:''}]},
+  { id: 'red', name: 'レッドメダル', sub: 'スパーリングができること', bg: 'bg-red-medal', dotColor: '#DB444C', dotBorder: '#B71C1C', textColor: '#B71C1C', videos: [{label:'初級',url:''},{label:'中級',url:''},{label:'上級',url:''},{label:'全クラス共通',url:''}]},
+  { id: 'gold', name: 'ゴールドメダル', sub: 'ボクシングを理解してスパーリングができること', bg: 'bg-gold-medal', dotColor: '#FFD700', dotBorder: '#FFA000', textColor: '#E65100', videos: [{label:'初級',url:''},{label:'中級',url:''},{label:'上級',url:''},{label:'全クラス共通',url:''}]}
 ];
-const hiraRows=['あいうえお','かきくけこ','さしすせそ','たちつてと','なにぬねの','はひふへほ','まみむめも','やゆよ','らりるれろ','わをん'];
-let selHira='',curPin='',currentMember=null,statuses=curItems.map(()=>'none');
-const now=new Date();const days=['日','月','火','水','木','金','土'];
-function fmtKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
-const todayKey=fmtKey(now);
-let wData={},goalW=null,calYear=now.getFullYear(),calMonth=now.getMonth();
-try{const r=localStorage.getItem(WKEY);wData=r?JSON.parse(r):{};}catch(e){}
-try{const g=localStorage.getItem(GKEY);goalW=g?parseFloat(g):null;}catch(e){}
-const grid=document.getElementById('hira-grid');
-hiraRows.forEach(row=>{row.split('').forEach(ch=>{
-  const btn=document.createElement('button');btn.className='hira-key';btn.textContent=ch;
-  btn.onclick=()=>{selHira=ch;document.querySelectorAll('.hira-key').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');const d=document.getElementById('hira-display');d.textContent='「'+ch+'」を選択';d.classList.remove('placeholder');d.classList.add('selected');document.getElementById('hira-next').disabled=false;};
-  grid.appendChild(btn);
-});});
-function goToPin(){document.getElementById('pin-hira-show').textContent=selHira;curPin='';updateDots();document.getElementById('pin-err').textContent='';document.getElementById('loading-msg').textContent='';showScreen('s-pin');}
-function pk(k){if(curPin.length>=4)return;curPin+=k;updateDots();if(curPin.length===4)setTimeout(checkPin,120);}
-function pd(){curPin=curPin.slice(0,-1);updateDots();document.getElementById('pin-err').textContent='';}
-function updateDots(){for(let i=0;i<4;i++)document.getElementById('d'+i).classList.toggle('filled',i<curPin.length);}
-async function checkPin(){
-  document.getElementById('loading-msg').textContent='確認中...';
-  try{
-    const res=await fetch(GAS_URL+'?action=getMemberByPin&hira='+encodeURIComponent(selHira)+'&pin='+encodeURIComponent(curPin));
-    const data=await res.json();
-    document.getElementById('loading-msg').textContent='';
-    if(data.success&&data.member){
-      currentMember=data.member;
-      const name=data.member['お名前']||'';
-      const grade=data.member['グレード']||'ホワイトメダル';
-      const gmap={'ホワイトメダル':'⚪','グリーンメダル':'🟢','ブルーメダル':'🔵','オレンジメダル':'🟠','レッドメダル':'🔴','ゴールドメダル':'🥇','ホワイト':'⚪','グリーン':'🟢','ブルー':'🔵','オレンジ':'🟠','レッド':'🔴','ゴールド':'🥇'};
-      document.getElementById('h-name').textContent=name;
-      document.getElementById('h-gicon').textContent=gmap[grade]||'⚪';
-      document.getElementById('h-gname').textContent=grade;
-      curPin='';updateDots();showScreen('s-home');
-    }else{
-      document.getElementById('pin-err').textContent='番号が違います。もう一度お試しください。';
-      setTimeout(()=>{curPin='';updateDots();document.getElementById('pin-err').textContent='';},900);
+
+const GRADE_ORDER = ['white','green','blue','orange','red','gold'];
+
+// ===== STATE =====
+let memberId = null;
+let memberData = {};
+let skillState = {};
+let weightData = [];
+let targetWeight = 0;
+
+// ===== INIT =====
+async function init() {
+  // SW登録
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  }
+
+  // URLからIDを取得
+  const params = new URLSearchParams(location.search);
+  memberId = params.get('id');
+
+  if (!memberId) {
+    document.getElementById('loading').classList.add('hide');
+    document.getElementById('error-screen').classList.add('show');
+    return;
+  }
+
+  // ローカルキャッシュ確認
+  const cached = localStorage.getItem('ob_member_' + memberId);
+  if (cached) {
+    memberData = JSON.parse(cached);
+    renderMember();
+    // バックグラウンドで最新データ取得
+    fetchMember(false);
+  } else {
+    // 初回はサーバーから取得
+    await fetchMember(true);
+  }
+
+  // カリキュラム状態読み込み
+  const sc = localStorage.getItem('ob_skill_' + memberId);
+  if (sc) skillState = JSON.parse(sc);
+
+  // 体重データ読み込み
+  const wc = localStorage.getItem('ob_weight_' + memberId);
+  if (wc) weightData = JSON.parse(wc);
+  const tc = localStorage.getItem('ob_target_' + memberId);
+  if (tc) targetWeight = parseFloat(tc);
+
+  buildCurriculum();
+  buildGrade();
+  hideLoding();
+}
+
+async function fetchMember(showError) {
+  try {
+    const res = await fetch(GAS_URL + '?action=getMember&id=' + encodeURIComponent(memberId));
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    memberData = data;
+    localStorage.setItem('ob_member_' + memberId, JSON.stringify(data));
+    renderMember();
+  } catch (e) {
+    if (showError) {
+      document.getElementById('loading').classList.add('hide');
+      document.getElementById('error-screen').classList.add('show');
     }
-  }catch(e){document.getElementById('loading-msg').textContent='';document.getElementById('pin-err').textContent='通信エラーが発生しました。';setTimeout(()=>{curPin='';updateDots();document.getElementById('pin-err').textContent='';},1500);}
-}
-function logout(){currentMember=null;selHira='';curPin='';document.querySelectorAll('.hira-key').forEach(b=>b.classList.remove('selected'));const d=document.getElementById('hira-display');d.textContent='タップして選んでください';d.classList.add('placeholder');d.classList.remove('selected');document.getElementById('hira-next').disabled=true;updateDots();showScreen('s-hira');}
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');window.scrollTo(0,0);
-  if(id==='s-cur')loadCurriculum();
-  if(id==='s-grade')renderGrade();
-  if(id==='s-weight')initWeight();
-}
-async function loadCurriculum(){
-  if(!currentMember)return;
-  try{const res=await fetch(GAS_URL+'?action=getCurriculumByMember&name='+encodeURIComponent(currentMember['お名前']));const data=await res.json();if(data.success)statuses=curItems.map(item=>data.items[item.name]||'none');}catch(e){}
-  renderCurriculum();
-}
-function renderCurriculum(){
-  const list=document.getElementById('cur-list');list.innerHTML='';
-  const pc=statuses.filter(s=>s==='ok').length;const pct=Math.round(pc/curItems.length*100);
-  document.getElementById('prog-bar').style.width=pct+'%';
-  document.getElementById('prog-txt').textContent='合格: '+pc+' / '+curItems.length;
-  document.getElementById('prog-pct').textContent=pct+'%';
-  document.getElementById('pass-bdg').style.display=pct>=78?'block':'none';
-  curItems.forEach((item,i)=>{
-    const st=statuses[i];const card=document.createElement('div');card.className='cur-item';
-    const main=document.createElement('div');main.className='cur-main';
-    main.innerHTML='<div class="item-nm">'+item.name+'</div><div class="st-group"><button class="st-btn '+(st==='ch'?'ch':'')+'" onclick="setSt('+i+',\'ch\')">挑戦中</button><button class="st-btn '+(st==='ok'?'ok':'')+'" onclick="setSt('+i+',\'ok\')">合格</button></div>';
-    card.appendChild(main);
-    const ytSec=document.createElement('div');ytSec.className='yt-section';
-    if(item.videos.length===0){ytSec.innerHTML='<div class="no-yt">📹 動画は準備中です</div>';}
-    else{item.videos.forEach(v=>{const a=document.createElement('a');a.className='yt-link';a.href=v.url;a.target='_blank';a.innerHTML='<div class="yt-icon"></div><span class="yt-text">'+v.label+' を見る</span>';ytSec.appendChild(a);});}
-    card.appendChild(ytSec);list.appendChild(card);
-  });
-}
-async function setSt(i,v){
-  statuses[i]=statuses[i]===v?'none':v;renderCurriculum();
-  if(!currentMember)return;
-  try{await fetch(GAS_URL+'?action=updateCurriculum&name='+encodeURIComponent(currentMember['お名前'])+'&item='+encodeURIComponent(curItems[i].name)+'&status='+encodeURIComponent(statuses[i]));}catch(e){}
-}
-function renderGrade(){
-  let mg=currentMember?currentMember['グレード']||'ホワイトメダル':'ホワイトメダル';
-  const shortToFull={'ホワイト':'ホワイトメダル','グリーン':'グリーンメダル','ブルー':'ブルーメダル','オレンジ':'オレンジメダル','レッド':'レッドメダル','ゴールド':'ゴールドメダル'};
-  if(shortToFull[mg]) mg=shortToFull[mg];
-  const ci=grades.findIndex(g=>g.name===mg);
-  const w=document.getElementById('grade-wrap');w.innerHTML='';
-  grades.forEach((g,i)=>{
-    const isCur=g.name===mg;const isAch=i<=ci;
-    const card=document.createElement('div');card.className='grade-card '+g.cls+(isAch?'':' locked');
-    let yt='';g.yt.forEach(y=>{yt+='<a class="grade-yt-btn" href="'+y.url+'" target="_blank"><div class="grade-yt-icon"></div>'+y.label+'</a>';});
-    card.innerHTML='<div class="grade-top"><div class="grade-icon-wrap">'+g.icon+'</div><div><div class="grade-name">'+g.name+(isCur?'<span class="current-badge">現在</span>':'')+'</div><div class="grade-desc">'+g.desc+'</div></div></div><div class="grade-status">'+(isAch?'✓ 達成済み':'未達成・トレーナーに声をかけよう')+'</div>'+yt;
-    w.appendChild(card);
-  });
-}
-document.getElementById('today-label').textContent=now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日（'+days[now.getDay()]+'）';
-function initWeight(){
-  if(wData[todayKey])document.getElementById('weight-input').value=wData[todayKey];
-  if(goalW)document.getElementById('goal-input').value=goalW;
-  renderWeightAll();
-}
-function saveGoal(){const v=parseFloat(document.getElementById('goal-input').value);if(!isNaN(v)&&v>=30&&v<=200){goalW=v;try{localStorage.setItem(GKEY,v);}catch(e){}renderWeightAll();}}
-function saveWeight(){
-  const v=parseFloat(document.getElementById('weight-input').value);
-  if(isNaN(v)||v<30||v>200){alert('正しい体重を入力してください（30〜200kg）');return;}
-  wData[todayKey]=v;try{localStorage.setItem(WKEY,JSON.stringify(wData));}catch(e){}
-  renderWeightAll();
-  const btn=document.querySelector('.w-save-btn');
-  btn.textContent='✓ 記録しました！';btn.style.background='linear-gradient(135deg,#3B6D11,#2d5a0d)';
-  setTimeout(()=>{btn.textContent='記録する';btn.style.background='';},2000);
-}
-function renderWeightStats(){
-  const vals=Object.entries(wData).sort((a,b)=>a[0].localeCompare(b[0]));
-  if(!vals.length)return;
-  const latest=vals[vals.length-1][1];
-  document.getElementById('stat-latest').innerHTML=latest+'<span>kg</span>';
-  if(goalW){const d=(latest-goalW).toFixed(1);const el=document.getElementById('goal-diff');el.style.display='inline-block';if(d>0){el.className='goal-diff goal-over';el.textContent='-'+d+'kg';}else{el.className='goal-diff goal-clear';el.textContent='達成！';}document.getElementById('stat-goal').innerHTML=(d>0?'-'+d:'達成！')+'<span>'+(d>0?'kg':'')+'</span>';}
-  if(vals.length>=2){const d=+(latest-vals[0][1]).toFixed(1);const el=document.getElementById('stat-change');el.innerHTML=(d>0?'▲+':'▼')+d+'<span>kg</span>';el.style.color=d<0?'#3B6D11':'#E24B4A';}
-}
-function renderWeightChart(){
-  const canvas=document.getElementById('weight-chart');const ctx=canvas.getContext('2d');
-  const dpr=window.devicePixelRatio||1;const W=canvas.offsetWidth||340;const H=160;
-  canvas.width=W*dpr;canvas.height=H*dpr;ctx.scale(dpr,dpr);
-  const entries=[];
-  for(let i=29;i>=0;i--){const d=new Date(now);d.setDate(d.getDate()-i);const k=fmtKey(d);if(wData[k])entries.push({key:k,val:wData[k]});}
-  if(entries.length<2){ctx.fillStyle='#ccc';ctx.font='12px Helvetica';ctx.textAlign='center';ctx.fillText('2件以上記録するとグラフが表示されます',W/2,H/2);return;}
-  const vals=entries.map(e=>e.val);const all=goalW?[...vals,goalW]:vals;
-  const minV=Math.min(...all)-2;const maxV=Math.max(...all)+2;
-  const pad={l:36,r:12,t:14,b:20};const gw=W-pad.l-pad.r;const gh=H-pad.t-pad.b;
-  for(let i=0;i<=4;i++){const y=pad.t+gh*(1-i/4);ctx.strokeStyle='#f0f0f0';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();ctx.fillStyle='#ccc';ctx.font='9px Helvetica';ctx.textAlign='right';ctx.fillText((minV+(maxV-minV)*i/4).toFixed(1),pad.l-4,y+3);}
-  if(goalW&&goalW>=minV&&goalW<=maxV){const gy=pad.t+gh*(1-(goalW-minV)/(maxV-minV));ctx.setLineDash([4,4]);ctx.strokeStyle='#3B6D11';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(pad.l,gy);ctx.lineTo(W-pad.r,gy);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#3B6D11';ctx.font='9px Helvetica';ctx.textAlign='left';ctx.fillText('目標',pad.l+4,gy-3);}
-  const px=i=>pad.l+gw*i/(entries.length-1);const py=v=>pad.t+gh*(1-(v-minV)/(maxV-minV));
-  ctx.beginPath();entries.forEach((e,i)=>i===0?ctx.moveTo(px(i),py(e.val)):ctx.lineTo(px(i),py(e.val)));ctx.lineTo(px(entries.length-1),pad.t+gh);ctx.lineTo(px(0),pad.t+gh);ctx.closePath();
-  const grad=ctx.createLinearGradient(0,pad.t,0,pad.t+gh);grad.addColorStop(0,'rgba(226,75,74,0.18)');grad.addColorStop(1,'rgba(240,146,42,0)');ctx.fillStyle=grad;ctx.fill();
-  ctx.beginPath();ctx.strokeStyle='#E24B4A';ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.lineCap='round';entries.forEach((e,i)=>i===0?ctx.moveTo(px(i),py(e.val)):ctx.lineTo(px(i),py(e.val)));ctx.stroke();
-  entries.forEach((e,i)=>{const isT=e.key===todayKey;ctx.beginPath();ctx.arc(px(i),py(e.val),isT?5:3,0,Math.PI*2);ctx.fillStyle=isT?'#E24B4A':'#fff';ctx.strokeStyle='#E24B4A';ctx.lineWidth=2;ctx.fill();ctx.stroke();});
-  const diff=+(vals[vals.length-1]-vals[0]).toFixed(1);const tag=document.getElementById('trend-tag');
-  if(diff<0){tag.textContent='▼'+Math.abs(diff)+'kg 減少';tag.className='trend-tag t-down';}
-  else if(diff>0){tag.textContent='▲'+diff+'kg 増加';tag.className='trend-tag t-up';}
-  else{tag.textContent='変化なし';tag.className='trend-tag t-flat';}
-}
-function renderWeightCal(){
-  const grid=document.getElementById('cal-grid');grid.innerHTML='';
-  document.getElementById('cal-title').textContent=calYear+'年'+(calMonth+1)+'月';
-  ['日','月','火','水','木','金','土'].forEach(d=>{const el=document.createElement('div');el.className='cal-dow';el.textContent=d;grid.appendChild(el);});
-  const first=new Date(calYear,calMonth,1).getDay();const last=new Date(calYear,calMonth+1,0).getDate();
-  for(let i=0;i<first;i++){const el=document.createElement('div');el.className='cal-day empty';grid.appendChild(el);}
-  for(let d=1;d<=last;d++){
-    const date=new Date(calYear,calMonth,d);const key=fmtKey(date);const isT=key===todayKey;const w=wData[key];const isGA=goalW&&w!=null&&w<=goalW;
-    const el=document.createElement('div');el.className='cal-day'+(isT?' today':'')+(w!=null?' hd':'');
-    el.innerHTML='<span class="dn">'+d+'</span>'+(w!=null?'<span class="dw">'+w+'</span>':'')+(isGA?'<span class="gdot"></span>':'');
-    if(w!=null)el.onclick=()=>{document.getElementById('weight-input').value=w;};
-    grid.appendChild(el);
   }
 }
-function renderWeightLog(){
-  const list=document.getElementById('log-list');list.innerHTML='';
-  const sorted=Object.entries(wData).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,10);
-  if(!sorted.length){list.innerHTML='<div style="font-size:13px;color:#bbb;text-align:center;padding:16px;">まだ記録がありません</div>';return;}
-  sorted.forEach(([key,val],idx)=>{
-    const next=sorted[idx+1];const diff=next?+(val-next[1]).toFixed(1):null;
-    const [y,m,d]=key.split('-');const el=document.createElement('div');el.className='log-item';
-    const dh=diff!==null?'<span class="log-diff" style="background:'+(diff<0?'#EAF3DE':'#FCEBEB')+';color:'+(diff<0?'#3B6D11':'#E24B4A')+'">'+(diff>0?'▲+':'▼')+diff+'kg</span>':'';
-    el.innerHTML='<span class="log-date">'+y+'/'+parseInt(m)+'/'+parseInt(d)+'</span><div class="log-right">'+dh+'<span class="log-w">'+val+'<span>kg</span></span><button class="log-del" onclick="delW(\''+key+'\')">✕</button></div>';
-    list.appendChild(el);
+
+function renderMember() {
+  document.getElementById('top-name').textContent = memberData.name || '---';
+  const grade = memberData.grade || '';
+  const gradeInfo = GRADES.find(g => g.name.includes(grade) || grade.includes(g.id));
+  const dotColor = gradeInfo ? gradeInfo.dotColor : '#DB444C';
+  document.getElementById('top-grade-dot').style.background = dotColor;
+  document.getElementById('top-grade-name').textContent = grade || '---';
+  document.getElementById('top-grade-name').style.color = gradeInfo ? gradeInfo.textColor : '#DB444C';
+}
+
+function hideLoding() {
+  const el = document.getElementById('loading');
+  el.classList.add('hide');
+  setTimeout(() => el.style.display = 'none', 500);
+  showPage('top');
+}
+
+// ===== PAGE NAV =====
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  window.scrollTo(0, 0);
+  if (name === 'weight') initWeightPage();
+}
+
+// ===== CURRICULUM =====
+function buildCurriculum() {
+  const list = document.getElementById('skill-list');
+  list.innerHTML = '';
+  SKILLS.forEach(skill => {
+    const st = skillState[skill.id] || 'none';
+    const isDone = st === 'pass';
+    const card = document.createElement('div');
+    card.className = 'skill-card' + (isDone ? ' done' : '');
+
+    let videosHtml = '';
+    if (skill.videos.length === 0) {
+      videosHtml = `<div class="video-preparing">🎬 動画は準備中です</div>`;
+    } else {
+      videosHtml = skill.videos.map(v =>
+        v.url
+          ? `<button class="video-row" onclick="openUrl('${v.url}')"><div class="yt-btn"><svg width="10" height="10" viewBox="0 0 10 10" fill="white"><polygon points="2,1 9,5 2,9"/></svg></div>${v.label}</button>`
+          : `<div class="video-row" style="opacity:0.4;"><div class="yt-btn"><svg width="10" height="10" viewBox="0 0 10 10" fill="white"><polygon points="2,1 9,5 2,9"/></svg></div>${v.label}（準備中）</div>`
+      ).join('');
+    }
+
+    card.innerHTML = `
+      <div class="skill-header">
+        <span class="skill-name">${skill.name}</span>
+        <div class="skill-btns">
+          <button class="skill-btn challenge${st==='challenge'?' active':''}" onclick="setSkill('${skill.id}','challenge')">挑戦中</button>
+          <button class="skill-btn pass${st==='pass'?' active':''}" onclick="setSkill('${skill.id}','pass')">合格</button>
+        </div>
+      </div>
+      <div class="skill-videos">${videosHtml}</div>`;
+    list.appendChild(card);
+  });
+  updateProgress();
+}
+
+function setSkill(id, status) {
+  skillState[id] = skillState[id] === status ? 'none' : status;
+  localStorage.setItem('ob_skill_' + memberId, JSON.stringify(skillState));
+  buildCurriculum();
+  // バックグラウンドでGASに保存
+  saveSkillToGAS(id, skillState[id]);
+  if (skillState[id] === 'pass') showToast('✅ 合格！おめでとうございます！');
+  else if (skillState[id] === 'challenge') showToast('💪 挑戦中！頑張れ！');
+}
+
+async function saveSkillToGAS(skillId, status) {
+  try {
+    await fetch(GAS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'saveSkill', memberId, skillId, status })
+    });
+  } catch (e) {}
+}
+
+function updateProgress() {
+  const passed = Object.values(skillState).filter(v => v === 'pass').length;
+  const total = SKILLS.length;
+  const pct = Math.round((passed / total) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = `合格: ${passed} / ${total}`;
+  document.getElementById('progress-pct').textContent = pct + '%';
+}
+
+// ===== GRADE =====
+function buildGrade() {
+  const currentGrade = memberData.grade || '';
+  const currentIdx = GRADE_ORDER.findIndex(id => currentGrade.includes(id) || (id === 'red' && currentGrade === 'レッド'));
+  const list = document.getElementById('grade-list');
+  list.innerHTML = '';
+
+  GRADES.forEach((g, idx) => {
+    const isCurrent = idx === currentIdx;
+    const isAchieved = idx <= currentIdx;
+    const isLocked = idx > currentIdx;
+
+    const card = document.createElement('div');
+    card.className = `medal-card ${g.bg}${isCurrent ? ' current' : ''}${isLocked ? ' locked' : ''}`;
+
+    const videosHtml = g.videos.map(v =>
+      `<button class="medal-video-btn" onclick="openUrl('${v.url}')"><div class="yt-btn" style="width:22px;height:22px;border-radius:5px;"><svg width="9" height="9" viewBox="0 0 10 10" fill="white"><polygon points="2,1 9,5 2,9"/></svg></div>${v.label}</button>`
+    ).join('');
+
+    card.innerHTML = `
+      <div class="medal-dot" style="background:${g.dotColor};border-color:${g.dotBorder};"></div>
+      <div class="medal-info">
+        <div class="medal-title" style="color:${g.textColor};">
+          ${g.name}
+          ${isCurrent ? '<span class="medal-now">現在</span>' : ''}
+        </div>
+        <div class="medal-sub">${g.sub}</div>
+      </div>
+      <span class="${isAchieved ? 'achieved-tag' : 'not-achieved-tag'}">${isAchieved ? '✓ 達成' : '未達成'}</span>`;
+
+    if (g.videos.length > 0) {
+      const videosWrap = document.createElement('div');
+      videosWrap.className = 'medal-videos-wrap';
+      videosWrap.innerHTML = videosHtml;
+      const wrapper = document.createElement('div');
+      wrapper.style.borderRadius = 'var(--radius)';
+      wrapper.style.overflow = 'hidden';
+      wrapper.appendChild(card);
+      wrapper.appendChild(videosWrap);
+      wrapper.className = `${g.bg} ${isCurrent ? 'current' : ''} ${isLocked ? 'locked' : ''}`;
+      wrapper.style.borderRadius = 'var(--radius)';
+      wrapper.style.marginBottom = '8px';
+      if (isCurrent) { wrapper.style.border = '2px solid var(--red)'; }
+      if (isLocked) { wrapper.style.opacity = '0.6'; }
+      list.appendChild(wrapper);
+    } else {
+      card.style.marginBottom = '8px';
+      list.appendChild(card);
+    }
   });
 }
-function delW(key){if(confirm('削除しますか？')){delete wData[key];try{localStorage.setItem(WKEY,JSON.stringify(wData));}catch(e){}renderWeightAll();}}
-function changeMonth(d){calMonth+=d;if(calMonth<0){calMonth=11;calYear--;}if(calMonth>11){calMonth=0;calYear++;}renderWeightCal();}
-function renderWeightAll(){renderWeightStats();renderWeightChart();renderWeightCal();renderWeightLog();}
+
+// ===== WEIGHT =====
+function initWeightPage() {
+  const now = new Date();
+  const days = ['日','月','火','水','木','金','土'];
+  document.getElementById('today-date').textContent =
+    `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日（${days[now.getDay()]}）`;
+  document.getElementById('target-input').value = targetWeight || '';
+  updateWeightStats();
+  drawChart();
+}
+
+function recordWeight() {
+  const val = parseFloat(document.getElementById('weight-input').value);
+  const tgt = parseFloat(document.getElementById('target-input').value);
+  if (isNaN(val) || val < 20 || val > 200) { showToast('⚠️ 正しい体重を入力してください'); return; }
+  if (!isNaN(tgt)) {
+    targetWeight = tgt;
+    localStorage.setItem('ob_target_' + memberId, tgt);
+  }
+  const today = new Date().toISOString().split('T')[0];
+  weightData = weightData.filter(d => d.date !== today);
+  weightData.push({ date: today, weight: val });
+  weightData.sort((a,b) => a.date.localeCompare(b.date));
+  localStorage.setItem('ob_weight_' + memberId, JSON.stringify(weightData));
+  document.getElementById('weight-input').value = '';
+  updateWeightStats();
+  drawChart();
+  showToast('✅ 記録しました！');
+}
+
+function updateWeightStats() {
+  const tgt = parseFloat(document.getElementById('target-input').value) || targetWeight;
+  if (weightData.length > 0) {
+    const latest = weightData[weightData.length - 1].weight;
+    document.getElementById('stat-latest').textContent = latest;
+    if (!isNaN(tgt)) {
+      const diff = (latest - tgt).toFixed(1);
+      document.getElementById('stat-diff').textContent = diff;
+      document.getElementById('target-diff').style.display = 'inline-block';
+      document.getElementById('target-diff').textContent = (diff > 0 ? '+' : '') + diff + 'kg';
+    }
+    if (weightData.length >= 2) {
+      const old = weightData[Math.max(0, weightData.length - 31)].weight;
+      const ch = (latest - old).toFixed(1);
+      document.getElementById('stat-change').textContent = (ch > 0 ? '+' : '') + ch + 'kg';
+    }
+  }
+}
+
+function drawChart() {
+  const recent = weightData.slice(-30);
+  const canvas = document.getElementById('weight-chart');
+  const empty = document.getElementById('chart-empty');
+  const badge = document.getElementById('no-data-badge');
+  if (recent.length === 0) {
+    canvas.style.display = 'none'; empty.style.display = 'flex'; badge.style.display = 'inline-block';
+    return;
+  }
+  canvas.style.display = 'block'; empty.style.display = 'none'; badge.style.display = 'none';
+  const W = canvas.parentElement.offsetWidth - 28;
+  canvas.width = W * 2; canvas.height = 160 * 2;
+  canvas.style.width = W + 'px'; canvas.style.height = '160px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(2, 2);
+  const w = W, h = 160;
+  const vals = recent.map(d => d.weight);
+  const min = Math.min(...vals) - 1, max = Math.max(...vals) + 1;
+  const px = i => (i / Math.max(recent.length - 1, 1)) * (w - 28) + 14;
+  const py = v => h - 22 - ((v - min) / (max - min || 1)) * (h - 44);
+  ctx.clearRect(0, 0, w, h);
+  // grid lines
+  ctx.strokeStyle = '#F0F0F0'; ctx.lineWidth = 1;
+  for (let i = 0; i < 4; i++) {
+    const y = py(min + (max-min) * i / 3);
+    ctx.beginPath(); ctx.moveTo(14, y); ctx.lineTo(w-14, y); ctx.stroke();
+  }
+  if (recent.length > 1) {
+    // fill
+    const grad = ctx.createLinearGradient(0, 0, 0, h);
+    grad.addColorStop(0, 'rgba(91,185,205,0.18)');
+    grad.addColorStop(1, 'rgba(91,185,205,0)');
+    ctx.beginPath();
+    ctx.moveTo(px(0), py(recent[0].weight));
+    recent.forEach((d, i) => ctx.lineTo(px(i), py(d.weight)));
+    ctx.lineTo(px(recent.length-1), h-22); ctx.lineTo(px(0), h-22); ctx.closePath();
+    ctx.fillStyle = grad; ctx.fill();
+    // line
+    ctx.beginPath(); ctx.strokeStyle = '#5BB9CD'; ctx.lineWidth = 2.5; ctx.lineJoin = 'round';
+    recent.forEach((d, i) => i === 0 ? ctx.moveTo(px(i), py(d.weight)) : ctx.lineTo(px(i), py(d.weight)));
+    ctx.stroke();
+  }
+  // dots & labels
+  recent.forEach((d, i) => {
+    ctx.beginPath(); ctx.arc(px(i), py(d.weight), 4, 0, Math.PI*2);
+    ctx.fillStyle = '#5BB9CD'; ctx.fill();
+    ctx.strokeStyle = 'white'; ctx.lineWidth = 2; ctx.stroke();
+  });
+  ctx.fillStyle = '#aaa'; ctx.font = '9px sans-serif'; ctx.textAlign = 'center';
+  recent.forEach((d, i) => {
+    if (i === 0 || i === recent.length-1 || (recent.length > 10 && i % Math.ceil(recent.length/5) === 0)) {
+      ctx.fillText(d.date.slice(5), px(i), h - 5);
+    }
+  });
+}
+
+// ===== UTILS =====
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+function openUrl(url) { if (url) window.open(url, '_blank'); }
+function openFB() { window.open(FB_URL, '_blank'); }
+function logout() {
+  if (confirm('ログアウトしますか？')) {
+    localStorage.removeItem('ob_member_' + memberId);
+    location.href = location.pathname;
+  }
+}
+
+// ===== START =====
+init();
 </script>
 </body>
 </html>
