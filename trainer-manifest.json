@@ -1,0 +1,20 @@
+{
+  "name": "トレーナー管理",
+  "short_name": "トレーナー管理",
+  "start_url": "/onebalance-member/trainer.html",
+  "display": "standalone",
+  "background_color": "#DB444C",
+  "theme_color": "#DB444C",
+  "icons": [
+    {
+      "src": "icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
