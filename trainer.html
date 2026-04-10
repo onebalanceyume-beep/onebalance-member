@@ -6,19 +6,20 @@
 <title>one-BALANCE トレーナー管理</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
-:root{--red:#DB444C;--red-dark:#C0392B;--red-light:#FFF0F0;--blue:#5BB9CD;--blue-light:#E8F7FA;--dark:#1a1a2e;--dark2:#16213e;--gray:#f5f5f5;--gray2:#e0e0e0;--text:#2c2c2c;--text2:#666;--shadow:0 4px 20px rgba(0,0,0,0.08);--radius:12px;}
+:root{--red:#DB444C;--red-dark:#C0392B;--red-light:#FFF0F0;--blue:#5BB9CD;--blue-dark:#4aa8bb;--blue-light:#E8F7FA;--gray:#f5f5f5;--gray2:#e0e0e0;--text:#2c2c2c;--text2:#666;--shadow:0 4px 20px rgba(0,0,0,0.08);--radius:12px;}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f9fa;color:var(--text);min-height:100vh;}
-.header{background:linear-gradient(135deg,var(--red-dark) 0%,var(--red) 60%,#e8621a 100%);color:white;position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(219,68,76,0.4);}
+.header{background:var(--red);color:white;position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(219,68,76,0.4);}
 .header-inner{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;}
 .logo{font-size:18px;font-weight:900;letter-spacing:1px;}
-.logo span{color:rgba(255,255,255,0.7);font-size:11px;display:block;font-weight:400;letter-spacing:2px;}
+.logo span{color:rgba(255,255,255,0.8);font-size:11px;display:block;font-weight:400;letter-spacing:2px;}
 .hdate{font-size:12px;opacity:.9;text-align:right;}
 .hdate .big{font-size:16px;font-weight:700;}
-.tabs{background:var(--dark2);display:flex;overflow-x:auto;scrollbar-width:none;}
+.tabs{background:var(--blue);display:flex;overflow-x:auto;scrollbar-width:none;}
 .tabs::-webkit-scrollbar{display:none;}
-.tab-btn{flex:none;padding:12px 16px;color:rgba(255,255,255,.6);font-size:12px;font-weight:600;border:none;background:none;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s;letter-spacing:.5px;}
-.tab-btn.active{color:white;border-bottom-color:var(--red);}
+.tab-btn{flex:none;padding:11px 16px;color:rgba(255,255,255,0.7);font-size:12px;font-weight:600;border:none;background:none;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s;letter-spacing:.5px;}
+.tab-btn.active{color:white;border-bottom-color:white;background:rgba(255,255,255,0.15);}
+.tab-btn:hover{color:white;background:rgba(255,255,255,0.1);}
 .content{padding:16px;max-width:800px;margin:0 auto;}
 .tab-content{display:none;}
 .tab-content.active{display:block;}
@@ -29,7 +30,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 .sc{background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;border-left:4px solid var(--red);}
 .sc.blue{border-left-color:var(--blue);}
 .sc.green{border-left-color:#27ae60;}
-.sc.orange{border-left-color:#f39c12;}
+.sc.red2{border-left-color:var(--red);}
 .slabel{font-size:11px;color:var(--text2);font-weight:600;}
 .sval{font-size:28px;font-weight:900;color:var(--text);line-height:1.1;margin-top:4px;}
 .sval span{font-size:14px;font-weight:500;color:var(--text2);}
@@ -50,7 +51,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 .minfo{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;}
 .badge{font-size:10px;padding:3px 8px;border-radius:20px;font-weight:600;white-space:nowrap;}
 .br{background:var(--red-light);color:var(--red);}
-.bb{background:var(--blue-light);color:#2980b9;}
+.bb{background:var(--blue-light);color:var(--blue-dark);}
 .bg{background:#eafaf1;color:#27ae60;}
 .bgr{background:#f5f5f5;color:#888;}
 .bo{background:#fef9e7;color:#d4a017;}
@@ -70,6 +71,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 .btn-red{background:var(--red);color:white;}
 .btn-red:hover{background:var(--red-dark);}
 .btn-blue{background:var(--blue);color:white;}
+.btn-blue:hover{background:var(--blue-dark);}
 .btn-green{background:#27ae60;color:white;}
 .btn-gray{background:var(--gray);color:var(--text);}
 .btn-out{background:white;color:var(--red);border:2px solid var(--red);}
@@ -94,9 +96,10 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 .pager{display:flex;justify-content:center;gap:6px;margin-top:16px;flex-wrap:wrap;}
 .pb{width:32px;height:32px;border-radius:6px;border:2px solid var(--gray2);background:white;cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;font-family:inherit;}
 .pb.a{background:var(--red);color:white;border-color:var(--red);}
+.pb:hover:not(.a){border-color:var(--red);color:var(--red);}
 .conv{font-size:56px;font-weight:900;color:var(--red);text-align:center;line-height:1;}
 .convs{font-size:13px;color:var(--text2);text-align:center;margin-top:6px;}
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--dark);color:white;padding:12px 24px;border-radius:24px;font-size:14px;font-weight:600;z-index:999;transition:transform .3s ease;white-space:nowrap;pointer-events:none;}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:#1a1a2e;color:white;padding:12px 24px;border-radius:24px;font-size:14px;font-weight:600;z-index:999;transition:transform .3s ease;white-space:nowrap;pointer-events:none;}
 .toast.show{transform:translateX(-50%) translateY(0);}
 .fb{padding:7px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:none;font-family:inherit;white-space:nowrap;}
 .fp{background:#eafaf1;color:#27ae60;}
@@ -128,7 +131,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
       <div class="sc"><div class="slabel">在籍会員数</div><div class="sval" id="s1">-<span>人</span></div></div>
       <div class="sc blue"><div class="slabel">今月新規</div><div class="sval" id="s2">-<span>人</span></div></div>
       <div class="sc green"><div class="slabel">今月体験</div><div class="sval" id="s3">-<span>人</span></div></div>
-      <div class="sc orange"><div class="slabel">成約率</div><div class="sval" id="s4">-<span>%</span></div></div>
+      <div class="sc red2"><div class="slabel">今月成約率</div><div class="sval" id="s4">-<span>%</span></div></div>
     </div>
     <div class="card">
       <div class="card-title">男女比（会員）</div>
@@ -186,9 +189,9 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
   <div id="stl" class="loading"><div class="spin"></div>読み込み中...</div>
   <div id="stb" style="display:none">
     <div class="card">
-      <div class="card-title">体験→成約率</div>
+      <div class="card-title">今月の成約率</div>
       <div class="conv" id="stconv">-%</div>
-      <div class="convs">体験者 <span id="sttt">-</span>人 → 入会 <span id="stmt">-</span>人</div>
+      <div class="convs">今月体験 <span id="sttt">-</span>人 → 今月入会 <span id="stmt">-</span>人</div>
     </div>
     <div class="card"><div class="card-title">会員 年齢分布</div><div class="cw"><canvas id="ac"></canvas></div></div>
     <div class="card"><div class="card-title">体験者 年齢分布</div><div class="cw"><canvas id="tac"></canvas></div></div>
@@ -208,7 +211,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
     <div class="card-title">アプリ情報</div>
     <div style="font-size:13px;color:var(--text2);line-height:2.2">
       <div>アプリ名：one-BALANCE トレーナー管理</div>
-      <div>バージョン：1.0.0</div>
+      <div>バージョン：1.2.0</div>
       <div>赤 #DB444C / 青 #5BB9CD</div>
     </div>
   </div>
@@ -244,7 +247,6 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
     </div>
   </div>
 </div>
-
 <div class="toast" id="toast"></div>
 
 <script>
@@ -253,210 +255,57 @@ const GR=[{n:'ホワイト前',b:'#f5f5f5',c:'#666'},{n:'ホワイト',b:'#ecf0f
 let AM=[],FM=[],CP=1,CM=null,SD=null;
 const PG=20,CH={};
 const gurl=()=>localStorage.getItem('gasUrl')||DGAS;
-window.onload=()=>{
-  tick();setInterval(tick,1e3);
-  document.getElementById('gu').value=gurl();
-  loadD();
-};
-function tick(){
-  const n=new Date(),dy=['日','月','火','水','木','金','土'];
-  document.getElementById('dd').textContent=`${n.getMonth()+1}/${n.getDate()}（${dy[n.getDay()]}）`;
-  document.getElementById('dt').textContent=`${p2(n.getHours())}:${p2(n.getMinutes())}`;
-}
+window.onload=()=>{tick();setInterval(tick,1e3);document.getElementById('gu').value=gurl();loadD();};
+function tick(){const n=new Date(),dy=['日','月','火','水','木','金','土'];document.getElementById('dd').textContent=`${n.getMonth()+1}/${n.getDate()}（${dy[n.getDay()]}）`;document.getElementById('dt').textContent=`${p2(n.getHours())}:${p2(n.getMinutes())}`;}
 const p2=n=>String(n).padStart(2,'0');
-function sw(name,btn){
-  document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));
-  document.getElementById('tab-'+name).classList.add('active');
-  btn.classList.add('active');
-  if(name==='members'&&!AM.length)loadM();
-  if(name==='fee'&&!AM.length)loadM();
-  if(name==='stats'&&!SD)loadSt();
-}
-async function api(p){
-  const u=new URL(gurl());
-  Object.entries(p).forEach(([k,v])=>u.searchParams.set(k,v));
-  const r=await fetch(u.toString());return r.json();
-}
-async function loadD(){
-  sh('dl');hd('db');
-  try{
-    const d=await api({action:'getStats'});
-    if(d.status!=='ok')throw 0;
-    SD=d.data;renderD(SD);hd('dl');sh('db');
-  }catch(e){document.getElementById('dl').innerHTML='<p style="color:#e74c3c">読み込み失敗。設定のGAS URLを確認してください。</p>';}
-}
+function sw(name,btn){document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));document.getElementById('tab-'+name).classList.add('active');btn.classList.add('active');if(name==='members'&&!AM.length)loadM();if(name==='fee'&&!AM.length)loadM();if(name==='stats'&&!SD)loadSt();}
+async function api(p){const u=new URL(gurl());Object.entries(p).forEach(([k,v])=>u.searchParams.set(k,v));const r=await fetch(u.toString());return r.json();}
+async function loadD(){sh('dl');hd('db');try{const d=await api({action:'getStats'});if(d.status!=='ok')throw 0;SD=d.data;renderD(SD);hd('dl');sh('db');}catch(e){document.getElementById('dl').innerHTML='<p style="color:#e74c3c">読み込み失敗。設定のGAS URLを確認してください。</p>';}}
 function renderD(d){
-  si('s1',`${d.total}<span>人</span>`);si('s2',`${d.newThisMonth}<span>人</span>`);
-  si('s3',`${d.trial.trialThisMonth}<span>人</span>`);si('s4',`${d.trial.convRate}<span>%</span>`);
+  si('s1',`${d.total}<span>人</span>`);
+  si('s2',`${d.newThisMonth}<span>人</span>`);
+  si('s3',`${d.trial.trialThisMonth}<span>人</span>`);
+  // 今月成約率：今月体験者のうち今月入会した人の割合
+  const monthConv=d.trial.trialThisMonth>0?Math.round((d.newThisMonth/d.trial.trialThisMonth)*100):0;
+  si('s4',`${monthConv}<span>%</span>`);
   si('sm',`${d.male}人`);si('sf',`${d.female}人`);
   mk('gc','doughnut',['男性','女性'],[d.male,d.female],['#DB444C','#5BB9CD'],{cutout:'70%'});
   const cl=Object.keys(d.courseCounts).map(k=>k.replace('いつでも','').replace('週１','週1 '));
   mk('cc','bar',cl,Object.values(d.courseCounts),'#DB444C',{indexAxis:'y',noLegend:true});
 }
-async function loadM(){
-  sh('ml2');
-  try{
-    const d=await api({action:'getMembers'});
-    if(d.status!=='ok')throw 0;
-    AM=d.data;FM=[...AM];CP=1;
-    renderML();renderFL();
-    document.getElementById('mc').textContent=`${AM.filter(m=>m.status==='在籍').length}人在籍`;
-  }catch(e){document.getElementById('ml').innerHTML='<p style="color:#e74c3c;padding:16px">読み込み失敗</p>';}
-  hd('ml2');
-}
-function filterM(){
-  const q=document.getElementById('ms').value.toLowerCase();
-  const f=document.getElementById('mf').value;
-  FM=AM.filter(m=>(!q||m.name.includes(q)||(m.kana||'').toLowerCase().includes(q))&&(!f||m.status===f));
-  CP=1;renderML();
-}
-function renderML(){
-  const st=(CP-1)*PG,pg=FM.slice(st,st+PG);
-  document.getElementById('ml').innerHTML=pg.map(m=>{
-    const sc=m.status==='在籍'?'act':m.status==='休会'?'vac':'res';
-    const sb=`<span class="badge ${m.status==='在籍'?'bg':m.status==='休会'?'bb':'bgr'}">${m.status}</span>`;
-    const cb=m.course?`<span class="badge br">${m.course.substring(0,14)}</span>`:'';
-    const gb=m.grade?`<span class="badge bo">${m.grade}</span>`:'';
-    return `<div class="mi ${sc}" onclick="opM('${m.id}')">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div><div class="mname">${m.name}</div><div class="mkana">${m.kana||''}</div></div>${sb}
-      </div><div class="minfo">${cb}${gb}</div></div>`;
-  }).join('')||'<p style="color:var(--text2);padding:20px;text-align:center">該当なし</p>';
-  const tot=Math.ceil(FM.length/PG);
-  document.getElementById('pg').innerHTML=tot<=1?'':Array.from({length:tot},(_,i)=>i+1).map(i=>`<button class="pb ${i===CP?'a':''}" onclick="gp(${i})">${i}</button>`).join('');
-}
+async function loadM(){sh('ml2');try{const d=await api({action:'getMembers'});if(d.status!=='ok')throw 0;AM=d.data;FM=[...AM];CP=1;renderML();renderFL();document.getElementById('mc').textContent=`${AM.filter(m=>m.status==='在籍').length}人在籍`;}catch(e){document.getElementById('ml').innerHTML='<p style="color:#e74c3c;padding:16px">読み込み失敗</p>';}hd('ml2');}
+function filterM(){const q=document.getElementById('ms').value.toLowerCase();const f=document.getElementById('mf').value;FM=AM.filter(m=>(!q||m.name.includes(q)||(m.kana||'').toLowerCase().includes(q))&&(!f||m.status===f));CP=1;renderML();}
+function renderML(){const st=(CP-1)*PG,pg=FM.slice(st,st+PG);document.getElementById('ml').innerHTML=pg.map(m=>{const sc=m.status==='在籍'?'act':m.status==='休会'?'vac':'res';const sb=`<span class="badge ${m.status==='在籍'?'bg':m.status==='休会'?'bb':'bgr'}">${m.status}</span>`;const cb=m.course?`<span class="badge br">${m.course.substring(0,14)}</span>`:'';const gb=m.grade?`<span class="badge bo">${m.grade}</span>`:'';return `<div class="mi ${sc}" onclick="opM('${m.id}')"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div class="mname">${m.name}</div><div class="mkana">${m.kana||''}</div></div>${sb}</div><div class="minfo">${cb}${gb}</div></div>`;}).join('')||'<p style="color:var(--text2);padding:20px;text-align:center">該当なし</p>';const tot=Math.ceil(FM.length/PG);document.getElementById('pg').innerHTML=tot<=1?'':Array.from({length:tot},(_,i)=>i+1).map(i=>`<button class="pb ${i===CP?'a':''}" onclick="gp(${i})">${i}</button>`).join('');}
 const gp=p=>{CP=p;renderML();};
-function opM(id){
-  CM=AM.find(m=>m.id===id);if(!CM)return;
-  const m=CM;
-  document.getElementById('mn').textContent=m.name;
-  document.getElementById('mk').textContent=m.kana||'-';
-  document.getElementById('mg').textContent=m.gender||'-';
-  document.getElementById('mb').textContent=m.birth||'-';
-  document.getElementById('mco').textContent=m.course||'-';
-  document.getElementById('mfee').textContent=m.fee?`¥${Number(m.fee).toLocaleString()}`:'-';
-  document.getElementById('mj').textContent=m.joinDate||'-';
-  document.getElementById('mst2').textContent=m.status||'-';
-  const ua=document.getElementById('mu');ua.href=m.url||'#';ua.textContent=m.url||'-';
-  document.getElementById('gg').innerHTML=GR.map(g=>`<button class="gbtn ${m.grade===g.n?'sel':''}" style="background:${g.b};color:${g.c}" onclick="selG('${g.n}')">${g.n}</button>`).join('');
-  document.getElementById('mm').classList.add('open');
-}
+function opM(id){CM=AM.find(m=>m.id===id);if(!CM)return;const m=CM;document.getElementById('mn').textContent=m.name;document.getElementById('mk').textContent=m.kana||'-';document.getElementById('mg').textContent=m.gender||'-';document.getElementById('mb').textContent=m.birth||'-';document.getElementById('mco').textContent=m.course||'-';document.getElementById('mfee').textContent=m.fee?`¥${Number(m.fee).toLocaleString()}`:'-';document.getElementById('mj').textContent=m.joinDate||'-';document.getElementById('mst2').textContent=m.status||'-';const ua=document.getElementById('mu');ua.href=m.url||'#';ua.textContent=m.url||'-';document.getElementById('gg').innerHTML=GR.map(g=>`<button class="gbtn ${m.grade===g.n?'sel':''}" style="background:${g.b};color:${g.c}" onclick="selG('${g.n}')">${g.n}</button>`).join('');document.getElementById('mm').classList.add('open');}
 function clm(e){if(e.target===document.getElementById('mm'))clmd();}
 function clmd(){document.getElementById('mm').classList.remove('open');}
-async function selG(grade){
-  if(!CM)return;
-  try{
-    await api({action:'updateGrade',id:CM.id,grade});
-    CM.grade=grade;const m=AM.find(m=>m.id===CM.id);if(m)m.grade=grade;
-    document.querySelectorAll('.gbtn').forEach(b=>b.classList.toggle('sel',b.textContent===grade));
-    toast(`グレード「${grade}」に変更`);renderML();
-  }catch(e){toast('エラー',true);}
-}
-async function upSt(status){
-  if(!CM)return;
-  if(status==='退会'&&!confirm(`${CM.name}さんを退会にしますか？`))return;
-  try{
-    await api({action:'updateStatus',id:CM.id,status});
-    const m=AM.find(m=>m.id===CM.id);if(m)m.status=status;
-    document.getElementById('mst2').textContent=status;
-    toast(`「${status}」に変更`);renderML();
-  }catch(e){toast('エラー',true);}
-}
-async function importM(){
-  if(!confirm('入会申し込みから新規会員を取り込みますか？'))return;
-  toast('取り込み中...');
-  try{const d=await api({action:'importMembers'});toast(d.message||'取込完了');await loadM();}
-  catch(e){toast('エラー',true);}
-}
-function renderFL(){
-  const q=(document.getElementById('fs')||{}).value||'';
-  const now=new Date(),mk=`${now.getFullYear()}年${now.getMonth()+1}月`;
-  const list=AM.filter(m=>m.status!=='退会'&&(!q||m.name.includes(q)));
-  document.getElementById('fl').innerHTML=list.map(m=>{
-    const fs=m[mk]||'';
-    let badge=fs==='✅'?'<span class="fb fp">✅ 入金済</span>':fs==='⚠️'?'<span class="fb fu">⚠️ 要確認</span>':`<button class="fb fe" onclick="manF('${m.id}')">タップで確認済</button>`;
-    return `<div class="mi act"><div style="display:flex;justify-content:space-between;align-items:center"><div><div class="mname">${m.name}</div><div class="mkana">¥${Number(m.fee||0).toLocaleString()}/月</div></div>${badge}</div></div>`;
-  }).join('')||'<p style="color:var(--text2);padding:20px;text-align:center">データなし</p>';
-}
-async function manF(id){
-  const m=AM.find(m=>m.id===id);
-  if(!m||!confirm(`${m.name}さんの会費を入金済みにしますか？`))return;
-  try{
-    const now=new Date(),mk=`${now.getFullYear()}年${now.getMonth()+1}月`;
-    await api({action:'updateFee',id,month:mk,status:'✅'});
-    m[mk]='✅';renderFL();toast('入金済みにしました');
-  }catch(e){toast('エラー',true);}
-}
-function procCSV(input){
-  const file=input.files[0];if(!file)return;
-  const reader=new FileReader();
-  reader.onload=e=>analyzeCSV(e.target.result);
-  reader.readAsText(file,'Shift_JIS');
-}
-function analyzeCSV(text){
-  const lines=text.split('\n').filter(l=>l.trim()),results=[],members=AM.filter(m=>m.status!=='退会');
-  for(let i=1;i<lines.length;i++){
-    const cols=lines[i].split(',');
-    if(cols[0]!=='2')continue;
-    const nr=(cols[7]||'').trim(),amount=parseInt(cols[8]||0,10),rc=(cols[9]||'').trim();
-    const norm=nk(nr),matched=members.find(m=>nk(m.kouzaName||m.kana||'')===norm);
-    results.push({name:matched?matched.name:nr,csvName:nr,amount,ok:rc==='0',matched:!!matched});
-  }
-  const ok=results.filter(r=>r.matched&&r.ok).length,ng=results.filter(r=>!r.ok).length,unk=results.filter(r=>!r.matched).length;
-  document.getElementById('cr').innerHTML=
-    `<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap"><span class="badge bg">✅ ${ok}件</span><span class="badge br">⚠️ ${ng}件</span><span class="badge bgr">❓ ${unk}件不明</span></div>`+
-    results.map(r=>`<div class="cri ${r.matched?(r.ok?'cok':'cng'):'cun'}"><div><div style="font-weight:700">${r.name}</div><div style="font-size:11px;color:var(--text2)">${r.csvName} ¥${r.amount.toLocaleString()}</div></div><div style="font-size:20px">${r.matched?(r.ok?'✅':'⚠️'):'❓'}</div></div>`).join('');
-}
-function nk(s){
-  if(!s)return'';
-  const z='アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンァィゥェォッャュョーヴガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポ';
-  const h='ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜｦﾝｧｨｩｪｫｯｬｭｮｰｳﾞｶﾞｷﾞｸﾞｹﾞｺﾞｻﾞｼﾞｽﾞｾﾞｿﾞﾀﾞﾁﾞﾂﾞﾃﾞﾄﾞﾊﾞﾋﾞﾌﾞﾍﾞﾎﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟ';
-  let r='';for(let i=0;i<s.length;i++){const idx=z.indexOf(s[i]);r+=idx>=0?h[idx]:s[i];}
-  return r.replace(/[\s　]/g,'');
-}
-async function loadSt(){
-  sh('stl');hd('stb');
-  try{
-    if(!SD){const d=await api({action:'getStats'});if(d.status!=='ok')throw 0;SD=d.data;}
-    renderSt(SD);hd('stl');sh('stb');
-  }catch(e){document.getElementById('stl').innerHTML='<p style="color:#e74c3c">読み込み失敗</p>';}
-}
+async function selG(grade){if(!CM)return;try{await api({action:'updateGrade',id:CM.id,grade});CM.grade=grade;const m=AM.find(m=>m.id===CM.id);if(m)m.grade=grade;document.querySelectorAll('.gbtn').forEach(b=>b.classList.toggle('sel',b.textContent===grade));toast(`グレード「${grade}」に変更`);renderML();}catch(e){toast('エラー',true);}}
+async function upSt(status){if(!CM)return;if(status==='退会'&&!confirm(`${CM.name}さんを退会にしますか？`))return;try{await api({action:'updateStatus',id:CM.id,status});const m=AM.find(m=>m.id===CM.id);if(m)m.status=status;document.getElementById('mst2').textContent=status;toast(`「${status}」に変更`);renderML();}catch(e){toast('エラー',true);}}
+async function importM(){if(!confirm('入会申し込みから新規会員を取り込みますか？'))return;toast('取り込み中...');try{const d=await api({action:'importMembers'});toast(d.message||'取込完了');await loadM();}catch(e){toast('エラー',true);}}
+function renderFL(){const q=(document.getElementById('fs')||{}).value||'';const now=new Date(),mk2=`${now.getFullYear()}年${now.getMonth()+1}月`;const list=AM.filter(m=>m.status!=='退会'&&(!q||m.name.includes(q)));document.getElementById('fl').innerHTML=list.map(m=>{const fs=m[mk2]||'';let badge=fs==='✅'?'<span class="fb fp">✅ 入金済</span>':fs==='⚠️'?'<span class="fb fu">⚠️ 要確認</span>':`<button class="fb fe" onclick="manF('${m.id}')">タップで確認済</button>`;return `<div class="mi act"><div style="display:flex;justify-content:space-between;align-items:center"><div><div class="mname">${m.name}</div><div class="mkana">¥${Number(m.fee||0).toLocaleString()}/月</div></div>${badge}</div></div>`;}).join('')||'<p style="color:var(--text2);padding:20px;text-align:center">データなし</p>';}
+async function manF(id){const m=AM.find(m=>m.id===id);if(!m||!confirm(`${m.name}さんの会費を入金済みにしますか？`))return;try{const now=new Date(),mk2=`${now.getFullYear()}年${now.getMonth()+1}月`;await api({action:'updateFee',id,month:mk2,status:'✅'});m[mk2]='✅';renderFL();toast('入金済みにしました');}catch(e){toast('エラー',true);}}
+function procCSV(input){const file=input.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>analyzeCSV(e.target.result);reader.readAsText(file,'Shift_JIS');}
+function analyzeCSV(text){const lines=text.split('\n').filter(l=>l.trim()),results=[],members=AM.filter(m=>m.status!=='退会');for(let i=1;i<lines.length;i++){const cols=lines[i].split(',');if(cols[0]!=='2')continue;const nr=(cols[7]||'').trim(),amount=parseInt(cols[8]||0,10),rc=(cols[9]||'').trim();const norm=nk(nr),matched=members.find(m=>nk(m.kouzaName||m.kana||'')===norm);results.push({name:matched?matched.name:nr,csvName:nr,amount,ok:rc==='0',matched:!!matched});}const ok=results.filter(r=>r.matched&&r.ok).length,ng=results.filter(r=>!r.ok).length,unk=results.filter(r=>!r.matched).length;document.getElementById('cr').innerHTML=`<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap"><span class="badge bg">✅ ${ok}件</span><span class="badge br">⚠️ ${ng}件</span><span class="badge bgr">❓ ${unk}件不明</span></div>`+results.map(r=>`<div class="cri ${r.matched?(r.ok?'cok':'cng'):'cun'}"><div><div style="font-weight:700">${r.name}</div><div style="font-size:11px;color:var(--text2)">${r.csvName} ¥${r.amount.toLocaleString()}</div></div><div style="font-size:20px">${r.matched?(r.ok?'✅':'⚠️'):'❓'}</div></div>`).join('');}
+function nk(s){if(!s)return'';const z='アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンァィゥェォッャュョーヴガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポ';const h='ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜｦﾝｧｨｩｪｫｯｬｭｮｰｳﾞｶﾞｷﾞｸﾞｹﾞｺﾞｻﾞｼﾞｽﾞｾﾞｿﾞﾀﾞﾁﾞﾂﾞﾃﾞﾄﾞﾊﾞﾋﾞﾌﾞﾍﾞﾎﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟ';let r='';for(let i=0;i<s.length;i++){const idx=z.indexOf(s[i]);r+=idx>=0?h[idx]:s[i];}return r.replace(/[\s　]/g,'');}
+async function loadSt(){sh('stl');hd('stb');try{if(!SD){const d=await api({action:'getStats'});if(d.status!=='ok')throw 0;SD=d.data;}renderSt(SD);hd('stl');sh('stb');}catch(e){document.getElementById('stl').innerHTML='<p style="color:#e74c3c">読み込み失敗</p>';}}
 function renderSt(d){
-  si('stconv',`${d.trial.convRate}%`);si('sttt',d.trial.trialTotal);si('stmt',d.total);
+  // 今月成約率
+  const monthConv=d.trial.trialThisMonth>0?Math.round((d.newThisMonth/d.trial.trialThisMonth)*100):0;
+  si('stconv',`${monthConv}%`);
+  si('sttt',d.trial.trialThisMonth);
+  si('stmt',d.newThisMonth);
   mk('ac','bar',Object.keys(d.ageCounts),Object.values(d.ageCounts),'#DB444C',{noLegend:true});
   mk('tac','bar',Object.keys(d.trial.trialAge),Object.values(d.trial.trialAge),'#5BB9CD',{noLegend:true});
-  mk('sc2','doughnut',Object.keys(d.trial.trialSource),Object.values(d.trial.trialSource),['#DB444C','#5BB9CD','#f39c12','#27ae60','#9b59b6','#e67e22'],{legend:true});
-  const gc=d.gradeCounts||{};
-  mk('grc','bar',Object.keys(gc),Object.values(gc),['#ecf0f1','#eafaf1','#e8f4fd','#fff3e0','#fdecea','#fef9e7'],{noLegend:true,bdc:['#bdc3c7','#27ae60','#2980b9','#e67e22','#e74c3c','#d4a017']});
+  mk('sc2','doughnut',Object.keys(d.trial.trialSource),Object.values(d.trial.trialSource),['#DB444C','#5BB9CD','#27ae60','#f39c12','#9b59b6','#e67e22'],{legend:true});
+  const gc=d.gradeCounts||{};mk('grc','bar',Object.keys(gc),Object.values(gc),['#ecf0f1','#eafaf1','#e8f4fd','#fff3e0','#fdecea','#fef9e7'],{noLegend:true,bdc:['#bdc3c7','#27ae60','#2980b9','#e67e22','#e74c3c','#d4a017']});
 }
-function saveS(){
-  const u=document.getElementById('gu').value.trim();
-  if(!u){toast('URLを入力してください',true);return;}
-  localStorage.setItem('gasUrl',u);toast('保存しました');
-}
-function mk(id,type,labels,data,colors,opts={}){
-  if(CH[id]){CH[id].destroy();delete CH[id];}
-  CH[id]=new Chart(document.getElementById(id),{
-    type,
-    data:{labels,datasets:[{data,backgroundColor:Array.isArray(colors)?colors:colors,borderColor:opts.bdc||undefined,borderWidth:opts.bdc?2:0,borderRadius:type==='bar'?6:0}]},
-    options:{
-      indexAxis:opts.indexAxis||undefined,
-      plugins:{legend:{display:!!opts.legend,position:'bottom',labels:{font:{size:11}}}},
-      responsive:true,maintainAspectRatio:false,
-      cutout:opts.cutout||undefined,
-      scales:type==='bar'?{x:{grid:{display:false}},y:{beginAtZero:true,ticks:{font:{size:10}}}}:undefined,
-    }
-  });
-}
+function saveS(){const u=document.getElementById('gu').value.trim();if(!u){toast('URLを入力してください',true);return;}localStorage.setItem('gasUrl',u);toast('保存しました');}
+function mk(id,type,labels,data,colors,opts={}){if(CH[id]){CH[id].destroy();delete CH[id];}CH[id]=new Chart(document.getElementById(id),{type,data:{labels,datasets:[{data,backgroundColor:Array.isArray(colors)?colors:colors,borderColor:opts.bdc||undefined,borderWidth:opts.bdc?2:0,borderRadius:type==='bar'?6:0}]},options:{indexAxis:opts.indexAxis||undefined,plugins:{legend:{display:!!opts.legend,position:'bottom',labels:{font:{size:11}}}},responsive:true,maintainAspectRatio:false,cutout:opts.cutout||undefined,scales:type==='bar'?{x:{grid:{display:false}},y:{beginAtZero:true,ticks:{font:{size:10}}}}:undefined}});}
 const sh=id=>{document.getElementById(id).style.display='';};
 const hd=id=>{document.getElementById(id).style.display='none';};
 const si=(id,html)=>{document.getElementById(id).innerHTML=html;};
-function toast(msg,err=false){
-  const el=document.getElementById('toast');
-  el.textContent=msg;el.style.background=err?'#e74c3c':'#1a1a2e';
-  el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2500);
-}
+function toast(msg,err=false){const el=document.getElementById('toast');el.textContent=msg;el.style.background=err?'#e74c3c':'#1a1a2e';el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2500);}
 </script>
 </body>
 </html>
