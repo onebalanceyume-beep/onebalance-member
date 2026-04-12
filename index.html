@@ -453,9 +453,11 @@ async function api(params){
   const url = new URL(GAS_URL);
   Object.entries(params).forEach(([k,v])=>url.searchParams.set(k,v));
   try{
-    const r = await fetch(url.toString());
-    return await r.json();
-  }catch(e){return {status:'error'};}
+    const r = await fetch(url.toString(), {redirect:'follow'});
+    const text = await r.text();
+    try{ return JSON.parse(text); }
+    catch(e){ console.error('JSON parse error:', text); return {status:'error'}; }
+  }catch(e){ console.error('fetch error:', e); return {status:'error'}; }
 }
 
 // 初期化
