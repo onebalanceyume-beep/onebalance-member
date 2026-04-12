@@ -534,8 +534,9 @@ function updateHeader(){
 
 function updateProgress(){
   const done = CURRICULUM.filter(c=>PROGRESS[c.id]==='合格').length;
-  const pct = Math.round((done/16)*100);
-  document.getElementById('prog-count').innerHTML = `${done}<span> / 16</span>`;
+  const total = CURRICULUM.length;
+  const pct = Math.round((done/total)*100);
+  document.getElementById('prog-count').innerHTML = `${done}<span> / ${total}</span>`;
   document.getElementById('prog-pct').textContent = pct+'%';
   document.getElementById('prog-fill').style.width = pct+'%';
   const left = 12 - done;
@@ -550,7 +551,6 @@ function getStatus(id){return PROGRESS[id] || '未着手';}
 function ciHtml(item, isNum=false){
   const st = getStatus(item.id);
   const cls = st==='合格'?'done':st==='挑戦中'?'trying':'none';
-  const stTxt = st==='合格'?'✓ 合格済み':st==='挑戦中'?'▶ 挑戦中':'○ 未着手';
   const playColor = st==='合格'?'#27ae60':st==='挑戦中'?'#5BB9CD':'#DB444C';
   return `<div class="ci ${cls}" id="ci-${item.id}">
     <div class="ci-thumb" onclick="openVideo('${item.url}')" style="cursor:pointer;">
@@ -564,9 +564,12 @@ function ciHtml(item, isNum=false){
     <div class="ci-info">
       ${isNum ? `<div class="ci-num">${item.num}</div>` : ''}
       <div class="ci-name">${item.name}</div>
-      <div class="ci-status ${cls}">${stTxt}</div>
+      <div style="display:flex;gap:4px;margin-top:4px;flex-wrap:nowrap;">
+        <button onclick="setStatus('${item.id}','未着手')" style="font-size:9px;padding:3px 7px;border-radius:6px;border:1.5px solid ${st==='未着手'?'#DB444C':'#ddd'};background:${st==='未着手'?'#DB444C':'white'};color:${st==='未着手'?'white':'#aaa'};cursor:pointer;font-family:inherit;font-weight:700;white-space:nowrap;">未着手</button>
+        <button onclick="setStatus('${item.id}','挑戦中')" style="font-size:9px;padding:3px 7px;border-radius:6px;border:1.5px solid ${st==='挑戦中'?'#5BB9CD':'#ddd'};background:${st==='挑戦中'?'#5BB9CD':'white'};color:${st==='挑戦中'?'white':'#aaa'};cursor:pointer;font-family:inherit;font-weight:700;white-space:nowrap;">挑戦中</button>
+        <button onclick="setStatus('${item.id}','合格')" style="font-size:9px;padding:3px 7px;border-radius:6px;border:1.5px solid ${st==='合格'?'#27ae60':'#ddd'};background:${st==='合格'?'#27ae60':'white'};color:${st==='合格'?'white':'#aaa'};cursor:pointer;font-family:inherit;font-weight:700;white-space:nowrap;">合格</button>
+      </div>
     </div>
-    <button class="ci-btn ${cls}" onclick="changeStatus('${item.id}','${item.name}')">${st==='合格'?'合格':st==='挑戦中'?'挑戦中':'未着手'}</button>
   </div>`;
 }
 
@@ -584,12 +587,17 @@ async function changeStatus(id, name){
   if(!MEMBER_ID){ toast('URLを確認してください'); return; }
   const cur = getStatus(id);
   const next = cur==='未着手'?'挑戦中':cur==='挑戦中'?'合格':'未着手';
-  PROGRESS[id] = next;
+  await setStatus(id, next);
+}
+
+async function setStatus(id, status){
+  if(!MEMBER_ID){ toast('URLを確認してください'); return; }
+  PROGRESS[id] = status;
   updateProgress();
-  toast(next + 'に変更しました');
+  toast(status + 'に変更しました');
   try{
-    await api({action:'updateCurriculum', id:MEMBER_ID, item:id, status:next});
-  }catch(e){}
+    await api({action:'updateCurriculum', id:MEMBER_ID, item:id, status:status});
+  }catch(e){ toast('保存に失敗しました'); }
 }
 
 function renderGrades(){
