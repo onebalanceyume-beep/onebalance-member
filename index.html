@@ -357,7 +357,7 @@ body.no-scroll{overflow:hidden;}
 <div class="toast" id="toast"></div>
 
 <script>
-const GAS_URL = localStorage.getItem('gasUrl') || 'https://script.google.com/macros/s/AKfycbzGrHeV7BAiJSrz9XkpuFDZw_rRcPMZDEzynzMZEx5-K5YM4QXhEHg88bsguUpcyvPafQ/exec';
+const GAS_URL = localStorage.getItem('gasUrl') || 'https://script.google.com/macros/s/AKfycbxtuP_XtGRk28uyI2_8NbP6jVtxDrPp4asSkzQYEHvoA2Y1r8as0Gps1cqdhmj47r4Wsg/exec';
 
 // URLから会員IDを取得
 const urlParams = new URLSearchParams(window.location.search);
@@ -452,12 +452,21 @@ function sw(tab, btn, title){
 async function api(params){
   const url = new URL(GAS_URL);
   Object.entries(params).forEach(([k,v])=>url.searchParams.set(k,v));
-  try{
-    const r = await fetch(url.toString(), {redirect:'follow'});
-    const text = await r.text();
-    try{ return JSON.parse(text); }
-    catch(e){ console.error('JSON parse error:', text); return {status:'error'}; }
-  }catch(e){ console.error('fetch error:', e); return {status:'error'}; }
+  return new Promise((resolve)=>{
+    const cb = 'cb_' + Math.random().toString(36).slice(2);
+    window[cb] = (data)=>{
+      delete window[cb];
+      document.getElementById('_jsonp_script')?.remove();
+      resolve(data);
+    };
+    url.searchParams.set('callback', cb);
+    const s = document.createElement('script');
+    s.id = '_jsonp_script';
+    s.src = url.toString();
+    s.onerror = ()=>{ delete window[cb]; resolve({status:'error'}); };
+    document.head.appendChild(s);
+    setTimeout(()=>{ if(window[cb]){ delete window[cb]; resolve({status:'error'}); } }, 10000);
+  });
 }
 
 // 初期化
