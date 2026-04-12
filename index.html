@@ -64,6 +64,8 @@ body.no-scroll{overflow:hidden;}
 .prog-bar-labels .goal{color:var(--green);font-weight:700;}
 .ci-list{display:flex;flex-direction:column;gap:5px;}
 .ci{background:var(--white);border-radius:var(--radius-lg);padding:10px 12px;display:flex;align-items:flex-start;gap:10px;margin-bottom:1px;}
+.ci.watched{border-left:4px solid var(--blue);}
+.ci.unwatched{border-left:4px solid #eee;}
 .ci.done{border-left:4px solid var(--green);}
 .ci.trying{border-left:4px solid var(--blue);}
 .ci.none{border-left:4px solid #eee;}
@@ -73,13 +75,6 @@ body.no-scroll{overflow:hidden;}
 .ci-info{flex:1;min-width:0;}
 .ci-num{font-size:9px;color:var(--text3);margin-bottom:2px;}
 .ci-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px;}
-.ci-status{font-size:8px;margin-top:1px;}
-.ci-status.done{color:var(--green);}
-.ci-status.trying{color:var(--blue);}
-.ci-btn{font-size:9px;padding:4px 10px;border-radius:6px;border:none;cursor:pointer;font-weight:700;flex-shrink:0;font-family:inherit;}
-.ci-btn.done{background:#e8f8f0;color:var(--green);}
-.ci-btn.trying{background:var(--blue-light);color:var(--blue-dark);}
-.ci-btn.locked{background:#f0f0f0;color:var(--text3);}
 .grade-list{display:flex;flex-direction:column;gap:4px;}
 .grade-item{background:var(--white);border-radius:var(--radius);padding:8px 10px;display:flex;align-items:center;gap:8px;}
 .grade-item.current{background:#EBF8FF;border:1.5px solid var(--blue);}
@@ -105,6 +100,9 @@ body.no-scroll{overflow:hidden;}
 .history-date{font-size:10px;color:var(--text2);}
 .history-w{font-size:13px;font-weight:700;color:var(--text);}
 .history-diff{font-size:9px;font-weight:700;}
+.private-note{background:#f0f7ff;border-radius:var(--radius);padding:9px 12px;margin-bottom:10px;display:flex;align-items:center;gap:7px;}
+.private-note-icon{font-size:14px;flex-shrink:0;}
+.private-note-txt{font-size:10px;color:#5577aa;font-weight:600;line-height:1.5;}
 .badge-section{display:flex;flex-direction:column;gap:8px;margin-bottom:10px;}
 .badge-card{background:var(--white);border-radius:var(--radius-lg);padding:12px 14px;display:flex;align-items:center;gap:12px;border:1.5px solid #f0f0f0;}
 .badge-card.earned{border-color:var(--red);background:#fff8f8;}
@@ -225,6 +223,7 @@ body.no-scroll{overflow:hidden;}
   </div>
 </div>
 
+<!-- カリキュラム -->
 <div class="content active" id="tab-curriculum">
   <div class="card progress-card">
     <div class="prog-label">カリキュラム達成状況</div>
@@ -240,12 +239,13 @@ body.no-scroll{overflow:hidden;}
       <span class="goal">75% 合格</span>
     </div>
   </div>
-  <div class="sec-label">基礎・準備</div>
+  <div class="sec-label">基礎・準備（まず見ておこう）</div>
   <div class="ci-list" id="basics-list"></div>
   <div class="sec-label" style="margin-top:10px;">基本カリキュラム</div>
   <div class="ci-list" id="curriculum-list"></div>
 </div>
 
+<!-- グレード -->
 <div class="content" id="tab-grade">
   <div class="card" style="padding:13px;">
     <div class="sec-label" style="margin-bottom:10px;">グレード一覧</div>
@@ -257,7 +257,12 @@ body.no-scroll{overflow:hidden;}
   </div>
 </div>
 
+<!-- 体重 -->
 <div class="content" id="tab-weight">
+  <div class="private-note">
+    <span class="private-note-icon">🔒</span>
+    <span class="private-note-txt">この体重データはあなただけが見ることができます。<br>トレーナーには共有されません。</span>
+  </div>
   <div class="weight-grid">
     <div class="weight-card">
       <div class="weight-label">現在の体重</div>
@@ -279,6 +284,7 @@ body.no-scroll{overflow:hidden;}
   <div class="weight-history" id="weight-history"></div>
 </div>
 
+<!-- 技術ノート -->
 <div class="content" id="tab-tech">
   <div class="sec-label">マイスターバッジ</div>
   <div class="badge-section" id="badge-list-tech"></div>
@@ -286,6 +292,7 @@ body.no-scroll{overflow:hidden;}
   <div class="tech-grid" id="tech-grid"></div>
 </div>
 
+<!-- コミュニティ -->
 <div class="content" id="tab-community">
   <div class="comm-card">
     <div class="comm-icon">
@@ -300,6 +307,7 @@ body.no-scroll{overflow:hidden;}
   </div>
 </div>
 
+<!-- 体重入力モーダル -->
 <div class="modal-overlay" id="weight-modal" onclick="handleModalClick(event)">
   <div class="modal">
     <div class="modal-title">今日の体重を入力</div>
@@ -318,6 +326,7 @@ body.no-scroll{overflow:hidden;}
 const GAS_URL = localStorage.getItem('gasUrl') || 'https://script.google.com/macros/s/AKfycbxtuP_XtGRk28uyI2_8NbP6jVtxDrPp4asSkzQYEHvoA2Y1r8as0Gps1cqdhmj47r4Wsg/exec';
 const urlParams = new URLSearchParams(window.location.search);
 const MEMBER_ID = urlParams.get('id') || '';
+
 const BASICS = [
   {id:'kiso1', name:'基礎①', url:'https://youtu.be/gcrBsDfvkwU', vid:'gcrBsDfvkwU'},
   {id:'kiso2', name:'基礎②', url:'https://youtu.be/ePguwF6JBpE', vid:'ePguwF6JBpE'},
@@ -344,13 +353,13 @@ const CURRICULUM = [
   {id:'rope4', num:'⑯', name:'ロープ Level.4', url:'https://youtu.be/WPROg0dUmsU', vid:'WPROg0dUmsU'},
 ];
 const GRADES = [
-  {name:'ホワイト前', desc:'初期状態', color:'#bdc3c7', bg:'#f8f9fa', locked:false},
-  {name:'ホワイトメダル', desc:'カリキュラム75%以上合格', color:'#95a5a6', bg:'#f0f0f0', locked:false},
-  {name:'グリーンメダル', desc:'守る基礎技術', color:'#27ae60', bg:'#eafaf1', locked:false},
-  {name:'ブルーメダル', desc:'マスボクシングができること', color:'#5BB9CD', bg:'#EBF8FF', locked:false},
-  {name:'オレンジメダル', desc:'当てマスボクシングができること', color:'#e67e22', bg:'#fff3e0', locked:true},
-  {name:'レッドメダル', desc:'スパーリングができること', color:'#e74c3c', bg:'#fdecea', locked:true},
-  {name:'ゴールドメダル', desc:'ボクシングを理解してスパーリング', color:'#f39c12', bg:'#fef9e7', locked:true},
+  {name:'ホワイト前', desc:'初期状態', color:'#bdc3c7', bg:'#f8f9fa'},
+  {name:'ホワイトメダル', desc:'カリキュラム75%以上合格', color:'#95a5a6', bg:'#f0f0f0'},
+  {name:'グリーンメダル', desc:'守る基礎技術', color:'#27ae60', bg:'#eafaf1'},
+  {name:'ブルーメダル', desc:'マスボクシングができること', color:'#5BB9CD', bg:'#EBF8FF'},
+  {name:'オレンジメダル', desc:'当てマスボクシングができること', color:'#e67e22', bg:'#fff3e0'},
+  {name:'レッドメダル', desc:'スパーリングができること', color:'#e74c3c', bg:'#fdecea'},
+  {name:'ゴールドメダル', desc:'ボクシングを理解してスパーリング', color:'#f39c12', bg:'#fef9e7'},
 ];
 const BADGES = [
   {name:'ディフェンスマイスター', desc:'守備力の動画一覧', stars:'⭐', url:'https://www.youtube.com/playlist?list=PL-gAc3kb2RX1DGpbcr2Prh4lUOuhXp5KJ', color:'#DB444C', bg:'#fff0f0'},
@@ -382,10 +391,18 @@ const TECH_CATS = [
   {name:'上手くなりたい人へ', color:'#9b59b6', url:'https://www.youtube.com/playlist?list=PL-gAc3kb2RX0Hi8o4EbN72ctSgA9n907w'},
   {name:'ボケシング', color:'#888', url:'https://www.youtube.com/playlist?list=PL-gAc3kb2RX1eJ9qfI9tGjBxwscDDHxAI'},
 ];
+
+// 基礎動画の視聴状態（localStorageで管理）
+const BASICS_KEY = 'basics_watch';
+function getBasicsWatch(){try{return JSON.parse(localStorage.getItem(BASICS_KEY)||'{}');}catch{return{};}}
+function saveBasicsWatch(obj){localStorage.setItem(BASICS_KEY,JSON.stringify(obj));}
+
 let MEMBER = null;
 let PROGRESS = {};
+
 function tick(){const n=new Date();document.getElementById('clock').textContent=`${n.getHours()}:${String(n.getMinutes()).padStart(2,'0')}`;}
 tick();setInterval(tick,10000);
+
 function sw(tab, btn, title){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.content').forEach(c=>c.classList.remove('active'));
@@ -393,6 +410,7 @@ function sw(tab, btn, title){
   document.getElementById('tab-'+tab).classList.add('active');
   document.getElementById('page-title').textContent = title;
 }
+
 async function api(params){
   const url = new URL(GAS_URL);
   Object.entries(params).forEach(([k,v])=>url.searchParams.set(k,v));
@@ -412,8 +430,10 @@ async function api(params){
     setTimeout(()=>{ if(window[cb]){ delete window[cb]; resolve({status:'error'}); } }, 10000);
   });
 }
+
 window.onload = async () => {
-  renderCurriculum();
+  renderBasics();
+  renderCurriculumItems();
   renderGrades();
   renderBadges();
   renderTech();
@@ -425,6 +445,7 @@ window.onload = async () => {
     document.getElementById('member-grade').textContent = 'URLを確認してください';
   }
 };
+
 async function loadMember(){
   try{
     const d = await api({action:'getMember', id:MEMBER_ID});
@@ -446,6 +467,7 @@ async function loadMember(){
     renderCurriculumItems();
   }
 }
+
 function updateHeader(){
   if(!MEMBER) return;
   document.getElementById('member-name').textContent = (MEMBER.name||'') + ' さん';
@@ -467,6 +489,7 @@ function updateHeader(){
   const badgeEl = document.getElementById('badge-icons');
   if(badgeEl) badgeEl.innerHTML = badgeIcons.join('');
 }
+
 function updateProgress(){
   const done = CURRICULUM.filter(c=>PROGRESS[c.id]==='合格').length;
   const total = CURRICULUM.length;
@@ -480,39 +503,72 @@ function updateProgress(){
     : '🎉 合格ライン達成！';
   renderCurriculumItems();
 }
+
 function getStatus(id){return PROGRESS[id] || '未着手';}
-function ciHtml(item, isNum=false){
-  const st = getStatus(item.id);
-  const cls = st==='合格'?'done':st==='挑戦中'?'trying':'none';
-  const playColor = st==='合格'?'#27ae60':st==='挑戦中'?'#5BB9CD':'#DB444C';
-  return `<div class="ci ${cls}" id="ci-${item.id}">
-    <div class="ci-thumb" onclick="openVideo('${item.url}')" style="cursor:pointer;">
-      <img src="https://img.youtube.com/vi/${item.vid}/default.jpg"
-           onerror="this.style.display='none';this.nextSibling.style.display='flex'"
-           alt="${item.name}">
-      <div style="display:none;align-items:center;justify-content:center;width:100%;height:100%;">
-        <svg class="ci-play" viewBox="0 0 10 10" fill="${playColor}"><polygon points="2,1 9,5 2,9"/></svg>
+
+// 基礎動画：未視聴/視聴済み の2択
+function renderBasics(){
+  const watch = getBasicsWatch();
+  document.getElementById('basics-list').innerHTML = BASICS.map(item=>{
+    const watched = !!watch[item.id];
+    const cls = watched ? 'watched' : 'unwatched';
+    return `<div class="ci ${cls}" id="ci-basic-${item.id}">
+      <div class="ci-thumb" onclick="openVideo('${item.url}')" style="cursor:pointer;">
+        <img src="https://img.youtube.com/vi/${item.vid}/default.jpg"
+             onerror="this.style.display='none';this.nextSibling.style.display='flex'"
+             alt="${item.name}">
+        <div style="display:none;align-items:center;justify-content:center;width:100%;height:100%;">
+          <svg class="ci-play" viewBox="0 0 10 10" fill="${watched?'#5BB9CD':'#DB444C'}"><polygon points="2,1 9,5 2,9"/></svg>
+        </div>
       </div>
-    </div>
-    <div class="ci-info">
-      ${isNum ? `<div class="ci-num">${item.num}</div>` : ''}
-      <div class="ci-name">${item.name}</div>
-      <div style="display:flex;gap:4px;margin-top:4px;flex-wrap:nowrap;">
-        <button onclick="setStatus('${item.id}','未着手')" style="font-size:9px;padding:3px 7px;border-radius:6px;border:1.5px solid ${st==='未着手'?'#DB444C':'#ddd'};background:${st==='未着手'?'#DB444C':'white'};color:${st==='未着手'?'white':'#aaa'};cursor:pointer;font-family:inherit;font-weight:700;white-space:nowrap;">未着手</button>
-        <button onclick="setStatus('${item.id}','挑戦中')" style="font-size:9px;padding:3px 7px;border-radius:6px;border:1.5px solid ${st==='挑戦中'?'#5BB9CD':'#ddd'};background:${st==='挑戦中'?'#5BB9CD':'white'};color:${st==='挑戦中'?'white':'#aaa'};cursor:pointer;font-family:inherit;font-weight:700;white-space:nowrap;">挑戦中</button>
-        <button onclick="setStatus('${item.id}','合格')" style="font-size:9px;padding:3px 7px;border-radius:6px;border:1.5px solid ${st==='合格'?'#27ae60':'#ddd'};background:${st==='合格'?'#27ae60':'white'};color:${st==='合格'?'white':'#aaa'};cursor:pointer;font-family:inherit;font-weight:700;white-space:nowrap;">合格</button>
+      <div class="ci-info">
+        <div class="ci-name">${item.name}</div>
+        <div style="display:flex;gap:6px;margin-top:6px;">
+          <button onclick="setBasicWatch('${item.id}',false)" style="font-size:9px;padding:4px 12px;border-radius:6px;border:1.5px solid ${!watched?'#DB444C':'#ddd'};background:${!watched?'#DB444C':'white'};color:${!watched?'white':'#aaa'};cursor:pointer;font-family:inherit;font-weight:700;">未視聴</button>
+          <button onclick="setBasicWatch('${item.id}',true)" style="font-size:9px;padding:4px 12px;border-radius:6px;border:1.5px solid ${watched?'#5BB9CD':'#ddd'};background:${watched?'#5BB9CD':'white'};color:${watched?'white':'#aaa'};cursor:pointer;font-family:inherit;font-weight:700;">視聴済み ✓</button>
+        </div>
       </div>
-    </div>
-  </div>`;
+    </div>`;
+  }).join('');
 }
-function renderCurriculum(){
-  document.getElementById('basics-list').innerHTML = BASICS.map(b=>ciHtml(b,false)).join('');
-  renderCurriculumItems();
+
+function setBasicWatch(id, watched){
+  const watch = getBasicsWatch();
+  watch[id] = watched;
+  saveBasicsWatch(watch);
+  renderBasics();
+  toast(watched ? '視聴済みにしました ✓' : '未視聴に戻しました');
 }
+
 function renderCurriculumItems(){
-  document.getElementById('curriculum-list').innerHTML = CURRICULUM.map(c=>ciHtml(c,true)).join('');
+  document.getElementById('curriculum-list').innerHTML = CURRICULUM.map(item=>{
+    const st = getStatus(item.id);
+    const cls = st==='合格'?'done':st==='挑戦中'?'trying':'none';
+    const playColor = st==='合格'?'#27ae60':st==='挑戦中'?'#5BB9CD':'#DB444C';
+    return `<div class="ci ${cls}" id="ci-${item.id}">
+      <div class="ci-thumb" onclick="openVideo('${item.url}')" style="cursor:pointer;">
+        <img src="https://img.youtube.com/vi/${item.vid}/default.jpg"
+             onerror="this.style.display='none';this.nextSibling.style.display='flex'"
+             alt="${item.name}">
+        <div style="display:none;align-items:center;justify-content:center;width:100%;height:100%;">
+          <svg class="ci-play" viewBox="0 0 10 10" fill="${playColor}"><polygon points="2,1 9,5 2,9"/></svg>
+        </div>
+      </div>
+      <div class="ci-info">
+        <div class="ci-num">${item.num}</div>
+        <div class="ci-name">${item.name}</div>
+        <div style="display:flex;gap:4px;margin-top:4px;flex-wrap:nowrap;">
+          <button onclick="setStatus('${item.id}','未着手')" style="font-size:9px;padding:3px 7px;border-radius:6px;border:1.5px solid ${st==='未着手'?'#DB444C':'#ddd'};background:${st==='未着手'?'#DB444C':'white'};color:${st==='未着手'?'white':'#aaa'};cursor:pointer;font-family:inherit;font-weight:700;white-space:nowrap;">未着手</button>
+          <button onclick="setStatus('${item.id}','挑戦中')" style="font-size:9px;padding:3px 7px;border-radius:6px;border:1.5px solid ${st==='挑戦中'?'#5BB9CD':'#ddd'};background:${st==='挑戦中'?'#5BB9CD':'white'};color:${st==='挑戦中'?'white':'#aaa'};cursor:pointer;font-family:inherit;font-weight:700;white-space:nowrap;">挑戦中</button>
+          <button onclick="setStatus('${item.id}','合格')" style="font-size:9px;padding:3px 7px;border-radius:6px;border:1.5px solid ${st==='合格'?'#27ae60':'#ddd'};background:${st==='合格'?'#27ae60':'white'};color:${st==='合格'?'white':'#aaa'};cursor:pointer;font-family:inherit;font-weight:700;white-space:nowrap;">合格</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
 }
+
 function openVideo(url){window.open(url,'_blank');}
+
 async function setStatus(id, status){
   if(!MEMBER_ID){ toast('URLを確認してください'); return; }
   PROGRESS[id] = status;
@@ -522,6 +578,7 @@ async function setStatus(id, status){
     await api({action:'updateCurriculum', id:MEMBER_ID, item:id, status:status});
   }catch(e){ toast('保存に失敗しました'); }
 }
+
 function renderGrades(){
   const currentGrade = MEMBER?.grade || 'ホワイト前';
   document.getElementById('grade-list').innerHTML = GRADES.map(g=>{
@@ -530,16 +587,13 @@ function renderGrades(){
     const myIdx = GRADES.findIndex(x=>x.name===g.name);
     const isPassed = curIdx > myIdx;
     const isLocked = myIdx > curIdx;
-    const cls = isCur?'current':isLocked?'locked':isPassed?'passed':'passed';
+    const cls = isCur?'current':isLocked?'locked':'passed';
     return `<div class="grade-item ${cls}">
       <div class="grade-medal" style="background:${g.bg};border:2px solid ${g.color};">
-        ${g.locked
-          ? `<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="2" y="5.5" width="8" height="5.5" rx="1.2" stroke="${g.color}" stroke-width="1"/><path d="M3.5 5.5 V3.5 a2.5 2.5 0 0 1 5 0 v2" stroke="${g.color}" stroke-width="1" fill="none"/></svg>`
-          : `<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="8.5" r="4" fill="${g.bg}" stroke="${g.color}" stroke-width="1.2"/><path d="M4 5 L6.5 3 L9 5" stroke="${g.color}" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 5 L4.2 5 L4.2 8" stroke="${g.color}" stroke-width="0.9" stroke-linecap="round" opacity="0.6"/><path d="M8.5 5 L8.8 5 L8.8 8" stroke="${g.color}" stroke-width="0.9" stroke-linecap="round" opacity="0.6"/></svg>`
-        }
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="8.5" r="4" fill="${g.bg}" stroke="${g.color}" stroke-width="1.2"/><path d="M4 5 L6.5 3 L9 5" stroke="${g.color}" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 5 L4.2 5 L4.2 8" stroke="${g.color}" stroke-width="0.9" stroke-linecap="round" opacity="0.6"/><path d="M8.5 5 L8.8 5 L8.8 8" stroke="${g.color}" stroke-width="0.9" stroke-linecap="round" opacity="0.6"/></svg>
       </div>
       <div class="grade-info">
-        <div class="grade-name" style="color:${g.locked?'#ccc':g.color}">${g.name}</div>
+        <div class="grade-name" style="color:${isLocked?'#ccc':g.color}">${g.name}</div>
         <div class="grade-desc">${g.desc}</div>
       </div>
       <div class="grade-badge" style="color:${isCur?g.color:'#ccc'}">
@@ -549,6 +603,7 @@ function renderGrades(){
   }).join('');
   document.getElementById('badge-list-grade').innerHTML = badgeHtml();
 }
+
 function badgeHtml(){
   const memberBadges = MEMBER?.badges || {};
   const badgeKeys = ['defense','step','counter','basic'];
@@ -569,18 +624,21 @@ function badgeHtml(){
     </div>`;
   }).join('');
 }
+
 function badgeSvg(i, color){
   const svgs = [
     `<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2 L17 6 L17 12 C17 16 10 19.5 10 19.5 C10 19.5 3 16 3 12 L3 6 Z" fill="${color}" opacity="0.12" stroke="${color}" stroke-width="1.2" stroke-linejoin="round"/><path d="M6.5 10 L9 12.5 L13.5 7.5" stroke="${color}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
     `<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><ellipse cx="10" cy="17" rx="6" ry="2" fill="${color}" opacity="0.15"/><path d="M7 16 L7 9 Q7 5.5 10 5.5 Q13 5.5 13 9 L13 16" stroke="${color}" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M5 14 L7 16 L9 14" stroke="${color}" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M11 14 L13 16 L15 14" stroke="${color}" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`,
     `<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 9 C5 5 8 2.5 11 2.5" stroke="${color}" stroke-width="1.4" stroke-linecap="round"/><path d="M5 9 L5 12 L8 12" stroke="${color}" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 13.5 L12 10.5 L15 13.5" stroke="${color}" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="10.5" x2="12" y2="18" stroke="${color}" stroke-width="1.4" stroke-linecap="round"/></svg>`,
-    `<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><polygon points="11,2 13.5,8.5 20,8.5 15,12.5 17,19 11,15.5 5,19 7,12.5 2,8.5 8.5,8.5" fill="${color}" opacity="0.15" stroke="${color}" stroke-width="1.2" stroke-linejoin="round"/><polygon points="11,4 13,9.5 19,9.5 14.5,13 16,18 11,15 6,18 7.5,13 3,9.5 9,9.5" stroke="${color}" stroke-width="1" fill="none" stroke-linejoin="round"/></svg>`,
+    `<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><polygon points="11,2 13.5,8.5 20,8.5 15,12.5 17,19 11,15.5 5,19 7,12.5 2,8.5 8.5,8.5" fill="${color}" opacity="0.15" stroke="${color}" stroke-width="1.2" stroke-linejoin="round"/></svg>`,
   ];
   return svgs[i];
 }
+
 function renderBadges(){
   document.getElementById('badge-list-tech').innerHTML = badgeHtml();
 }
+
 function renderTech(){
   document.getElementById('tech-grid').innerHTML = TECH_CATS.map(t=>`
     <div class="tech-item" onclick="window.open('${t.url}','_blank')">
@@ -589,9 +647,11 @@ function renderTech(){
     </div>
   `).join('');
 }
+
 const WEIGHT_KEY = 'weight_log';
 function getWeightLog(){try{return JSON.parse(localStorage.getItem(WEIGHT_KEY)||'[]');}catch{return[];}}
 function saveWeightLog(log){localStorage.setItem(WEIGHT_KEY,JSON.stringify(log));}
+
 function renderWeightPage(){
   const log = getWeightLog();
   const goalWeight = parseFloat(localStorage.getItem('goalWeight')||'0');
@@ -609,6 +669,7 @@ function renderWeightPage(){
   renderWeightChart(log, goalWeight);
   renderWeightHistory(log);
 }
+
 function renderWeightChart(log, goal){
   const svg = document.getElementById('weight-chart');
   if(log.length < 2){svg.innerHTML='<text x="50%" y="50%" text-anchor="middle" font-size="9" fill="#bbb" font-family="sans-serif">データが2件以上になるとグラフが表示されます</text>';return;}
@@ -633,6 +694,7 @@ function renderWeightChart(log, goal){
   log.forEach((l,i)=>{if(i%step===0||i===log.length-1){html+=`<text x="${px(i)}" y="${H-4}" font-size="5.5" fill="#bbb" font-family="sans-serif" text-anchor="middle">${l.date.slice(5)}</text>`;}});
   svg.innerHTML=html;
 }
+
 function renderWeightHistory(log){
   if(log.length===0){document.getElementById('weight-history').innerHTML='<div style="padding:16px;text-align:center;font-size:11px;color:#bbb;">まだ記録がありません</div>';return;}
   const rev = [...log].reverse().slice(0,10);
@@ -643,6 +705,7 @@ function renderWeightHistory(log){
     return `<div class="history-row"><span class="history-date">${l.date}</span><div style="display:flex;align-items:center;gap:8px;">${diffHtml}<span class="history-w">${l.w}kg</span></div></div>`;
   }).join('');
 }
+
 function openWeightModal(){
   document.getElementById('weight-modal').classList.add('open');
   document.getElementById('weight-input').focus();
