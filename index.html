@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' https://script.google.com https://cdnjs.cloudflare.com;">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="マイページ">
@@ -80,21 +79,20 @@ body.no-scroll{overflow:hidden;}
 
 /* カリキュラムリスト */
 .ci-list{display:flex;flex-direction:column;gap:5px;}
-.ci{background:var(--white);border-radius:var(--radius);padding:8px 10px;display:flex;align-items:center;gap:8px;border-left:3px solid var(--text3);}
-.ci.done{border-left-color:var(--green);}
-.ci.trying{border-left-color:var(--blue);}
-.ci.locked{opacity:0.4;}
-.ci-thumb{width:44px;height:32px;border-radius:6px;flex-shrink:0;overflow:hidden;background:#f0eded;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.ci{background:var(--white);border-radius:var(--radius-lg);padding:10px 12px;display:flex;align-items:flex-start;gap:10px;margin-bottom:1px;}
+.ci.done{border-left:4px solid var(--green);}
+.ci.trying{border-left:4px solid var(--blue);}
+.ci.none{border-left:4px solid #eee;}
+.ci-thumb{width:80px;height:58px;border-radius:8px;flex-shrink:0;overflow:hidden;background:#f0eded;display:flex;align-items:center;justify-content:center;cursor:pointer;}
 .ci-thumb img{width:100%;height:100%;object-fit:cover;}
-.ci-play{width:10px;height:10px;}
+.ci-play{width:16px;height:16px;}
 .ci-info{flex:1;min-width:0;}
-.ci-num{font-size:8px;color:var(--text3);}
-.ci-name{font-size:10.5px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ci-num{font-size:9px;color:var(--text3);margin-bottom:2px;}
+.ci-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px;}
 .ci-status{font-size:8px;margin-top:1px;}
 .ci-status.done{color:var(--green);}
 .ci-status.trying{color:var(--blue);}
-.ci-status.locked{color:var(--text3);}
-.ci-btn{font-size:8px;padding:3px 9px;border-radius:6px;border:none;cursor:pointer;font-weight:700;flex-shrink:0;font-family:inherit;}
+.ci-btn{font-size:9px;padding:4px 10px;border-radius:6px;border:none;cursor:pointer;font-weight:700;flex-shrink:0;font-family:inherit;}
 .ci-btn.done{background:#e8f8f0;color:var(--green);}
 .ci-btn.trying{background:var(--blue-light);color:var(--blue-dark);}
 .ci-btn.locked{background:#f0f0f0;color:var(--text3);}
