@@ -83,7 +83,7 @@ body.no-scroll{overflow:hidden;}
 .ci.done{border-left:4px solid var(--green);}
 .ci.trying{border-left:4px solid var(--blue);}
 .ci.none{border-left:4px solid #eee;}
-.ci-thumb{width:80px;height:58px;border-radius:8px;flex-shrink:0;overflow:hidden;background:#f0eded;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.ci-thumb{width:120px;height:90px;border-radius:8px;flex-shrink:0;overflow:hidden;background:#f0eded;display:flex;align-items:center;justify-content:center;cursor:pointer;}
 .ci-thumb img{width:100%;height:100%;object-fit:cover;}
 .ci-play{width:16px;height:16px;}
 .ci-info{flex:1;min-width:0;}
@@ -127,18 +127,18 @@ body.no-scroll{overflow:hidden;}
 .history-diff{font-size:9px;font-weight:700;}
 
 /* 技術ノート */
-.badge-section{display:flex;flex-direction:column;gap:5px;margin-bottom:10px;}
-.badge-card{background:var(--white);border-radius:var(--radius);padding:9px 11px;display:flex;align-items:center;gap:9px;}
-.badge-card.earned{border-left:3px solid var(--red);}
-.badge-card.locked-badge{opacity:0.38;}
+.badge-section{display:flex;flex-direction:column;gap:8px;margin-bottom:10px;}
+.badge-card{background:var(--white);border-radius:var(--radius-lg);padding:12px 14px;display:flex;align-items:center;gap:12px;border:1.5px solid #f0f0f0;}
+.badge-card.earned{border-color:var(--red);background:#fff8f8;}
+.badge-card.locked-badge{opacity:0.55;background:#fafafa;}
 .badge-icon{width:36px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.badge-name{font-size:10.5px;font-weight:700;color:var(--text);}
-.badge-desc{font-size:7.5px;color:var(--text3);margin-top:1px;}
+.badge-name{font-size:13px;font-weight:700;color:var(--text);}
+.badge-desc{font-size:11px;color:var(--text2);margin-top:3px;}
 .badge-chevron{flex-shrink:0;opacity:0.3;}
 .tech-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;}
 .tech-item{background:var(--white);border-radius:8px;padding:8px 9px;display:flex;align-items:center;gap:5px;cursor:pointer;}
 .tech-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
-.tech-name{font-size:9.5px;font-weight:700;}
+.tech-name{font-size:12px;font-weight:700;}
 
 /* モーダル（体重入力） */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end;justify-content:center;}
@@ -633,14 +633,17 @@ function badgeHtml(){
   return BADGES.map((b,i)=>{
     const earned = memberBadges[badgeKeys[i]];
     return `<div class="badge-card ${earned?'earned':'locked-badge'}" onclick="window.open('${b.url}','_blank')" style="cursor:pointer;">
-      <div class="badge-icon" style="background:${b.bg};">
+      <div class="badge-icon" style="background:${b.bg};width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
         ${badgeSvg(i, b.color)}
       </div>
       <div style="flex:1;">
-        <div class="badge-name">${b.name}</div>
-        <div class="badge-desc">${b.desc} ${b.stars}</div>
+        <div class="badge-name" style="color:${earned?b.color:'#aaa'};">${b.name} ${b.stars}</div>
+        <div class="badge-desc">${b.desc}</div>
+        <div style="font-size:10px;color:${earned?'#27ae60':'#bbb'};margin-top:4px;font-weight:700;">
+          ${earned?'✓ 取得済み':'🔒 トレーナーから付与されます'}
+        </div>
       </div>
-      <svg class="badge-chevron" width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M2.5 1.5 L5.5 4 L2.5 6.5" stroke="#999" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <svg class="badge-chevron" width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M3 2 L7 5 L3 8" stroke="#ccc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </div>`;
   }).join('');
 }
