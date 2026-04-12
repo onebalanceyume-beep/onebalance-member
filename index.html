@@ -200,6 +200,7 @@ body.no-scroll{overflow:hidden;}
         <div class="p-dot"></div>
         <span class="p-grade-txt" id="member-grade">-</span>
         <span class="p-stars" id="member-stars"></span>
+        <span id="badge-icons" style="display:flex;gap:2px;align-items:center;"></span>
       </div>
     </div>
     <div class="profile-right">
@@ -309,6 +310,7 @@ body.no-scroll{overflow:hidden;}
       <div class="weight-label">目標体重</div>
       <div class="weight-num" style="color:var(--blue);" id="goal-weight">-<span>kg</span></div>
       <div class="weight-sub" style="color:var(--red);" id="weight-diff">-</div>
+      <button onclick="openGoalModal()" style="margin-top:6px;font-size:9px;padding:3px 10px;border-radius:6px;background:var(--blue);color:white;border:none;cursor:pointer;font-family:inherit;font-weight:700;">目標を設定</button>
     </div>
   </div>
   <div class="weight-chart-card">
@@ -520,6 +522,14 @@ function updateHeader(){
   if(badges.basic){stars+='🌟🌟';count+=2;}
   document.getElementById('member-stars').textContent = stars;
   document.getElementById('star-count').textContent = count > 0 ? stars : '―';
+  // バッジアイコンを表示
+  const badgeIcons = [];
+  if(badges.defense) badgeIcons.push('<span title="ディフェンスマイスター" style="font-size:14px;">🛡️</span>');
+  if(badges.step)    badgeIcons.push('<span title="ステップマイスター" style="font-size:14px;">👟</span>');
+  if(badges.counter) badgeIcons.push('<span title="カウンターマイスター" style="font-size:14px;">⚡</span>');
+  if(badges.basic)   badgeIcons.push('<span title="ベーシックマイスター" style="font-size:14px;">👑</span>');
+  const badgeEl = document.getElementById('badge-icons');
+  if(badgeEl) badgeEl.innerHTML = badgeIcons.join('');
 }
 
 function updateProgress(){
@@ -539,16 +549,16 @@ function getStatus(id){return PROGRESS[id] || '未着手';}
 
 function ciHtml(item, isNum=false){
   const st = getStatus(item.id);
-  const cls = st==='合格'?'done':st==='挑戦中'?'trying':'locked';
-  const stTxt = st==='合格'?'✓ 合格済み':st==='挑戦中'?'▶ 挑戦中':'🔒 未着手';
-  const numHtml = isNum ? `<div class="ci-num">${item.num} ${item.name}</div>` : `<div class="ci-num">${item.name}</div>`;
+  const cls = st==='合格'?'done':st==='挑戦中'?'trying':'none';
+  const stTxt = st==='合格'?'✓ 合格済み':st==='挑戦中'?'▶ 挑戦中':'○ 未着手';
+  const playColor = st==='合格'?'#27ae60':st==='挑戦中'?'#5BB9CD':'#DB444C';
   return `<div class="ci ${cls}" id="ci-${item.id}">
-    <div class="ci-thumb" onclick="openVideo('${item.url}')">
+    <div class="ci-thumb" onclick="openVideo('${item.url}')" style="cursor:pointer;">
       <img src="https://img.youtube.com/vi/${item.vid}/default.jpg" 
            onerror="this.style.display='none';this.nextSibling.style.display='flex'"
            alt="${item.name}">
       <div style="display:none;align-items:center;justify-content:center;width:100%;height:100%;">
-        <svg class="ci-play" viewBox="0 0 10 10" fill="${cls==='done'?'#27ae60':cls==='trying'?'#5BB9CD':'#ccc'}"><polygon points="2,1 9,5 2,9"/></svg>
+        <svg class="ci-play" viewBox="0 0 10 10" fill="${playColor}"><polygon points="2,1 9,5 2,9"/></svg>
       </div>
     </div>
     <div class="ci-info">
@@ -556,7 +566,7 @@ function ciHtml(item, isNum=false){
       <div class="ci-name">${item.name}</div>
       <div class="ci-status ${cls}">${stTxt}</div>
     </div>
-    <button class="ci-btn ${cls}" onclick="requestStatus('${item.id}','${item.name}')">${st==='合格'?'合格':st==='挑戦中'?'挑戦中':'未着手'}</button>
+    <button class="ci-btn ${cls}" onclick="changeStatus('${item.id}','${item.name}')">${st==='合格'?'合格':st==='挑戦中'?'挑戦中':'未着手'}</button>
   </div>`;
 }
 
@@ -570,17 +580,27 @@ function renderCurriculumItems(){
 
 function openVideo(url){window.open(url,'_blank');}
 
-function requestStatus(id, name){
-  // トレーナーに確認してもらうためのメッセージ表示
-  toast(`「${name}」の状態変更はトレーナーに確認してください`);
+async function changeStatus(id, name){
+  if(!MEMBER_ID){ toast('URLを確認してください'); return; }
+  const cur = getStatus(id);
+  const next = cur==='未着手'?'挑戦中':cur==='挑戦中'?'合格':'未着手';
+  PROGRESS[id] = next;
+  updateProgress();
+  toast(next + 'に変更しました');
+  try{
+    await api({action:'updateCurriculum', id:MEMBER_ID, item:id, status:next});
+  }catch(e){}
 }
 
 function renderGrades(){
-  const currentGrade = MEMBER?.grade || 'ブルーメダル';
+  const currentGrade = MEMBER?.grade || 'ホワイト前';
   document.getElementById('grade-list').innerHTML = GRADES.map(g=>{
     const isCur = g.name === currentGrade;
-    const isPassed = GRADES.findIndex(x=>x.name===currentGrade) > GRADES.findIndex(x=>x.name===g.name);
-    const cls = isCur?'current':g.locked?'locked':'passed';
+    const curIdx = GRADES.findIndex(x=>x.name===currentGrade);
+    const myIdx = GRADES.findIndex(x=>x.name===g.name);
+    const isPassed = curIdx > myIdx;
+    const isLocked = myIdx > curIdx;
+    const cls = isCur?'current':isLocked?'locked':isPassed?'passed':'passed';
     return `<div class="grade-item ${cls}">
       <div class="grade-medal" style="background:${g.bg};border:2px solid ${g.color};">
         ${g.locked
@@ -593,7 +613,7 @@ function renderGrades(){
         <div class="grade-desc">${g.desc}</div>
       </div>
       <div class="grade-badge" style="color:${isCur?g.color:'#ccc'}">
-        ${isCur?'← 現在':isPassed?'✓ 習得':g.locked?'🔒':''}
+        ${isCur?'← 現在':isPassed?'✓ 習得':isLocked?'🔒':''}
       </div>
     </div>`;
   }).join('');
@@ -714,6 +734,16 @@ function openWeightModal(){
   document.getElementById('weight-modal').classList.add('open');
   document.getElementById('weight-input').focus();
   document.body.classList.add('no-scroll');
+}
+
+function openGoalModal(){
+  const cur = localStorage.getItem('goalWeight') || '';
+  const v = prompt('目標体重を入力してください（kg）', cur);
+  if(v && !isNaN(parseFloat(v))){
+    localStorage.setItem('goalWeight', parseFloat(v));
+    renderWeightPage();
+    toast(`目標体重を${parseFloat(v)}kgに設定しました`);
+  }
 }
 function closeWeightModal(){
   document.getElementById('weight-modal').classList.remove('open');
