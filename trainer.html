@@ -114,7 +114,6 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 .fp{background:#eafaf1;color:#27ae60;}
 .fu{background:#fef9e7;color:#e67e22;}
 .fe{background:var(--red-light);color:var(--red);}
-/* カリキュラム進捗 */
 .cur-list{display:flex;flex-direction:column;gap:6px;}
 .cur-item{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:8px;background:#f8f9fa;font-size:12px;}
 .cur-item.done{background:#eafaf1;}
@@ -124,10 +123,13 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 .cs-done{background:#27ae60;color:white;}
 .cs-try{background:var(--blue);color:white;}
 .cs-none{background:#e0e0e0;color:#888;}
-/* バッジ付与 */
 .badge-award{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .ba-btn{padding:10px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;border:2px solid transparent;font-family:inherit;text-align:center;transition:all .15s;}
 .ba-btn.awarded{border-color:var(--red);background:var(--red-light);}
+.course-select-wrap{margin-bottom:8px;}
+.course-select-wrap select{width:100%;padding:10px 12px;border:2px solid var(--gray2);border-radius:8px;font-size:13px;outline:none;font-family:inherit;background:white;}
+.course-select-wrap select:focus{border-color:var(--blue);}
+.course-fee-preview{font-size:12px;color:var(--blue-dark);font-weight:700;margin-bottom:8px;min-height:18px;}
 @media(min-width:600px){.sgrid{grid-template-columns:repeat(4,1fr);}.ggrid{grid-template-columns:repeat(4,1fr);}.badge-award{grid-template-columns:repeat(4,1fr);}}
 </style>
 </head>
@@ -188,10 +190,10 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
       <option value="">全員</option>
       <option value="在籍">在籍</option>
       <option value="休会">休会</option>
+      <option value="退会予定">退会予定</option>
       <option value="退会">退会</option>
     </select>
   </div>
-  <!-- グレード別フィルター -->
   <div class="grade-filter" id="grade-filter"></div>
   <div id="ml2" class="loading" style="display:none"><div class="spin"></div>読み込み中...</div>
   <div id="ml" class="mlist"></div>
@@ -245,7 +247,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
     <div class="card-title">アプリ情報</div>
     <div style="font-size:13px;color:var(--text2);line-height:2.2">
       <div>アプリ名：one-BALANCE トレーナー管理</div>
-      <div>バージョン：1.3.0</div>
+      <div>バージョン：1.4.0</div>
       <div>赤 #DB444C / 青 #5BB9CD</div>
     </div>
   </div>
@@ -269,6 +271,16 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
       <div class="ir"><span class="il">会員URL</span><a id="mu" href="#" target="_blank" style="font-size:11px;color:var(--blue);word-break:break-all">-</a></div>
     </div>
     <div class="ms">
+      <div class="mst">コース変更</div>
+      <div class="course-select-wrap">
+        <select id="course-select" onchange="previewCourse(this.value)">
+          <option value="">コースを選択してください</option>
+        </select>
+      </div>
+      <div class="course-fee-preview" id="course-fee-preview"></div>
+      <button class="btn btn-blue btn-sm" onclick="changeCourse()">💾 コースを変更する</button>
+    </div>
+    <div class="ms">
       <div class="mst">グレード変更</div>
       <div class="ggrid" id="gg"></div>
     </div>
@@ -285,6 +297,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
       <div class="btn-row">
         <button class="btn btn-green btn-sm" onclick="upSt('在籍')">✅ 在籍</button>
         <button class="btn btn-blue btn-sm" onclick="upSt('休会')">⏸ 休会</button>
+        <button class="btn btn-gray btn-sm" onclick="setYotei()">📅 退会予定</button>
         <button class="btn btn-out btn-sm" onclick="upSt('退会')">❌ 退会</button>
       </div>
     </div>
@@ -294,21 +307,39 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 
 <script>
 const DGAS='https://script.google.com/macros/s/AKfycbzGrHeV7BAiJSrz9XkpuFDZw_rRcPMZDEzynzMZEx5-K5YM4QXhEHg88bsguUpcyvPafQ/exec';
+
 const GR=[
-  {n:'ホワイト前', b:'#f5f5f5', c:'#666'},
-  {n:'ホワイト',   b:'#ecf0f1', c:'#7f8c8d'},
-  {n:'グリーン',   b:'#eafaf1', c:'#27ae60'},
-  {n:'ブルー',     b:'#e8f4fd', c:'#2980b9'},
-  {n:'オレンジ',   b:'#fff3e0', c:'#e67e22'},
-  {n:'レッド',     b:'#fdecea', c:'#e74c3c'},
-  {n:'ゴールド',   b:'#fef9e7', c:'#d4a017'}
+  {n:'ホワイト前', b:'#f5f5f5', c:'#666',    d:'入会直後の初期状態'},
+  {n:'ホワイト',   b:'#ecf0f1', c:'#7f8c8d', d:'基本カリキュラム75%以上合格'},
+  {n:'グリーン',   b:'#eafaf1', c:'#27ae60', d:'守る基礎技術ができる'},
+  {n:'ブルー',     b:'#e8f4fd', c:'#2980b9', d:'マスボクシングができる'},
+  {n:'オレンジ',   b:'#fff3e0', c:'#e67e22', d:'当てマスボクシングができる'},
+  {n:'レッド',     b:'#fdecea', c:'#e74c3c', d:'スパーリングができる'},
+  {n:'ゴールド',   b:'#fef9e7', c:'#d4a017', d:'ボクシングを理解してスパーリング'}
 ];
+
+const COURSES=[
+  {n:'いつでもスパーリングボクシング（男性）', f:7810},
+  {n:'いつでもライトボクシング（男性）',       f:7260},
+  {n:'いつでもキックエクササイズ（男性）',     f:7260},
+  {n:'いつでもライトボクシング（女性）',       f:6380},
+  {n:'いつでもキックエクササイズ（女性）',     f:6380},
+  {n:'週１スパーリングボクシング',             f:4950},
+  {n:'週１ライトボクシング',                   f:4620},
+  {n:'週１キックエクササイズ',                 f:4620},
+  {n:'週１ライト',                             f:3850},
+  {n:'いつでもライト（男性）',                 f:6380},
+  {n:'いつでもスパーリングボクシング（女性）', f:6930},
+  {n:'いつでもライト（女性）',                 f:5500},
+];
+
 const BADGES_DEF=[
   {key:'defense', name:'ディフェンスマイスター', stars:'⭐', color:'#DB444C', bg:'#fff0f0'},
   {key:'step',    name:'ステップマイスター',     stars:'⭐', color:'#5BB9CD', bg:'#e8f7fa'},
   {key:'counter', name:'カウンターマイスター',   stars:'⭐', color:'#E8621A', bg:'#fff3ec'},
   {key:'basic',   name:'ベーシックマイスター',   stars:'🌟🌟', color:'#F39C12', bg:'#fffbf0'},
 ];
+
 const CURRICULUM_ITEMS=[
   {id:'kiso1',name:'基礎①'},{id:'kiso2',name:'基礎②'},{id:'kiso3',name:'基礎③'},
   {id:'bandage_l',name:'バンテージ（左）'},{id:'bandage_r',name:'バンテージ（右）'},
@@ -330,6 +361,7 @@ window.onload=()=>{
   tick();setInterval(tick,1e3);
   document.getElementById('gu').value=gurl();
   renderGradeFilter();
+  initCourseSelect();
   loadD();
 };
 
@@ -376,19 +408,14 @@ function renderD(d){
   si('s4',`${monthConv}<span>%</span>`);
   si('sm',`${d.male}人`);
   si('sf',`${d.female}人`);
-  // 男性→青、女性→赤
   mk('gc','doughnut',['男性','女性'],[d.male,d.female],['#5BB9CD','#DB444C'],{cutout:'70%'});
-  // 年代別グラフ（ダッシュボード）
   const ageLabelsDash=['10代','20代','30代','40代','50代','60代以上'];
-  const ageKeysDash=['10代','20代','30代','40代','50代','60代以上'];
-  const ageDataDash=ageKeysDash.map(k=>d.ageCounts?.[k]||0);
+  const ageDataDash=ageLabelsDash.map(k=>d.ageCounts?.[k]||0);
   mk('agec','bar',ageLabelsDash,ageDataDash,['#5BB9CD','#DB444C','#27ae60','#F39C12','#E8621A','#9b59b6'],{noLegend:true,multiColor:true});
-  // コース別
   const cl=Object.keys(d.courseCounts).map(k=>k.replace('いつでも','').replace('週１','週1 '));
   mk('cc','bar',cl,Object.values(d.courseCounts),'#DB444C',{indexAxis:'y',noLegend:true});
 }
 
-// グレード別フィルターボタン描画
 function renderGradeFilter(){
   const container=document.getElementById('grade-filter');
   const allBtn=`<button class="gf-btn active" style="background:#f0f0f0;color:#555;" onclick="setGF('',this)">全グレード</button>`;
@@ -400,8 +427,38 @@ function setGF(grade,btn){
   GF=grade;
   document.querySelectorAll('.gf-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  CP=1;
-  filterM();
+  CP=1;filterM();
+}
+
+function initCourseSelect(){
+  const sel=document.getElementById('course-select');
+  sel.innerHTML='<option value="">コースを選択してください</option>'+
+    COURSES.map(c=>`<option value="${c.n}">${c.n}　¥${c.f.toLocaleString()}</option>`).join('');
+}
+
+function previewCourse(name){
+  const c=COURSES.find(c=>c.n===name);
+  document.getElementById('course-fee-preview').textContent=c?`変更後：¥${c.f.toLocaleString()}/月`:'';
+}
+
+async function changeCourse(){
+  if(!CM)return;
+  const name=document.getElementById('course-select').value;
+  if(!name){toast('コースを選択してください',true);return;}
+  const c=COURSES.find(c=>c.n===name);
+  if(!c)return;
+  if(!confirm(`${CM.name}さんのコースを\n「${c.n}」\n¥${c.f.toLocaleString()}/月\nに変更しますか？`))return;
+  try{
+    await api({action:'updateCourse',id:CM.id,course:c.n,fee:c.f});
+    CM.course=c.n;CM.fee=c.f;
+    const m=AM.find(m=>m.id===CM.id);
+    if(m){m.course=c.n;m.fee=c.f;}
+    document.getElementById('mco').textContent=c.n;
+    document.getElementById('mfee').textContent=`¥${c.f.toLocaleString()}`;
+    document.getElementById('course-fee-preview').textContent=`✅ 変更済：¥${c.f.toLocaleString()}/月`;
+    toast(`コースを「${c.n}」に変更しました`);
+    renderML();
+  }catch(e){toast('エラー',true);}
 }
 
 async function loadM(){
@@ -432,13 +489,16 @@ function filterM(){
 
 function renderML(){
   const st=(CP-1)*PG,pg=FM.slice(st,st+PG);
-  // グレード別の場合は件数を表示
-  const gfLabel=GF?`「${GF}」${FM.length}人`:'';
-  if(gfLabel)document.getElementById('mc').textContent=gfLabel;
+  if(GF){
+    document.getElementById('mc').textContent=`「${GF}」${FM.length}人`;
+  } else {
+    document.getElementById('mc').textContent=`${AM.filter(m=>m.status==='在籍').length}人在籍`;
+  }
   document.getElementById('ml').innerHTML=pg.map(m=>{
     const sc=m.status==='在籍'?'act':m.status==='休会'?'vac':'res';
-    const sb=`<span class="badge ${m.status==='在籍'?'bg':m.status==='休会'?'bb':'bgr'}">${m.status}</span>`;
-    const cb=m.course?`<span class="badge br">${m.course.substring(0,14)}</span>`:'';
+    const stColor=m.status==='在籍'?'bg':m.status==='休会'?'bb':m.status==='退会予定'?'bo':'bgr';
+    const sb=`<span class="badge ${stColor}">${m.status}</span>`;
+    const cb=m.course?`<span class="badge br">${m.course.substring(0,16)}</span>`:'';
     const gb=m.grade?`<span class="badge bo">${m.grade}</span>`:'';
     return `<div class="mi ${sc}" onclick="opM('${m.id}')">
       <div style="display:flex;justify-content:space-between;align-items:flex-start">
@@ -465,11 +525,18 @@ function opM(id){
   document.getElementById('mco').textContent=m.course||'-';
   document.getElementById('mfee').textContent=m.fee?`¥${Number(m.fee).toLocaleString()}`:'-';
   document.getElementById('mj').textContent=m.joinDate||'-';
-  document.getElementById('mst2').textContent=m.status||'-';
+  document.getElementById('mst2').textContent=m.status||(m['退会予定日']?`退会予定（${m['退会予定日']}）`:'');
   const ua=document.getElementById('mu');
   ua.href=m.url||'#';ua.textContent=m.url||'-';
+  // コース選択をリセット
+  document.getElementById('course-select').value='';
+  document.getElementById('course-fee-preview').textContent=`現在：¥${Number(m.fee||0).toLocaleString()}/月`;
   // グレードボタン
-  document.getElementById('gg').innerHTML=GR.map(g=>`<button class="gbtn ${m.grade===g.n?'sel':''}" style="background:${g.b};color:${g.c}" onclick="selG('${g.n}')">${g.n}</button>`).join('');
+  document.getElementById('gg').innerHTML=GR.map(g=>`
+    <button class="gbtn ${m.grade===g.n?'sel':''}" style="background:${g.b};color:${g.c}" onclick="selG('${g.n}')">
+      <div style="font-weight:700;">${g.n}</div>
+      <div style="font-size:9px;font-weight:500;margin-top:3px;opacity:0.85;line-height:1.3;">${g.d}</div>
+    </button>`).join('');
   // バッジ付与ボタン
   const badges=m.badges||{};
   document.getElementById('badge-award').innerHTML=BADGES_DEF.map(b=>{
@@ -503,9 +570,11 @@ async function selG(grade){
     CM.grade=grade;
     const m=AM.find(m=>m.id===CM.id);
     if(m)m.grade=grade;
-    document.querySelectorAll('.gbtn').forEach(b=>b.classList.toggle('sel',b.textContent===grade));
-    toast(`グレード「${grade}」に変更`);
-    renderML();
+    document.querySelectorAll('.gbtn').forEach(b=>{
+      const isThis=b.querySelector('div')?.textContent===grade;
+      b.classList.toggle('sel',isThis);
+    });
+    toast(`グレード「${grade}」に変更`);renderML();
   }catch(e){toast('エラー',true);}
 }
 
@@ -518,11 +587,9 @@ async function toggleBadge(key,name){
   if(!next&&!confirm(`${CM.name}さんの「${name}」を取り消しますか？`))return;
   try{
     await api({action:'updateBadge',id:CM.id,badge:key,value:next?'TRUE':'FALSE'});
-    badges[key]=next;
-    CM.badges=badges;
+    badges[key]=next;CM.badges=badges;
     const m=AM.find(m=>m.id===CM.id);
     if(m)m.badges=badges;
-    // ボタン再描画
     document.getElementById('badge-award').innerHTML=BADGES_DEF.map(b=>{
       const awarded=!!badges[b.key];
       return `<button class="ba-btn ${awarded?'awarded':''}" style="background:${b.bg};color:${b.color};" onclick="toggleBadge('${b.key}','${b.name}')">
@@ -531,6 +598,21 @@ async function toggleBadge(key,name){
       </button>`;
     }).join('');
     toast(next?`「${name}」を付与しました`:`「${name}」を取り消しました`);
+  }catch(e){toast('エラー',true);}
+}
+
+async function setYotei(){
+  if(!CM)return;
+  const d=prompt(`${CM.name}さんの退会予定日を入力\n例：2026/05/31`);
+  if(!d)return;
+  if(!confirm(`退会予定日を「${d}」に設定しますか？`))return;
+  try{
+    await api({action:'updateStatus',id:CM.id,status:'退会予定',退会予定日:d});
+    const m=AM.find(m=>m.id===CM.id);
+    if(m){m.status='退会予定';m['退会予定日']=d;}
+    document.getElementById('mst2').textContent=`退会予定（${d}）`;
+    toast(`退会予定日を${d}に設定しました`);
+    renderML();
   }catch(e){toast('エラー',true);}
 }
 
@@ -594,7 +676,9 @@ function analyzeCSV(text){
     results.push({name:matched?matched.name:nr,csvName:nr,amount,ok:rc==='0',matched:!!matched});
   }
   const ok=results.filter(r=>r.matched&&r.ok).length,ng=results.filter(r=>!r.ok).length,unk=results.filter(r=>!r.matched).length;
-  document.getElementById('cr').innerHTML=`<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap"><span class="badge bg">✅ ${ok}件</span><span class="badge br">⚠️ ${ng}件</span><span class="badge bgr">❓ ${unk}件不明</span></div>`+results.map(r=>`<div class="cri ${r.matched?(r.ok?'cok':'cng'):'cun'}"><div><div style="font-weight:700">${r.name}</div><div style="font-size:11px;color:var(--text2)">${r.csvName} ¥${r.amount.toLocaleString()}</div></div><div style="font-size:20px">${r.matched?(r.ok?'✅':'⚠️'):'❓'}</div></div>`).join('');
+  document.getElementById('cr').innerHTML=
+    `<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap"><span class="badge bg">✅ ${ok}件</span><span class="badge br">⚠️ ${ng}件</span><span class="badge bgr">❓ ${unk}件不明</span></div>`+
+    results.map(r=>`<div class="cri ${r.matched?(r.ok?'cok':'cng'):'cun'}"><div><div style="font-weight:700">${r.name}</div><div style="font-size:11px;color:var(--text2)">${r.csvName} ¥${r.amount.toLocaleString()}</div></div><div style="font-size:20px">${r.matched?(r.ok?'✅':'⚠️'):'❓'}</div></div>`).join('');
 }
 
 function nk(s){
