@@ -106,8 +106,6 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 .pb{width:32px;height:32px;border-radius:6px;border:2px solid var(--gray2);background:white;cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;font-family:inherit;}
 .pb.a{background:var(--red);color:white;border-color:var(--red);}
 .pb:hover:not(.a){border-color:var(--red);color:var(--red);}
-.conv{font-size:56px;font-weight:900;color:var(--red);text-align:center;line-height:1;}
-.convs{font-size:13px;color:var(--text2);text-align:center;margin-top:6px;}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:#1a1a2e;color:white;padding:12px 24px;border-radius:24px;font-size:14px;font-weight:600;z-index:999;transition:transform .3s ease;white-space:nowrap;pointer-events:none;}
 .toast.show{transform:translateX(-50%) translateY(0);}
 .fb{padding:7px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:none;font-family:inherit;white-space:nowrap;}
@@ -130,6 +128,11 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 .course-select-wrap select{width:100%;padding:10px 12px;border:2px solid var(--gray2);border-radius:8px;font-size:13px;outline:none;font-family:inherit;background:white;}
 .course-select-wrap select:focus{border-color:var(--blue);}
 .course-fee-preview{font-size:12px;color:var(--blue-dark);font-weight:700;margin-bottom:8px;min-height:18px;}
+.section-label{font-size:12px;font-weight:700;color:var(--text2);letter-spacing:1px;margin-bottom:8px;padding:4px 0;}
+.grade-bar-wrap{margin-bottom:6px;}
+.grade-bar-label{display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:4px;}
+.grade-bar-bg{background:#f0f0f0;border-radius:6px;height:16px;overflow:hidden;}
+.grade-bar-fill{height:100%;border-radius:6px;transition:width .6s ease;}
 @media(min-width:600px){.sgrid{grid-template-columns:repeat(4,1fr);}.ggrid{grid-template-columns:repeat(4,1fr);}.badge-award{grid-template-columns:repeat(4,1fr);}}
 </style>
 </head>
@@ -223,15 +226,51 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 <div class="tab-content" id="tab-stats">
   <div id="stl" class="loading"><div class="spin"></div>読み込み中...</div>
   <div id="stb" style="display:none">
-    <div class="card">
-      <div class="card-title">今月の成約率</div>
-      <div class="conv" id="stconv">-%</div>
-      <div class="convs">今月体験 <span id="sttt">-</span>人 → 今月入会 <span id="stmt">-</span>人</div>
+
+    <div class="section-label">📅 今月</div>
+    <div class="sgrid" style="margin-bottom:16px">
+      <div class="sc"><div class="slabel">今月体験数</div><div class="sval" id="st-trial-m">-<span>人</span></div></div>
+      <div class="sc blue"><div class="slabel">今月入会数</div><div class="sval" id="st-join-m">-<span>人</span></div></div>
+      <div class="sc green"><div class="slabel">今月成約率</div><div class="sval" id="st-conv-m">-<span>%</span></div></div>
+      <div class="sc red2"><div class="slabel">在籍会員数</div><div class="sval" id="st-total">-<span>人</span></div></div>
     </div>
-    <div class="card"><div class="card-title">会員 年齢分布</div><div class="cw"><canvas id="ac"></canvas></div></div>
-    <div class="card"><div class="card-title">体験者 年齢分布</div><div class="cw"><canvas id="tac"></canvas></div></div>
-    <div class="card"><div class="card-title">体験者 知ったキッカケ</div><div class="cw"><canvas id="sc2"></canvas></div></div>
-    <div class="card"><div class="card-title">グレード別人数</div><div class="cw"><canvas id="grc"></canvas></div></div>
+
+    <div class="section-label">📆 年間（今年）</div>
+    <div class="sgrid" style="margin-bottom:16px">
+      <div class="sc"><div class="slabel">年間体験数</div><div class="sval" id="st-trial-y">-<span>人</span></div></div>
+      <div class="sc blue"><div class="slabel">年間入会数</div><div class="sval" id="st-join-y">-<span>人</span></div></div>
+      <div class="sc green"><div class="slabel">年間成約率</div><div class="sval" id="st-conv-y">-<span>%</span></div></div>
+      <div class="sc red2"><div class="slabel">累計体験数</div><div class="sval" id="st-trial-total">-<span>人</span></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">月別 体験数・入会数（過去12ヶ月）</div>
+      <div class="cw"><canvas id="monthly-chart"></canvas></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">体験者 年代別（累計）</div>
+      <div class="cw"><canvas id="trial-age-chart"></canvas></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">在籍会員 年代別</div>
+      <div class="cw"><canvas id="member-age-chart"></canvas></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">体験者 知ったキッカケ</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:center">
+        <div class="cw s"><canvas id="source-chart"></canvas></div>
+        <div id="source-legend" style="font-size:12px;line-height:2.2"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">グレード別 在籍人数</div>
+      <div id="grade-bars" style="display:flex;flex-direction:column;gap:12px;margin-top:4px"></div>
+    </div>
+
   </div>
 </div>
 
@@ -247,7 +286,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
     <div class="card-title">アプリ情報</div>
     <div style="font-size:13px;color:var(--text2);line-height:2.2">
       <div>アプリ名：one-BALANCE トレーナー管理</div>
-      <div>バージョン：1.4.0</div>
+      <div>バージョン：1.5.0</div>
       <div>赤 #DB444C / 青 #5BB9CD</div>
     </div>
   </div>
@@ -353,6 +392,11 @@ const CURRICULUM_ITEMS=[
   {id:'rope3',name:'⑮ロープLv.3'},{id:'rope4',name:'⑯ロープLv.4'},
 ];
 
+const GRADE_COLORS={
+  'ホワイト前':'#bdc3c7','ホワイト':'#95a5a6','グリーン':'#27ae60',
+  'ブルー':'#2980b9','オレンジ':'#e67e22','レッド':'#e74c3c','ゴールド':'#d4a017'
+};
+
 let AM=[],FM=[],CP=1,CM=null,SD=null,GF='';
 const PG=20,CH={};
 const gurl=()=>localStorage.getItem('gasUrl')||DGAS;
@@ -396,24 +440,102 @@ async function loadD(){
     if(d.status!=='ok')throw 0;
     SD=d.data;renderD(SD);hd('dl');sh('db');
   }catch(e){
-    document.getElementById('dl').innerHTML='<p style="color:#e74c3c">読み込み失敗。設定のGAS URLを確認してください。</p>';
+    document.getElementById('dl').innerHTML='<p style="color:#e74c3c;padding:16px">読み込み失敗。設定のGAS URLを確認してください。</p>';
   }
 }
 
 function renderD(d){
+  const t=d.trial||{};
   si('s1',`${d.total}<span>人</span>`);
   si('s2',`${d.newThisMonth}<span>人</span>`);
-  si('s3',`${d.trial.trialThisMonth}<span>人</span>`);
-  const monthConv=d.trial.trialThisMonth>0?Math.round((d.newThisMonth/d.trial.trialThisMonth)*100):0;
-  si('s4',`${monthConv}<span>%</span>`);
+  si('s3',`${t.trialThisMonth||0}<span>人</span>`);
+  si('s4',`${t.convMonth||0}<span>%</span>`);
   si('sm',`${d.male}人`);
   si('sf',`${d.female}人`);
   mk('gc','doughnut',['男性','女性'],[d.male,d.female],['#5BB9CD','#DB444C'],{cutout:'70%'});
-  const ageLabelsDash=['10代','20代','30代','40代','50代','60代以上'];
-  const ageDataDash=ageLabelsDash.map(k=>d.ageCounts?.[k]||0);
-  mk('agec','bar',ageLabelsDash,ageDataDash,['#5BB9CD','#DB444C','#27ae60','#F39C12','#E8621A','#9b59b6'],{noLegend:true,multiColor:true});
-  const cl=Object.keys(d.courseCounts).map(k=>k.replace('いつでも','').replace('週１','週1 '));
-  mk('cc','bar',cl,Object.values(d.courseCounts),'#DB444C',{indexAxis:'y',noLegend:true});
+  const ageLabels=['10代','20代','30代','40代','50代','60代以上'];
+  mk('agec','bar',ageLabels,ageLabels.map(k=>(d.ageCounts||{})[k]||0),
+    ['#5BB9CD','#DB444C','#27ae60','#F39C12','#E8621A','#9b59b6'],{noLegend:true,multiColor:true});
+  const cl=Object.keys(d.courseCounts||{}).map(k=>k.replace('いつでも','').replace('週１','週1 '));
+  mk('cc','bar',cl,Object.values(d.courseCounts||{}),'#DB444C',{indexAxis:'y',noLegend:true});
+}
+
+async function loadSt(){
+  sh('stl');hd('stb');
+  try{
+    if(!SD){const d=await api({action:'getStats'});if(d.status!=='ok')throw 0;SD=d.data;}
+    renderSt(SD);hd('stl');sh('stb');
+  }catch(e){
+    document.getElementById('stl').innerHTML='<p style="color:#e74c3c;padding:16px">読み込み失敗。GAS URLを確認してください。</p>';
+  }
+}
+
+function renderSt(d){
+  const t=d.trial||{};
+
+  // 数字
+  si('st-trial-m',`${t.trialThisMonth||0}<span>人</span>`);
+  si('st-join-m',`${t.joinedThisMonth||0}<span>人</span>`);
+  si('st-conv-m',`${t.convMonth||0}<span>%</span>`);
+  si('st-total',`${d.total||0}<span>人</span>`);
+  si('st-trial-y',`${t.trialYear||0}<span>人</span>`);
+  si('st-join-y',`${t.joinedYear||0}<span>人</span>`);
+  si('st-conv-y',`${t.convYear||0}<span>%</span>`);
+  si('st-trial-total',`${t.trialTotal||0}<span>人</span>`);
+
+  // 月別体験・入会グラフ
+  const mTrial=t.monthlyTrial||{};
+  const mJoined=t.monthlyJoined||{};
+  const mLabels=Object.keys(mTrial).map(k=>k.replace('年','/').replace('月',''));
+  mk('monthly-chart','bar',mLabels,[
+    {label:'体験数',data:Object.values(mTrial),backgroundColor:'rgba(91,185,205,0.8)',borderRadius:4,borderSkipped:false},
+    {label:'入会数',data:Object.values(mJoined),backgroundColor:'rgba(219,68,76,0.8)',borderRadius:4,borderSkipped:false}
+  ],null,{multiDataset:true,legend:true});
+
+  // 体験者年代別
+  const ageLabels=['10代','20代','30代','40代','50代','60代以上'];
+  const ageColors=['#5BB9CD','#DB444C','#27ae60','#f39c12','#9b59b6','#e67e22'];
+  mk('trial-age-chart','bar',ageLabels,ageLabels.map(k=>(t.trialAge||{})[k]||0),
+    ageColors,{noLegend:true,multiColor:true});
+
+  // 会員年代別
+  mk('member-age-chart','bar',ageLabels,ageLabels.map(k=>(d.ageCounts||{})[k]||0),
+    ageColors,{noLegend:true,multiColor:true});
+
+  // 知ったキッカケ
+  const src=t.trialSource||{};
+  const srcLabels=Object.keys(src);
+  const srcData=Object.values(src);
+  const srcColors=['#DB444C','#5BB9CD','#27ae60','#f39c12','#9b59b6','#e67e22','#1abc9c'];
+  if(srcLabels.length>0){
+    mk('source-chart','doughnut',srcLabels,srcData,srcColors,{cutout:'60%'});
+    const total=srcData.reduce((a,b)=>a+b,0)||1;
+    document.getElementById('source-legend').innerHTML=srcLabels.map((l,i)=>
+      `<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+        <span style="width:10px;height:10px;border-radius:50%;background:${srcColors[i]||'#ccc'};display:inline-block;flex-shrink:0"></span>
+        <span>${l}：${srcData[i]}人（${Math.round(srcData[i]/total*100)}%）</span>
+      </div>`
+    ).join('');
+  }
+
+  // グレード別バー
+  const gradeOrder=['ホワイト前','ホワイト','グリーン','ブルー','オレンジ','レッド','ゴールド'];
+  const gc=d.gradeCounts||{};
+  const maxG=Math.max(...gradeOrder.map(g=>gc[g]||0),1);
+  document.getElementById('grade-bars').innerHTML=gradeOrder.map(g=>{
+    const cnt=gc[g]||0;
+    const pct=Math.round(cnt/maxG*100);
+    const col=GRADE_COLORS[g]||'#ccc';
+    return `<div class="grade-bar-wrap">
+      <div class="grade-bar-label">
+        <span style="color:${col};font-weight:800">${g}</span>
+        <span style="color:var(--text2)">${cnt}人</span>
+      </div>
+      <div class="grade-bar-bg">
+        <div class="grade-bar-fill" style="background:${col};width:${pct}%"></div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function renderGradeFilter(){
@@ -489,11 +611,7 @@ function filterM(){
 
 function renderML(){
   const st=(CP-1)*PG,pg=FM.slice(st,st+PG);
-  if(GF){
-    document.getElementById('mc').textContent=`「${GF}」${FM.length}人`;
-  } else {
-    document.getElementById('mc').textContent=`${AM.filter(m=>m.status==='在籍').length}人在籍`;
-  }
+  document.getElementById('mc').textContent=GF?`「${GF}」${FM.length}人`:`${AM.filter(m=>m.status==='在籍').length}人在籍`;
   document.getElementById('ml').innerHTML=pg.map(m=>{
     const sc=m.status==='在籍'?'act':m.status==='休会'?'vac':'res';
     const stColor=m.status==='在籍'?'bg':m.status==='休会'?'bb':m.status==='退会予定'?'bo':'bgr';
@@ -528,16 +646,13 @@ function opM(id){
   document.getElementById('mst2').textContent=m.status||(m['退会予定日']?`退会予定（${m['退会予定日']}）`:'');
   const ua=document.getElementById('mu');
   ua.href=m.url||'#';ua.textContent=m.url||'-';
-  // コース選択をリセット
   document.getElementById('course-select').value='';
   document.getElementById('course-fee-preview').textContent=`現在：¥${Number(m.fee||0).toLocaleString()}/月`;
-  // グレードボタン
   document.getElementById('gg').innerHTML=GR.map(g=>`
     <button class="gbtn ${m.grade===g.n?'sel':''}" style="background:${g.b};color:${g.c}" onclick="selG('${g.n}')">
       <div style="font-weight:700;">${g.n}</div>
       <div style="font-size:9px;font-weight:500;margin-top:3px;opacity:0.85;line-height:1.3;">${g.d}</div>
     </button>`).join('');
-  // バッジ付与ボタン
   const badges=m.badges||{};
   document.getElementById('badge-award').innerHTML=BADGES_DEF.map(b=>{
     const awarded=!!badges[b.key];
@@ -546,7 +661,6 @@ function opM(id){
       <span style="font-size:10px;font-weight:600;">${awarded?'✓ 付与済み':'タップで付与'}</span>
     </button>`;
   }).join('');
-  // カリキュラム進捗
   const prog=m.progress||{};
   document.getElementById('cur-list').innerHTML=CURRICULUM_ITEMS.map(c=>{
     const st=prog[c.id]||'未着手';
@@ -690,26 +804,6 @@ function nk(s){
   return r.replace(/[\s　]/g,'');
 }
 
-async function loadSt(){
-  sh('stl');hd('stb');
-  try{
-    if(!SD){const d=await api({action:'getStats'});if(d.status!=='ok')throw 0;SD=d.data;}
-    renderSt(SD);hd('stl');sh('stb');
-  }catch(e){document.getElementById('stl').innerHTML='<p style="color:#e74c3c">読み込み失敗</p>';}
-}
-
-function renderSt(d){
-  const monthConv=d.trial.trialThisMonth>0?Math.round((d.newThisMonth/d.trial.trialThisMonth)*100):0;
-  si('stconv',`${monthConv}%`);
-  si('sttt',d.trial.trialThisMonth);
-  si('stmt',d.newThisMonth);
-  mk('ac','bar',Object.keys(d.ageCounts),Object.values(d.ageCounts),'#DB444C',{noLegend:true});
-  mk('tac','bar',Object.keys(d.trial.trialAge),Object.values(d.trial.trialAge),'#5BB9CD',{noLegend:true});
-  mk('sc2','doughnut',Object.keys(d.trial.trialSource),Object.values(d.trial.trialSource),['#DB444C','#5BB9CD','#27ae60','#f39c12','#9b59b6','#e67e22'],{legend:true});
-  const gc=d.gradeCounts||{};
-  mk('grc','bar',Object.keys(gc),Object.values(gc),['#ecf0f1','#eafaf1','#e8f4fd','#fff3e0','#fdecea','#fef9e7'],{noLegend:true,bdc:['#bdc3c7','#27ae60','#2980b9','#e67e22','#e74c3c','#d4a017']});
-}
-
 function saveS(){
   const u=document.getElementById('gu').value.trim();
   if(!u){toast('URLを入力してください',true);return;}
@@ -718,10 +812,16 @@ function saveS(){
 
 function mk(id,type,labels,data,colors,opts={}){
   if(CH[id]){CH[id].destroy();delete CH[id];}
-  const bgColors=opts.multiColor&&Array.isArray(colors)?colors:(Array.isArray(colors)?colors:data.map(()=>colors));
+  let datasets;
+  if(opts.multiDataset&&Array.isArray(data)&&data[0]&&typeof data[0]==='object'&&'label' in data[0]){
+    datasets=data;
+  } else {
+    const bgColors=opts.multiColor&&Array.isArray(colors)?colors:(Array.isArray(colors)?colors:(data.map?data.map(()=>colors):colors));
+    datasets=[{data,backgroundColor:bgColors,borderColor:opts.bdc||undefined,borderWidth:opts.bdc?2:0,borderRadius:type==='bar'?6:0}];
+  }
   CH[id]=new Chart(document.getElementById(id),{
     type,
-    data:{labels,datasets:[{data,backgroundColor:bgColors,borderColor:opts.bdc||undefined,borderWidth:opts.bdc?2:0,borderRadius:type==='bar'?6:0}]},
+    data:{labels,datasets},
     options:{
       indexAxis:opts.indexAxis||undefined,
       plugins:{legend:{display:!!opts.legend,position:'bottom',labels:{font:{size:11}}}},
