@@ -335,7 +335,8 @@ const CFG={
   hp:"https://www.one-balance.jp",
   calId:"YOUR_CALENDAR_ID@group.calendar.google.com",
   apiKey:"YOUR_GOOGLE_API_KEY",
-  formEp:"https://script.google.com/macros/s/AKfycbwoVqM2pvKaPGtev4Vyh-tEpY3g1TjGuleeDTMQ3a5zyNzMLjGUpoxNe1Bi864X_mi8Tw/exec",
+  formEp:"https://script.google.com/macros/s/AKfycby7H_NPx1Mri3wARmT_sHks1Htcfk_1sqRAD26GiS8sE392jKMqhmPy9_GsxxF9MUxrOA/exec",
+  gasUrl:"https://script.google.com/macros/s/AKfycby7H_NPx1Mri3wARmT_sHks1Htcfk_1sqRAD26GiS8sE392jKMqhmPy9_GsxxF9MUxrOA/exec",
   startH:16, endH:22
 };
 const LABELS={kick:"キックボクササイズ体験",boxing:"ボクシング体験",tour:"ジム見学"};
@@ -416,46 +417,50 @@ function pickDate(ds,dt){
   document.getElementById('btn2').disabled=true;
 }
 
-// ── SLOTS（30分単位・選択で1時間ブロック）──
-function renderSlots(dt){
-  const sec=document.getElementById('slots-sec');
-  const grid=document.getElementById('slots-grid');
-  grid.innerHTML=''; sec.style.display='block';
+// ── SLOTS（GASから空き取得）──
+function renderSlots(dt){{
+  var sec=document.getElementById('slots-sec');
+  var grid=document.getElementById('slots-grid');
+  grid.innerHTML='<p style="color:var(--g400);font-size:12px;padding:8px 0;">⌛ 空き確認中...</p>';
+  sec.style.display='block';
+  document.getElementById('btn2').disabled=true;
 
-  // 30分ごとのスロット生成（16:00〜21:30まで表示、22:00終了）
-  const slots=[];
-  for(let h=CFG.startH;h<CFG.endH;h++){
-    for(let m=0;m<60;m+=30){
-      const totalMin=h*60+m;
-      const endMin=totalMin+60; // 予約枠は1時間
-      if(endMin>CFG.endH*60) break;
-      slots.push({h,m,totalMin});
-    }
-  }
+  var ds=S.date;
+  var cb='cb'+Date.now();
+  window[cb]=function(res){{
+    delete window[cb];
+    grid.innerHTML='';
+    if(res.error){{
+      grid.innerHTML='<p style="color:var(--red);font-size:12px;padding:8px 0;">'+res.error+'</p>';
+      return;
+    }}
+    if(!res.slots||res.slots.length===0){{
+      grid.innerHTML='<p style="color:var(--g400);font-size:12px;padding:8px 0;">この日は空きがありません</p>';
+      return;
+    }}
+    res.slots.forEach(function(slot){{
+      var btn=document.createElement('button');
+      btn.className='slot';
+      btn.textContent=slot.label;
+      btn.onclick=function(){{
+        S.time=slot.label;
+        S.slotStart=slot.start;
+        S.slotEnd=slot.end;
+        document.querySelectorAll('.slot').forEach(function(b){{b.classList.remove('sel');}});
+        btn.classList.add('sel');
+        document.getElementById('btn2').disabled=false;
+      }};
+      grid.appendChild(btn);
+    }});
+  }};
 
-  slots.forEach(slot=>{
-    const ts=p2(slot.h)+':'+p2(slot.m);
-    const eMin=slot.totalMin+60;
-    const es=p2(Math.floor(eMin/60))+':'+p2(eMin%60);
-    const btn=document.createElement('button');
-    btn.className='slot';
-    btn.innerHTML=ts;
-
-    // Googleカレンダーとの重複チェック（1時間枠）
-    const ss=new Date(dt.getFullYear(),dt.getMonth(),dt.getDate(),slot.h,slot.m);
-    const se=new Date(ss.getTime()+60*60000);
-    const isBusy=S.busy.some(b=>ss<b.e&&se>b.s);
-
-    if(isBusy){
-      btn.classList.add('busy');
-      btn.disabled=true;
-    } else {
-      if(S.time===ts) btn.classList.add('sel');
-      btn.onclick=()=>pickSlot(ts,btn);
-    }
-    grid.appendChild(btn);
-  });
-}
+  var sc=document.createElement('script');
+  sc.onerror=function(){{
+    grid.innerHTML='<p style="color:var(--red);font-size:12px;">取得に失敗しました。再度お試しください。</p>';
+  }};
+  sc.src=CFG.gasUrl+'?action=getSlots&date='+ds+'&duration=60&callback='+cb;
+  document.head.appendChild(sc);
+}}
 
 function pickSlot(ts,btn){
   S.time=ts;
@@ -527,18 +532,27 @@ function fillConf(){
 // ── SUBMIT ──
 async function doSub(){
   setLoad(true);
-  const payload={
-    menu:LABELS[S.menu], date:S.date, time:S.time+'（1時間枠）',
-    pax:S.pax+'名',
-    name:document.getElementById('fn').value,
-    tel:document.getElementById('ftel').value,
-    email:document.getElementById('fmail').value,
-    address:document.getElementById('fadr').value,
-    _subject:`【予約】${LABELS[S.menu]}　${document.getElementById('fn').value}様　${S.pax}名`
-  };
-  try{
-    await fetch(CFG.formEp,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    setLoad(false); showSuc();
+  var cb='cb'+Date.now();
+  window[cb]=function(res){{
+    delete window[cb];
+    setLoad(false);
+    if(res.success){{ showSuc(); }}
+    else{{ alert(res.message||'送信に失敗しました。お電話にてご連絡ください。'); }}
+  }};
+  var sc=document.createElement('script');
+  sc.src=CFG.gasUrl+'?action=reserve'
+    +'&menu='+encodeURIComponent(LABELS[S.menu])
+    +'&date='+encodeURIComponent(S.date)
+    +'&time='+encodeURIComponent(S.time)
+    +'&start='+encodeURIComponent(S.slotStart||'')
+    +'&end='+encodeURIComponent(S.slotEnd||'')
+    +'&pax='+encodeURIComponent(S.pax)
+    +'&name='+encodeURIComponent(document.getElementById('fn').value)
+    +'&tel='+encodeURIComponent(document.getElementById('ftel').value)
+    +'&email='+encodeURIComponent(document.getElementById('fmail').value)
+    +'&address='+encodeURIComponent(document.getElementById('fadr').value)
+    +'&callback='+cb;
+  document.head.appendChild(sc);
   }catch{
     setLoad(false); alert('送信に失敗しました。お電話にてご連絡ください。');
   }
