@@ -65,10 +65,10 @@ main{max-width:480px;margin:0 auto;padding:18px 14px 100px;}
 
 /* MENU CARDS */
 .mgrid{display:flex;flex-direction:column;gap:12px;margin-bottom:24px;}
-.mc{background:var(--white);border-radius:var(--r);border:2.5px solid var(--g200);overflow:hidden;cursor:pointer;transition:all 0.22s cubic-bezier(.34,1.56,.64,1);box-shadow:0 3px 10px rgba(0,0,0,0.05);}
+.mc{background:var(--white);border-radius:var(--r);border:2.5px solid var(--g200);overflow:hidden;cursor:pointer;transition:all 0.22s cubic-bezier(.34,1.56,.64,1);box-shadow:0 3px 10px rgba(0,0,0,0.05);touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;}
 .mc:active{transform:scale(0.98);}
-.mc-head{display:flex;align-items:center;gap:10px;padding:12px 14px 10px;}
-.mc-icon{width:54px;height:54px;border-radius:12px;object-fit:cover;flex-shrink:0;image-rendering:-webkit-optimize-contrast;}
+.mc-head{display:flex;align-items:center;gap:10px;padding:12px 14px 10px;pointer-events:none;}
+.mc-icon{width:54px;height:54px;border-radius:12px;object-fit:cover;flex-shrink:0;image-rendering:-webkit-optimize-contrast;pointer-events:none;}
 .mc-svg{width:54px;height:54px;border-radius:12px;background:var(--yl-l);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .mc-name{font-size:16px;font-weight:900;line-height:1.1;margin-bottom:4px;}
 .mc.kick .mc-name{color:var(--blue);}
@@ -82,7 +82,7 @@ main{max-width:480px;margin:0 auto;padding:18px 14px 100px;}
 .mc.selected.kick .mc-check{background:var(--blue);border-color:var(--blue);color:white;}
 .mc.selected.boxing .mc-check{background:var(--red);border-color:var(--red);color:white;}
 .mc.selected.tour .mc-check{background:var(--yellow);border-color:var(--yellow);color:white;}
-.mc-body{font-size:12px;color:var(--g600);line-height:1.8;font-weight:500;border-top:1.5px dashed var(--g200);margin:0 12px;padding:10px 4px 12px;}
+.mc-body{font-size:12px;color:var(--g600);line-height:1.8;font-weight:500;border-top:1.5px dashed var(--g200);margin:0 12px;padding:10px 4px 12px;pointer-events:none;}
 .mc.selected{transform:scale(1.01);box-shadow:0 6px 20px rgba(0,0,0,0.1);}
 .mc.selected.kick{border-color:var(--blue);background:var(--blue-p);}
 .mc.selected.boxing{border-color:var(--red);background:var(--red-p);}
@@ -258,7 +258,7 @@ main{max-width:480px;margin:0 auto;padding:18px 14px 100px;}
       </div>
 
     </div>
-    <button class="btnp" id="btn1" onclick="go(2)">次へ　→　日程を選ぶ</button>
+    <button class="btnp" id="btn1" onclick="go(2)" id="btn1">次へ　→　日程を選ぶ</button>
   </div>
 
   <!-- ■ STEP 2：日程 -->
