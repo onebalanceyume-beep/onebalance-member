@@ -580,7 +580,7 @@ async function setStatus(id, status){
 }
 
 function renderGrades(){
-  const currentGrade = MEMBER?.grade?.trim() || 'ホワイト前';
+  const currentGrade = MEMBER?.grade || 'ホワイト前';
   document.getElementById('grade-list').innerHTML = GRADES.map(g=>{
     const isCur = g.name === currentGrade;
     const curIdx = GRADES.findIndex(x=>x.name===currentGrade);
