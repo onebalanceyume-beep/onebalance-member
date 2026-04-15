@@ -434,7 +434,6 @@ async function api(params){
 window.onload = async () => {
   renderBasics();
   renderCurriculumItems();
-  renderGrades();
   renderBadges();
   renderTech();
   renderWeightPage();
@@ -454,6 +453,7 @@ async function loadMember(){
       PROGRESS = d.data.progress || {};
       updateHeader();
       updateProgress();
+      renderGrades(); 
     } else {
       document.getElementById('member-name').textContent = 'データなし';
       document.getElementById('member-grade').textContent = '会員情報が見つかりません';
