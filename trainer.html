@@ -33,13 +33,20 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 .card-title{font-size:13px;font-weight:700;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
 .card-title::before{content:'';width:4px;height:14px;background:var(--red);border-radius:2px;display:inline-block;}
 .sgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px;}
-.sc{background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;border-left:4px solid var(--red);}
+.sc{background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;border-left:4px solid var(--red);}
 .sc.blue{border-left-color:var(--blue);}
 .sc.green{border-left-color:#27ae60;}
 .sc.red2{border-left-color:var(--red);}
 .slabel{font-size:11px;color:var(--text2);font-weight:600;}
-.sval{font-size:28px;font-weight:900;color:var(--text);line-height:1.1;margin-top:4px;}
+.sval{font-size:24px;font-weight:900;color:var(--text);line-height:1.1;margin-top:4px;}
 .sval span{font-size:14px;font-weight:500;color:var(--text2);}
+.fee-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:4px;}
+.fee-sum-card{background:#f8f9fa;border-radius:10px;padding:12px;text-align:center;}
+.fee-sum-label{font-size:11px;color:var(--text2);font-weight:600;margin-bottom:6px;}
+.fee-sum-val{font-size:16px;font-weight:900;}
+.fee-sum-val.total{color:var(--text);}
+.fee-sum-val.paid{color:#27ae60;}
+.fee-sum-val.unpaid{color:var(--red);}
 .cw{position:relative;height:200px;}
 .cw.s{height:160px;}
 .msearch{display:flex;gap:8px;margin-bottom:12px;}
@@ -133,6 +140,8 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 .grade-bar-label{display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:4px;}
 .grade-bar-bg{background:#f0f0f0;border-radius:6px;height:16px;overflow:hidden;}
 .grade-bar-fill{height:100%;border-radius:6px;transition:width .6s ease;}
+.month-sel{padding:10px 12px;border:2px solid var(--blue);border-radius:8px;font-size:14px;font-weight:700;outline:none;font-family:inherit;background:white;color:var(--blue-dark);}
+.fee-month-summary{font-size:12px;color:var(--text2);margin-top:8px;font-weight:600;line-height:1.8;}
 @media(min-width:600px){.sgrid{grid-template-columns:repeat(4,1fr);}.ggrid{grid-template-columns:repeat(4,1fr);}.badge-award{grid-template-columns:repeat(4,1fr);}}
 </style>
 </head>
@@ -161,6 +170,26 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
       <div class="sc blue"><div class="slabel">今月新規</div><div class="sval" id="s2">-<span>人</span></div></div>
       <div class="sc green"><div class="slabel">今月体験</div><div class="sval" id="s3">-<span>人</span></div></div>
       <div class="sc red2"><div class="slabel">今月成約率</div><div class="sval" id="s4">-<span>%</span></div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">💴 今月の会費状況</div>
+      <div class="fee-summary">
+        <div class="fee-sum-card">
+          <div class="fee-sum-label">見込み総額</div>
+          <div class="fee-sum-val total" id="fee-total">-</div>
+          <div style="font-size:10px;color:var(--text2);margin-top:2px">円</div>
+        </div>
+        <div class="fee-sum-card">
+          <div class="fee-sum-label">✅ 入金済み</div>
+          <div class="fee-sum-val paid" id="fee-paid">-</div>
+          <div style="font-size:10px;color:var(--text2);margin-top:2px">円</div>
+        </div>
+        <div class="fee-sum-card">
+          <div class="fee-sum-label">❌ 未入金</div>
+          <div class="fee-sum-val unpaid" id="fee-unpaid">-</div>
+          <div style="font-size:10px;color:var(--text2);margin-top:2px">円</div>
+        </div>
+      </div>
     </div>
     <div class="card">
       <div class="card-title">男女比（会員）</div>
@@ -206,8 +235,13 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 <!-- 月会費 -->
 <div class="tab-content" id="tab-fee">
   <div class="card">
+    <div class="card-title">📅 対象月を選択</div>
+    <select class="month-sel" id="month-select" onchange="onMonthChange()"></select>
+    <div class="fee-month-summary" id="fee-month-summary"></div>
+  </div>
+  <div class="card">
     <div class="card-title">CSVから自動チェック</div>
-    <p style="font-size:13px;color:var(--text2);margin-bottom:12px">山陰合同・鳥取銀行・他行経由 対応</p>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:12px">照合結果はスプレッドシートに自動反映されます。</p>
     <div class="csv-area" onclick="document.getElementById('cf').click()">
       <div style="font-size:36px;margin-bottom:8px">📂</div>
       <div style="font-size:13px;color:var(--text2)">CSVファイルをタップして選択</div>
@@ -216,7 +250,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
     <div id="cr" style="margin-top:12px"></div>
   </div>
   <div class="card">
-    <div class="card-title">手動チェック</div>
+    <div class="card-title">手動チェック・一覧</div>
     <div class="msearch"><input type="text" id="fs" placeholder="名前で検索" oninput="renderFL()"></div>
     <div id="fl" class="mlist"></div>
   </div>
@@ -226,7 +260,6 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 <div class="tab-content" id="tab-stats">
   <div id="stl" class="loading"><div class="spin"></div>読み込み中...</div>
   <div id="stb" style="display:none">
-
     <div class="section-label">📅 今月</div>
     <div class="sgrid" style="margin-bottom:16px">
       <div class="sc"><div class="slabel">今月体験数</div><div class="sval" id="st-trial-m">-<span>人</span></div></div>
@@ -234,7 +267,6 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
       <div class="sc green"><div class="slabel">今月成約率</div><div class="sval" id="st-conv-m">-<span>%</span></div></div>
       <div class="sc red2"><div class="slabel">在籍会員数</div><div class="sval" id="st-total">-<span>人</span></div></div>
     </div>
-
     <div class="section-label">📆 年間（今年）</div>
     <div class="sgrid" style="margin-bottom:16px">
       <div class="sc"><div class="slabel">年間体験数</div><div class="sval" id="st-trial-y">-<span>人</span></div></div>
@@ -242,22 +274,18 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
       <div class="sc green"><div class="slabel">年間成約率</div><div class="sval" id="st-conv-y">-<span>%</span></div></div>
       <div class="sc red2"><div class="slabel">累計体験数</div><div class="sval" id="st-trial-total">-<span>人</span></div></div>
     </div>
-
     <div class="card">
       <div class="card-title">月別 体験数・入会数（過去12ヶ月）</div>
       <div class="cw"><canvas id="monthly-chart"></canvas></div>
     </div>
-
     <div class="card">
       <div class="card-title">体験者 年代別（累計）</div>
       <div class="cw"><canvas id="trial-age-chart"></canvas></div>
     </div>
-
     <div class="card">
       <div class="card-title">在籍会員 年代別</div>
       <div class="cw"><canvas id="member-age-chart"></canvas></div>
     </div>
-
     <div class="card">
       <div class="card-title">体験者 知ったキッカケ</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:center">
@@ -265,12 +293,10 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
         <div id="source-legend" style="font-size:12px;line-height:2.2"></div>
       </div>
     </div>
-
     <div class="card">
       <div class="card-title">グレード別 在籍人数</div>
       <div id="grade-bars" style="display:flex;flex-direction:column;gap:12px;margin-top:4px"></div>
     </div>
-
   </div>
 </div>
 
@@ -286,7 +312,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
     <div class="card-title">アプリ情報</div>
     <div style="font-size:13px;color:var(--text2);line-height:2.2">
       <div>アプリ名：one-BALANCE トレーナー管理</div>
-      <div>バージョン：1.5.0</div>
+      <div>バージョン：1.6.0</div>
       <div>赤 #DB444C / 青 #5BB9CD</div>
     </div>
   </div>
@@ -311,7 +337,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
       <div class="ir" style="align-items:center">
         <span class="il">名義変更</span>
         <div style="display:flex;gap:6px;flex:1">
-          <input type="text" id="kouza-input" class="si" style="margin:0;flex:1;padding:8px 10px;font-size:13px" placeholder="口座名義人（カタカナ）">
+          <input type="text" id="kouza-input" class="si" style="margin:0;flex:1;padding:8px 10px;font-size:13px" placeholder="口座名義人（半角カタカナ・スペースなし）">
           <button class="btn btn-blue btn-sm" onclick="saveKouza()">保存</button>
         </div>
       </div>
@@ -353,7 +379,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 <div class="toast" id="toast"></div>
 
 <script>
-const DGAS='https://script.google.com/macros/s/AKfycbzGrHeV7BAiJSrz9XkpuFDZw_rRcPMZDEzynzMZEx5-K5YM4QXhEHg88bsguUpcyvPafQ/exec';
+const DGAS='https://script.google.com/macros/s/AKfycbwjQ6_xHKcArfU0zdZtSCPdutJ71DQJG_1v9XYz-R8mFwa-srMB9aChV-ZcI4iSGwWrHw/exec';
 
 const GR=[
   {n:'ホワイト前', b:'#f5f5f5', c:'#666',    d:'入会直後の初期状態'},
@@ -406,6 +432,7 @@ const GRADE_COLORS={
 };
 
 let AM=[],FM=[],CP=1,CM=null,SD=null,GF='';
+let SELECTED_MONTH='';
 const PG=20,CH={};
 const gurl=()=>localStorage.getItem('gasUrl')||DGAS;
 
@@ -414,6 +441,7 @@ window.onload=()=>{
   document.getElementById('gu').value=gurl();
   renderGradeFilter();
   initCourseSelect();
+  initMonthSelect();
   loadD();
 };
 
@@ -424,13 +452,32 @@ function tick(){
 }
 const p2=n=>String(n).padStart(2,'0');
 
+function initMonthSelect(){
+  const sel=document.getElementById('month-select');
+  const now=new Date();
+  const opts=[];
+  for(let i=0;i<7;i++){
+    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+    const label=`${d.getFullYear()}年${d.getMonth()+1}月`;
+    opts.push(`<option value="${label}">${label}</option>`);
+  }
+  sel.innerHTML=opts.join('');
+  SELECTED_MONTH=sel.value;
+}
+
+function onMonthChange(){
+  SELECTED_MONTH=document.getElementById('month-select').value;
+  renderFL();
+}
+
 function sw(name,btn){
   document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));
   document.getElementById('tab-'+name).classList.add('active');
   btn.classList.add('active');
   if(name==='members'&&!AM.length)loadM();
-  if(name==='fee'&&!AM.length)loadM();
+  if(name==='fee'&&!AM.length)loadM().then(()=>renderFL());
+  if(name==='fee'&&AM.length)renderFL();
   if(name==='stats'&&!SD)loadSt();
 }
 
@@ -447,9 +494,24 @@ async function loadD(){
     const d=await api({action:'getStats'});
     if(d.status!=='ok')throw 0;
     SD=d.data;renderD(SD);hd('dl');sh('db');
+    if(!AM.length)await loadM();
+    renderFeeSummary();
   }catch(e){
     document.getElementById('dl').innerHTML='<p style="color:#e74c3c;padding:16px">読み込み失敗。設定のGAS URLを確認してください。</p>';
   }
+}
+
+function renderFeeSummary(){
+  if(!AM.length)return;
+  const now=new Date();
+  const mk=`${now.getFullYear()}年${now.getMonth()+1}月`;
+  const members=AM.filter(m=>m.status!=='退会');
+  const total=members.reduce((s,m)=>s+Number(m.fee||0),0);
+  const paid=members.filter(m=>m[mk]==='✅').reduce((s,m)=>s+Number(m.fee||0),0);
+  const unpaid=total-paid;
+  document.getElementById('fee-total').textContent=`¥${total.toLocaleString()}`;
+  document.getElementById('fee-paid').textContent=`¥${paid.toLocaleString()}`;
+  document.getElementById('fee-unpaid').textContent=`¥${unpaid.toLocaleString()}`;
 }
 
 function renderD(d){
@@ -497,10 +559,8 @@ function renderSt(d){
   ],null,{multiDataset:true,legend:true});
   const ageLabels=['10代','20代','30代','40代','50代','60代以上'];
   const ageColors=['#5BB9CD','#DB444C','#27ae60','#f39c12','#9b59b6','#e67e22'];
-  mk('trial-age-chart','bar',ageLabels,ageLabels.map(k=>(t.trialAge||{})[k]||0),
-    ageColors,{noLegend:true,multiColor:true});
-  mk('member-age-chart','bar',ageLabels,ageLabels.map(k=>(d.ageCounts||{})[k]||0),
-    ageColors,{noLegend:true,multiColor:true});
+  mk('trial-age-chart','bar',ageLabels,ageLabels.map(k=>(t.trialAge||{})[k]||0),ageColors,{noLegend:true,multiColor:true});
+  mk('member-age-chart','bar',ageLabels,ageLabels.map(k=>(d.ageCounts||{})[k]||0),ageColors,{noLegend:true,multiColor:true});
   const src=t.trialSource||{};
   const srcLabels=Object.keys(src);
   const srcData=Object.values(src);
@@ -523,13 +583,8 @@ function renderSt(d){
     const pct=Math.round(cnt/maxG*100);
     const col=GRADE_COLORS[g]||'#ccc';
     return `<div class="grade-bar-wrap">
-      <div class="grade-bar-label">
-        <span style="color:${col};font-weight:800">${g}</span>
-        <span style="color:var(--text2)">${cnt}人</span>
-      </div>
-      <div class="grade-bar-bg">
-        <div class="grade-bar-fill" style="background:${col};width:${pct}%"></div>
-      </div>
+      <div class="grade-bar-label"><span style="color:${col};font-weight:800">${g}</span><span style="color:var(--text2)">${cnt}人</span></div>
+      <div class="grade-bar-bg"><div class="grade-bar-fill" style="background:${col};width:${pct}%"></div></div>
     </div>`;
   }).join('');
 }
@@ -587,6 +642,7 @@ async function loadM(){
     AM=d.data;FM=[...AM];CP=1;
     renderML();renderFL();
     document.getElementById('mc').textContent=`${AM.filter(m=>m.status==='在籍').length}人在籍`;
+    renderFeeSummary();
   }catch(e){
     document.getElementById('ml').innerHTML='<p style="color:#e74c3c;padding:16px">読み込み失敗</p>';
   }
@@ -768,22 +824,46 @@ async function importM(){
 
 function renderFL(){
   const q=(document.getElementById('fs')||{}).value||'';
-  const now=new Date(),mk2=`${now.getFullYear()}年${now.getMonth()+1}月`;
+  const month=SELECTED_MONTH;
   const list=AM.filter(m=>m.status!=='退会'&&(!q||m.name.includes(q)));
+  const total=list.reduce((s,m)=>s+Number(m.fee||0),0);
+  const paid=list.filter(m=>m[month]==='✅').reduce((s,m)=>s+Number(m.fee||0),0);
+  const unpaid=total-paid;
+  const paidCount=list.filter(m=>m[month]==='✅').length;
+  const unpaidCount=list.filter(m=>m[month]!=='✅').length;
+  const el=document.getElementById('fee-month-summary');
+  if(el)el.innerHTML=`✅ 入金済 ${paidCount}人 ¥${paid.toLocaleString()}　／　❌ 未入金 ${unpaidCount}人 ¥${unpaid.toLocaleString()}`;
   document.getElementById('fl').innerHTML=list.map(m=>{
-    const fs=m[mk2]||'';
-    let badge=fs==='✅'?'<span class="fb fp">✅ 入金済</span>':fs==='⚠️'?'<span class="fb fu">⚠️ 要確認</span>':`<button class="fb fe" onclick="manF('${m.id}')">タップで確認済</button>`;
-    return `<div class="mi act"><div style="display:flex;justify-content:space-between;align-items:center"><div><div class="mname">${m.name}</div><div class="mkana">¥${Number(m.fee||0).toLocaleString()}/月</div></div>${badge}</div></div>`;
+    const fs=m[month]||'';
+    const isPaid=fs==='✅';
+    const isWarn=fs==='⚠️';
+    let badge=isPaid
+      ?'<span class="fb fp">✅ 入金済</span>'
+      :isWarn
+      ?'<span class="fb fu">⚠️ 要確認</span>'
+      :`<button class="fb fe" onclick="manF('${m.id}')">タップで確認済</button>`;
+    const bc=isPaid?'#27ae60':isWarn?'#e67e22':'var(--red)';
+    return `<div class="mi" style="border-left-color:${bc}">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div class="mname">${m.name}</div>
+          <div class="mkana">¥${Number(m.fee||0).toLocaleString()}/月${m.kouzaName?' ・ '+m.kouzaName:''}</div>
+        </div>
+        ${badge}
+      </div>
+    </div>`;
   }).join('')||'<p style="color:var(--text2);padding:20px;text-align:center">データなし</p>';
 }
 
 async function manF(id){
   const m=AM.find(m=>m.id===id);
-  if(!m||!confirm(`${m.name}さんの会費を入金済みにしますか？`))return;
+  if(!m||!confirm(`${m.name}さんの${SELECTED_MONTH}を入金済みにしますか？`))return;
   try{
-    const now=new Date(),mk2=`${now.getFullYear()}年${now.getMonth()+1}月`;
-    await api({action:'updateFee',id,month:mk2,status:'✅'});
-    m[mk2]='✅';renderFL();toast('入金済みにしました');
+    await api({action:'updateFee',id,month:SELECTED_MONTH,status:'✅'});
+    m[SELECTED_MONTH]='✅';
+    renderFL();
+    renderFeeSummary();
+    toast('入金済みにしました');
   }catch(e){toast('エラー',true);}
 }
 
@@ -794,19 +874,54 @@ function procCSV(input){
   reader.readAsText(file,'Shift_JIS');
 }
 
-function analyzeCSV(text){
-  const lines=text.split('\n').filter(l=>l.trim()),results=[],members=AM.filter(m=>m.status!=='退会');
+async function analyzeCSV(text){
+  const lines=text.split('\n').filter(l=>l.trim());
+  const results=[];
+  const members=AM.filter(m=>m.status!=='退会');
+  const updateQueue=[];
   for(let i=1;i<lines.length;i++){
     const cols=lines[i].split(',');
     if(cols[0]!=='2')continue;
-    const nr=(cols[7]||'').trim(),amount=parseInt(cols[8]||0,10),rc=(cols[9]||'').trim();
-    const norm=nk(nr),matched=members.find(m=>nk(m.kouzaName||m.kana||'')===norm);
-    results.push({name:matched?matched.name:nr,csvName:nr,amount,ok:rc==='0',matched:!!matched});
+    const nr=(cols[7]||'').trim();
+    const amount=parseInt(cols[8]||0,10);
+    const rc=(cols[9]||'').trim();
+    const norm=nk(nr);
+    const matched=members.find(m=>nk(m.kouzaName||m.kana||'')===norm);
+    const ok=rc==='0';
+    results.push({name:matched?matched.name:nr,csvName:nr,amount,ok,matched:!!matched,member:matched});
+    if(matched&&ok)updateQueue.push(matched);
   }
-  const ok=results.filter(r=>r.matched&&r.ok).length,ng=results.filter(r=>!r.ok).length,unk=results.filter(r=>!r.matched).length;
+  const okCount=results.filter(r=>r.matched&&r.ok).length;
+  const ngCount=results.filter(r=>!r.ok).length;
+  const unkCount=results.filter(r=>!r.matched).length;
   document.getElementById('cr').innerHTML=
-    `<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap"><span class="badge bg">✅ ${ok}件</span><span class="badge br">⚠️ ${ng}件</span><span class="badge bgr">❓ ${unk}件不明</span></div>`+
-    results.map(r=>`<div class="cri ${r.matched?(r.ok?'cok':'cng'):'cun'}"><div><div style="font-weight:700">${r.name}</div><div style="font-size:11px;color:var(--text2)">${r.csvName} ¥${r.amount.toLocaleString()}</div></div><div style="font-size:20px">${r.matched?(r.ok?'✅':'⚠️'):'❓'}</div></div>`).join('');
+    `<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+      <span class="badge bg">✅ ${okCount}件 入金確認</span>
+      <span class="badge br">⚠️ ${ngCount}件 要確認</span>
+      <span class="badge bgr">❓ ${unkCount}件 不明</span>
+    </div>`+
+    results.map(r=>`<div class="cri ${r.matched?(r.ok?'cok':'cng'):'cun'}">
+      <div>
+        <div style="font-weight:700">${r.name}</div>
+        <div style="font-size:11px;color:var(--text2)">${r.csvName} ¥${r.amount.toLocaleString()}</div>
+      </div>
+      <div style="font-size:20px">${r.matched?(r.ok?'✅':'⚠️'):'❓'}</div>
+    </div>`).join('');
+  if(updateQueue.length>0&&confirm(`${SELECTED_MONTH}の入金確認 ${updateQueue.length}件を\nスプレッドシートに反映しますか？`)){
+    toast('反映中...');
+    let done=0;
+    for(const m of updateQueue){
+      try{
+        await api({action:'updateFee',id:m.id,month:SELECTED_MONTH,status:'✅'});
+        m[SELECTED_MONTH]='✅';
+        done++;
+      }catch(e){}
+    }
+    toast(`${done}件をスプレッドシートに反映しました`);
+    renderFL();
+    renderFeeSummary();
+  }
+  document.getElementById('cf').value='';
 }
 
 function nk(s){
