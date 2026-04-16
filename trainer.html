@@ -307,6 +307,14 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
       <div class="ir"><span class="il">月会費</span><span class="iv" id="mfee">-</span></div>
       <div class="ir"><span class="il">入会日</span><span class="iv" id="mj">-</span></div>
       <div class="ir"><span class="il">状態</span><span class="iv" id="mst2">-</span></div>
+      <div class="ir"><span class="il">口座名義人</span><span class="iv" id="mkouza">-</span></div>
+      <div class="ir" style="align-items:center">
+        <span class="il">名義変更</span>
+        <div style="display:flex;gap:6px;flex:1">
+          <input type="text" id="kouza-input" class="si" style="margin:0;flex:1;padding:8px 10px;font-size:13px" placeholder="口座名義人（カタカナ）">
+          <button class="btn btn-blue btn-sm" onclick="saveKouza()">保存</button>
+        </div>
+      </div>
       <div class="ir"><span class="il">会員URL</span><a id="mu" href="#" target="_blank" style="font-size:11px;color:var(--blue);word-break:break-all">-</a></div>
     </div>
     <div class="ms">
@@ -472,8 +480,6 @@ async function loadSt(){
 
 function renderSt(d){
   const t=d.trial||{};
-
-  // 数字
   si('st-trial-m',`${t.trialThisMonth||0}<span>人</span>`);
   si('st-join-m',`${t.joinedThisMonth||0}<span>人</span>`);
   si('st-conv-m',`${t.convMonth||0}<span>%</span>`);
@@ -482,8 +488,6 @@ function renderSt(d){
   si('st-join-y',`${t.joinedYear||0}<span>人</span>`);
   si('st-conv-y',`${t.convYear||0}<span>%</span>`);
   si('st-trial-total',`${t.trialTotal||0}<span>人</span>`);
-
-  // 月別体験・入会グラフ
   const mTrial=t.monthlyTrial||{};
   const mJoined=t.monthlyJoined||{};
   const mLabels=Object.keys(mTrial).map(k=>k.replace('年','/').replace('月',''));
@@ -491,18 +495,12 @@ function renderSt(d){
     {label:'体験数',data:Object.values(mTrial),backgroundColor:'rgba(91,185,205,0.8)',borderRadius:4,borderSkipped:false},
     {label:'入会数',data:Object.values(mJoined),backgroundColor:'rgba(219,68,76,0.8)',borderRadius:4,borderSkipped:false}
   ],null,{multiDataset:true,legend:true});
-
-  // 体験者年代別
   const ageLabels=['10代','20代','30代','40代','50代','60代以上'];
   const ageColors=['#5BB9CD','#DB444C','#27ae60','#f39c12','#9b59b6','#e67e22'];
   mk('trial-age-chart','bar',ageLabels,ageLabels.map(k=>(t.trialAge||{})[k]||0),
     ageColors,{noLegend:true,multiColor:true});
-
-  // 会員年代別
   mk('member-age-chart','bar',ageLabels,ageLabels.map(k=>(d.ageCounts||{})[k]||0),
     ageColors,{noLegend:true,multiColor:true});
-
-  // 知ったキッカケ
   const src=t.trialSource||{};
   const srcLabels=Object.keys(src);
   const srcData=Object.values(src);
@@ -517,8 +515,6 @@ function renderSt(d){
       </div>`
     ).join('');
   }
-
-  // グレード別バー
   const gradeOrder=['ホワイト前','ホワイト','グリーン','ブルー','オレンジ','レッド','ゴールド'];
   const gc=d.gradeCounts||{};
   const maxG=Math.max(...gradeOrder.map(g=>gc[g]||0),1);
@@ -644,6 +640,8 @@ function opM(id){
   document.getElementById('mfee').textContent=m.fee?`¥${Number(m.fee).toLocaleString()}`:'-';
   document.getElementById('mj').textContent=m.joinDate||'-';
   document.getElementById('mst2').textContent=m.status||(m['退会予定日']?`退会予定（${m['退会予定日']}）`:'');
+  document.getElementById('mkouza').textContent=m.kouzaName||'-';
+  document.getElementById('kouza-input').value='';
   const ua=document.getElementById('mu');
   ua.href=m.url||'#';ua.textContent=m.url||'-';
   document.getElementById('course-select').value='';
@@ -712,6 +710,22 @@ async function toggleBadge(key,name){
       </button>`;
     }).join('');
     toast(next?`「${name}」を付与しました`:`「${name}」を取り消しました`);
+  }catch(e){toast('エラー',true);}
+}
+
+async function saveKouza(){
+  if(!CM)return;
+  const val=document.getElementById('kouza-input').value.trim();
+  if(!val){toast('口座名義人を入力してください',true);return;}
+  if(!confirm(`${CM.name}さんの口座名義人を「${val}」に変更しますか？`))return;
+  try{
+    await api({action:'updateKouzaName',id:CM.id,kouzaName:val});
+    CM.kouzaName=val;
+    const m=AM.find(m=>m.id===CM.id);
+    if(m)m.kouzaName=val;
+    document.getElementById('mkouza').textContent=val;
+    document.getElementById('kouza-input').value='';
+    toast(`口座名義人を「${val}」に変更しました`);
   }catch(e){toast('エラー',true);}
 }
 
