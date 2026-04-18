@@ -221,7 +221,13 @@ main { max-width:480px; margin:0 auto; padding:18px 14px 100px; }
 <div class="suc-wrap">
 <span class="suc-icon">🎉</span>
 <div class="suc-ttl">ご予約完了！</div>
-<div class="suc-txt">確認メールをお送りしました✉️<br>当日のご来館をお待ちしております😊<br><br><strong>ONE-BALANCE BOXING GYM</strong><br>鳥取県米子市</div>
+<div class="suc-txt">確認メールをお送りしました✉️<br>当日のご来館をお待ちしております😊</div>
+<div style="background:#FFF5F6;border:2px solid #FADADD;border-radius:14px;padding:14px 16px;margin:0 auto 20px;max-width:320px;">
+<div style="font-size:10px;font-weight:800;color:#B0A898;letter-spacing:1px;margin-bottom:4px;">予約ID</div>
+<div id="suc-id" style="font-size:20px;font-weight:900;color:#C8102E;letter-spacing:2px;font-family:monospace;">--------</div>
+<div style="font-size:10px;color:#7A6E60;margin-top:6px;line-height:1.6;">※キャンセル時に必要です<br>※確認メールにもキャンセルURLを記載しています</div>
+</div>
+<div style="font-size:12px;color:#7A6E60;margin-bottom:24px;line-height:1.8;"><strong>ONE-BALANCE BOXING GYM</strong><br>鳥取県米子市<br>TEL：0859-49-5275</div>
 <button class="btnp" onclick="location.href='https://www.one-balance.jp'">ホームページへ戻る</button>
 <button class="btnb" onclick="location.reload()">最初に戻る</button>
 </div>
@@ -408,17 +414,21 @@ function doSub() {
   window[cb] = function(res) {
     delete window[cb];
     document.getElementById("lov").classList.remove("on");
-    if (res.success) {
+    if (res.ok) {
       var panels = document.querySelectorAll(".panel");
       for (var i = 0; i < panels.length; i++) panels[i].classList.remove("on");
       document.getElementById("p5").classList.add("on");
+      if (res.reservationId) {
+        var idEl = document.getElementById("suc-id");
+        if (idEl) idEl.textContent = res.reservationId;
+      }
       window.scrollTo(0, 0);
     } else {
-      alert(res.message || "送信に失敗しました。お電話にてご連絡ください。");
+      alert(res.error || "送信に失敗しました。お電話にてご連絡ください。");
     }
   };
   var sc = document.createElement("script");
-  sc.src = GAS + "?action=reserve"
+  sc.src = GAS + "?action=saveTaiken"
     + "&menu=" + encodeURIComponent(LABELS[menu])
     + "&date=" + encodeURIComponent(selDate)
     + "&time=" + encodeURIComponent(selTime)
@@ -426,7 +436,7 @@ function doSub() {
     + "&end=" + encodeURIComponent(selEnd || "")
     + "&pax=" + encodeURIComponent(pax)
     + "&name=" + encodeURIComponent(document.getElementById("fn").value)
-    + "&tel=" + encodeURIComponent(document.getElementById("ftel").value)
+    + "&phone=" + encodeURIComponent(document.getElementById("ftel").value)
     + "&email=" + encodeURIComponent(document.getElementById("fmail").value)
     + "&address=" + encodeURIComponent(document.getElementById("fadr").value)
     + "&callback=" + cb;
