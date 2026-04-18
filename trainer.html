@@ -142,6 +142,28 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 .grade-bar-fill{height:100%;border-radius:6px;transition:width .6s ease;}
 .month-sel{padding:10px 12px;border:2px solid var(--blue);border-radius:8px;font-size:14px;font-weight:700;outline:none;font-family:inherit;background:white;color:var(--blue-dark);}
 .fee-month-summary{font-size:12px;color:var(--text2);margin-top:8px;font-weight:600;line-height:1.8;}
+
+/* ===== 体験予約タブ専用スタイル ===== */
+.r-filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.rf-btn{padding:7px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:2px solid transparent;background:#f0f0f0;color:#555;transition:all .15s;font-family:inherit;}
+.rf-btn.active{border-color:var(--red);background:var(--red-light);color:var(--red);box-shadow:0 0 0 2px rgba(219,68,76,.2);}
+.r-card{background:white;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:14px;border-left:4px solid var(--red);margin-bottom:8px;}
+.r-card.cancelled{border-left-color:#bbb;opacity:.6;}
+.r-card.past{border-left-color:var(--gray2);opacity:.7;}
+.r-card.today{border-left-color:var(--blue);background:#f8fcfd;}
+.r-row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px;}
+.r-name{font-size:15px;font-weight:800;}
+.r-date{font-size:13px;font-weight:700;color:var(--red);margin:2px 0 6px;}
+.r-date.past{color:var(--text2);}
+.r-info-row{display:flex;flex-wrap:wrap;gap:10px;font-size:11px;color:var(--text2);margin-bottom:8px;}
+.r-info-row span{display:inline-flex;align-items:center;gap:3px;}
+.r-btn-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.r-btn-cancel{padding:8px 14px;background:linear-gradient(135deg,#DB444C,#C0392B);color:white;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex:1;min-width:140px;}
+.r-btn-cancel:hover{opacity:.9;}
+.r-btn-call{padding:8px 14px;background:white;color:var(--blue-dark);border:2px solid var(--blue);border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;text-decoration:none;text-align:center;}
+.r-status-badge{font-size:10px;padding:3px 10px;border-radius:20px;font-weight:700;white-space:nowrap;}
+.r-empty{padding:40px 20px;text-align:center;color:var(--text2);font-size:13px;}
+
 @media(min-width:600px){.sgrid{grid-template-columns:repeat(4,1fr);}.ggrid{grid-template-columns:repeat(4,1fr);}.badge-award{grid-template-columns:repeat(4,1fr);}}
 </style>
 </head>
@@ -154,6 +176,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
   <div class="tabs">
     <button class="tab-btn active" onclick="sw('dashboard',this)">📊 ダッシュボード</button>
     <button class="tab-btn" onclick="sw('members',this)">👥 会員管理</button>
+    <button class="tab-btn" onclick="sw('reserve',this)">🗓️ 体験予約</button>
     <button class="tab-btn" onclick="sw('fee',this)">💰 月会費</button>
     <button class="tab-btn" onclick="sw('stats',this)">📈 統計</button>
     <button class="tab-btn" onclick="sw('settings',this)">⚙️ 設定</button>
@@ -232,6 +255,23 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
   <div class="pager" id="pg"></div>
 </div>
 
+<!-- 体験予約 -->
+<div class="tab-content" id="tab-reserve">
+  <div class="ib">
+    <button class="btn btn-red" onclick="loadR()">🔄 予約を更新</button>
+    <span id="rc" style="font-size:12px;color:var(--text2)"></span>
+  </div>
+  <div class="r-filter">
+    <button class="rf-btn active" onclick="setRF('upcoming',this)">📅 今後の予約</button>
+    <button class="rf-btn" onclick="setRF('today',this)">本日</button>
+    <button class="rf-btn" onclick="setRF('past',this)">過去</button>
+    <button class="rf-btn" onclick="setRF('cancelled',this)">キャンセル済み</button>
+    <button class="rf-btn" onclick="setRF('all',this)">すべて</button>
+  </div>
+  <div id="rl2" class="loading" style="display:none"><div class="spin"></div>読み込み中...</div>
+  <div id="rl"></div>
+</div>
+
 <!-- 月会費 -->
 <div class="tab-content" id="tab-fee">
   <div class="card">
@@ -303,16 +343,22 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 <!-- 設定 -->
 <div class="tab-content" id="tab-settings">
   <div class="card">
-    <div class="card-title">GAS設定</div>
-    <div style="font-size:13px;font-weight:700;margin-bottom:6px">GAS デプロイURL</div>
+    <div class="card-title">GAS設定（会員管理）</div>
+    <div style="font-size:13px;font-weight:700;margin-bottom:6px">会員管理 GAS URL</div>
     <input type="text" class="si" id="gu" placeholder="https://script.google.com/macros/s/...">
     <button class="btn btn-red btn-full" onclick="saveS()">保存する</button>
+  </div>
+  <div class="card">
+    <div class="card-title">GAS設定（予約・キャンセル）</div>
+    <div style="font-size:13px;font-weight:700;margin-bottom:6px">予約・キャンセル GAS URL</div>
+    <input type="text" class="si" id="ru" placeholder="https://script.google.com/macros/s/...">
+    <button class="btn btn-red btn-full" onclick="saveR()">保存する</button>
   </div>
   <div class="card">
     <div class="card-title">アプリ情報</div>
     <div style="font-size:13px;color:var(--text2);line-height:2.2">
       <div>アプリ名：one-BALANCE トレーナー管理</div>
-      <div>バージョン：1.6.0</div>
+      <div>バージョン：1.7.0（体験予約タブ追加）</div>
       <div>赤 #DB444C / 青 #5BB9CD</div>
     </div>
   </div>
@@ -380,6 +426,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 
 <script>
 const DGAS='https://script.google.com/macros/s/AKfycbwjQ6_xHKcArfU0zdZtSCPdutJ71DQJG_1v9XYz-R8mFwa-srMB9aChV-ZcI4iSGwWrHw/exec';
+const DGAS_RESERVE='https://script.google.com/macros/s/AKfycbzWPH4cO-kPMGqbJqHEsYG1yefxa0FoKQOgDJeIeUHIe9alN1yrsDVHe6E7yFY1DFiY/exec';
 
 const GR=[
   {n:'ホワイト前', b:'#f5f5f5', c:'#666',    d:'入会直後の初期状態'},
@@ -433,12 +480,15 @@ const GRADE_COLORS={
 
 let AM=[],FM=[],CP=1,CM=null,SD=null,GF='';
 let SELECTED_MONTH='';
+let AR=[],RF='upcoming'; // 体験予約データ・フィルター
 const PG=20,CH={};
 const gurl=()=>localStorage.getItem('gasUrl')||DGAS;
+const rurl=()=>localStorage.getItem('gasReserveUrl')||DGAS_RESERVE;
 
 window.onload=()=>{
   tick();setInterval(tick,1e3);
   document.getElementById('gu').value=gurl();
+  document.getElementById('ru').value=rurl();
   renderGradeFilter();
   initCourseSelect();
   initMonthSelect();
@@ -479,6 +529,7 @@ function sw(name,btn){
   if(name==='fee'&&!AM.length)loadM().then(()=>renderFL());
   if(name==='fee'&&AM.length)renderFL();
   if(name==='stats'&&!SD)loadSt();
+  if(name==='reserve'&&!AR.length)loadR();
 }
 
 async function api(p){
@@ -486,6 +537,36 @@ async function api(p){
   Object.entries(p).forEach(([k,v])=>u.searchParams.set(k,v));
   const r=await fetch(u.toString());
   return r.json();
+}
+
+// 予約GAS用 JSONP呼び出し（CORS回避）
+function apiReserve(params){
+  return new Promise((resolve,reject)=>{
+    const cbName='cb_'+Date.now()+'_'+Math.floor(Math.random()*10000);
+    const timeoutId=setTimeout(()=>{
+      delete window[cbName];
+      if(script.parentNode)script.parentNode.removeChild(script);
+      reject(new Error('timeout'));
+    },30000);
+    window[cbName]=(data)=>{
+      clearTimeout(timeoutId);
+      delete window[cbName];
+      if(script.parentNode)script.parentNode.removeChild(script);
+      resolve(data);
+    };
+    const u=new URL(rurl());
+    Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v));
+    u.searchParams.set('callback',cbName);
+    const script=document.createElement('script');
+    script.src=u.toString();
+    script.onerror=()=>{
+      clearTimeout(timeoutId);
+      delete window[cbName];
+      if(script.parentNode)script.parentNode.removeChild(script);
+      reject(new Error('network error'));
+    };
+    document.body.appendChild(script);
+  });
 }
 
 async function loadD(){
@@ -822,6 +903,214 @@ async function importM(){
   }catch(e){toast('エラー',true);}
 }
 
+// ============================================
+// 体験予約タブ関連
+// ============================================
+async function loadR(){
+  sh('rl2');
+  document.getElementById('rl').innerHTML='';
+  try{
+    const d=await apiReserve({action:'getReservations'});
+    if(!d.ok)throw new Error(d.error||'読み込み失敗');
+    AR=d.data||[];
+    renderR();
+  }catch(e){
+    document.getElementById('rl').innerHTML=`<div class="r-empty" style="color:#e74c3c">読み込み失敗。設定の予約GAS URLを確認してください。<br>${String(e.message||e)}</div>`;
+  }
+  hd('rl2');
+}
+
+function setRF(f,btn){
+  RF=f;
+  document.querySelectorAll('.rf-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderR();
+}
+
+// "2026年04月24日" みたいな文字列を Date に変換
+function parseReserveDate(str){
+  if(!str)return null;
+  if(str instanceof Date)return str;
+  const s=String(str);
+  // yyyy年MM月dd日 HH:mm
+  let m=s.match(/(\d{4})年(\d{1,2})月(\d{1,2})日\s*(\d{1,2}):(\d{2})/);
+  if(m)return new Date(+m[1],+m[2]-1,+m[3],+m[4],+m[5]);
+  // yyyy年MM月dd日
+  m=s.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
+  if(m)return new Date(+m[1],+m[2]-1,+m[3]);
+  // ISOっぽいもの
+  const d=new Date(s);
+  if(!isNaN(d.getTime()))return d;
+  return null;
+}
+
+function fmtReserveDate(str){
+  const d=parseReserveDate(str);
+  if(!d)return str||'-';
+  const wd=['日','月','火','水','木','金','土'][d.getDay()];
+  const hasTime=/\d{1,2}:\d{2}/.test(String(str));
+  const base=`${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日(${wd})`;
+  return hasTime?`${base} ${p2(d.getHours())}:${p2(d.getMinutes())}`:base;
+}
+
+function renderR(){
+  const now=new Date();
+  const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const tomorrow=new Date(today.getTime()+86400000);
+
+  let list=AR.map(r=>{
+    const d=parseReserveDate(r.reserveDate);
+    return {...r,_date:d};
+  });
+
+  const isCancelled=(r)=>String(r.status||'').indexOf('キャンセル')>=0;
+
+  let filtered;
+  if(RF==='upcoming'){
+    filtered=list.filter(r=>!isCancelled(r)&&r._date&&r._date>=today);
+    filtered.sort((a,b)=>a._date-b._date);
+  }else if(RF==='today'){
+    filtered=list.filter(r=>!isCancelled(r)&&r._date&&r._date>=today&&r._date<tomorrow);
+    filtered.sort((a,b)=>a._date-b._date);
+  }else if(RF==='past'){
+    filtered=list.filter(r=>!isCancelled(r)&&r._date&&r._date<today);
+    filtered.sort((a,b)=>b._date-a._date);
+  }else if(RF==='cancelled'){
+    filtered=list.filter(r=>isCancelled(r));
+    filtered.sort((a,b)=>(b._date||0)-(a._date||0));
+  }else{
+    filtered=list.slice();
+    filtered.sort((a,b)=>(b._date||0)-(a._date||0));
+  }
+
+  document.getElementById('rc').textContent=`${filtered.length}件`;
+
+  if(!filtered.length){
+    const msgMap={
+      upcoming:'今後の予約はありません',
+      today:'本日の予約はありません',
+      past:'過去の予約はありません',
+      cancelled:'キャンセル済みの予約はありません',
+      all:'予約データがありません'
+    };
+    document.getElementById('rl').innerHTML=`<div class="r-empty">${msgMap[RF]||'データなし'}</div>`;
+    return;
+  }
+
+  document.getElementById('rl').innerHTML=filtered.map(r=>{
+    const d=r._date;
+    const cancelled=isCancelled(r);
+    const past=d&&d<today;
+    const isToday=d&&d>=today&&d<tomorrow;
+    let cls='r-card';
+    if(cancelled)cls+=' cancelled';
+    else if(isToday)cls+=' today';
+    else if(past)cls+=' past';
+
+    const dateStr=fmtReserveDate(r.reserveDate);
+    const gender=r.gender?`<span>👤 ${escapeHtml(r.gender)}</span>`:'';
+    const age=r.age?`<span>🎂 ${escapeHtml(r.age)}</span>`:'';
+    const kikkake=r.kikkake?`<span>📢 ${escapeHtml(r.kikkake)}</span>`:'';
+    const undou=r.undou?`<span>💪 ${escapeHtml(r.undou).substring(0,20)}</span>`:'';
+    const phone=r.phone?`<span>📞 ${escapeHtml(r.phone)}</span>`:'';
+    const email=r.email?`<span style="word-break:break-all">✉️ ${escapeHtml(r.email)}</span>`:'';
+    const addr=r.address?`<span>🏠 ${escapeHtml(r.address).substring(0,24)}</span>`:'';
+
+    let statusBadge='';
+    if(cancelled){
+      statusBadge='<span class="r-status-badge bgr">キャンセル済み</span>';
+    }else if(isToday){
+      statusBadge='<span class="r-status-badge bb">📍 本日</span>';
+    }else if(past){
+      statusBadge='<span class="r-status-badge bgr">終了</span>';
+    }else{
+      statusBadge='<span class="r-status-badge bg">予約中</span>';
+    }
+
+    const cancelBtn=(!cancelled&&!past)?`<button class="r-btn-cancel" onclick="cancelReserve('${escapeAttr(r.reservationId)}','${escapeAttr(r.name)}','${escapeAttr(dateStr)}')">❌ キャンセル＋お詫びメール送信</button>`:'';
+    const callBtn=r.phone?`<a class="r-btn-call" href="tel:${escapeAttr(r.phone)}">📞 電話する</a>`:'';
+    const btnRow=(cancelBtn||callBtn)?`<div class="r-btn-row">${cancelBtn}${callBtn}</div>`:'';
+
+    const cancelledAtRow=cancelled&&r.cancelledAt?`<div style="font-size:10px;color:var(--text2);margin-top:4px">キャンセル日時：${escapeHtml(r.cancelledAt)}</div>`:'';
+    const idRow=`<div style="font-size:10px;color:var(--text2);margin-top:4px">予約ID：${escapeHtml(r.reservationId||'-')}</div>`;
+
+    return `<div class="${cls}">
+      <div class="r-row">
+        <div style="flex:1">
+          <div class="r-name">${escapeHtml(r.name||'-')} 様</div>
+          <div class="r-date ${past?'past':''}">🗓 ${escapeHtml(dateStr)}</div>
+        </div>
+        ${statusBadge}
+      </div>
+      <div class="r-info-row">${gender}${age}${phone}${email}${addr}${kikkake}${undou}</div>
+      ${idRow}
+      ${cancelledAtRow}
+      ${btnRow}
+    </div>`;
+  }).join('');
+}
+
+async function cancelReserve(reservationId,name,dateStr){
+  if(!reservationId){toast('予約IDが見つかりません',true);return;}
+
+  // 第一確認：キャンセル意思確認
+  const confirm1=confirm(
+    `【予約キャンセルの確認】\n\n`+
+    `お客様：${name} 様\n`+
+    `予約日時：${dateStr}\n`+
+    `予約ID：${reservationId}\n\n`+
+    `この予約をキャンセルしますか？\n`+
+    `※Googleカレンダーからも自動削除されます。`
+  );
+  if(!confirm1)return;
+
+  // キャンセル理由入力（任意）
+  const reason=prompt(
+    `キャンセル理由を入力してください（任意）\n\n`+
+    `※お詫びメールに記載されます。\n`+
+    `※空欄のままでもOK（理由は記載されません）\n\n`+
+    `例：トレーナー急病のため / 設備メンテナンスのため`,
+    ''
+  );
+  if(reason===null)return; // キャンセルボタン押下
+
+  // 最終確認
+  const confirm2=confirm(
+    `【最終確認】\n\n`+
+    `${name} 様に以下を実行します：\n\n`+
+    `✓ Googleカレンダーから削除\n`+
+    `✓ 予約シートを「キャンセル済み」に更新\n`+
+    `✓ お客様へお詫びメール自動送信\n\n`+
+    (reason?`キャンセル理由：${reason}\n\n`:'')+
+    `実行してよろしいですか？`
+  );
+  if(!confirm2)return;
+
+  toast('キャンセル処理中...');
+  try{
+    const params={action:'cancelByTrainer',id:reservationId};
+    if(reason)params.reason=reason;
+    const d=await apiReserve(params);
+    if(!d.ok){
+      toast(d.error||'キャンセル失敗',true);
+      return;
+    }
+    toast(`${name}様のキャンセル＋お詫びメール送信完了`);
+    await loadR();
+  }catch(e){
+    toast('通信エラー：'+String(e.message||e),true);
+  }
+}
+
+function escapeHtml(s){
+  if(s==null)return'';
+  return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function escapeAttr(s){
+  if(s==null)return'';
+  return String(s).replace(/[\\'"]/g,'\\$&').replace(/</g,'&lt;');
+}
+
 function renderFL(){
   const q=(document.getElementById('fs')||{}).value||'';
   const month=SELECTED_MONTH;
@@ -937,6 +1226,12 @@ function saveS(){
   const u=document.getElementById('gu').value.trim();
   if(!u){toast('URLを入力してください',true);return;}
   localStorage.setItem('gasUrl',u);toast('保存しました');
+}
+
+function saveR(){
+  const u=document.getElementById('ru').value.trim();
+  if(!u){toast('URLを入力してください',true);return;}
+  localStorage.setItem('gasReserveUrl',u);toast('予約GAS URLを保存しました');
 }
 
 function mk(id,type,labels,data,colors,opts={}){
