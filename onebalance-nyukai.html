@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>入会申込 | ONE-BALANCE BOXING GYM</title>
+<style>
+:root{
+  --red:#DB444C; --blue:#5BB9CD; --gray:#727474;
+  --bg:#fffaf5; --card:#ffffff; --border:#f0e6dc;
+  --text:#2b2b2b; --sub:#7a7a7a;
+  --radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.6}
+body{min-height:100vh;padding-bottom:100px}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px}
+
+/* ヘッダー */
+header{background:linear-gradient(135deg,var(--red) 0%,#c73841 100%);color:#fff;padding:20px 16px;text-align:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+header .logo{width:72px;height:72px;border-radius:50%;background:#fff;padding:6px;margin:0 auto 8px;display:flex;align-items:center;justify-content:center}
+header .logo img{width:100%;height:100%;object-fit:contain;border-radius:50%}
+header h1{font-size:17px;font-weight:700;letter-spacing:.02em}
+header p{font-size:12px;opacity:.9;margin-top:4px}
+
+/* ステップインジケーター */
+.stepper{display:flex;justify-content:space-between;align-items:center;padding:20px 16px 8px;max-width:560px;margin:0 auto}
+.step{flex:1;text-align:center;position:relative}
+.step .circle{width:32px;height:32px;border-radius:50%;background:#e8ddd3;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;transition:all .3s}
+.step.active .circle{background:var(--red);box-shadow:0 4px 12px rgba(219,68,76,.4)}
+.step.done .circle{background:var(--blue)}
+.step .lbl{font-size:10px;color:var(--sub);margin-top:4px;display:block}
+.step.active .lbl{color:var(--red);font-weight:700}
+.step:not(:last-child)::after{content:'';position:absolute;top:16px;right:-50%;width:100%;height:2px;background:#e8ddd3;z-index:-1}
+.step.done:not(:last-child)::after{background:var(--blue)}
+
+/* カード */
+.card{background:var(--card);border-radius:var(--radius);padding:20px 16px;margin:12px 0;box-shadow:0 2px 10px rgba(0,0,0,.04);border:1px solid var(--border)}
+.card h2{font-size:16px;color:var(--red);margin-bottom:12px;padding-bottom:8px;border-bottom:2px dotted #f3d9db;font-weight:700}
+.card h2 .num{display:inline-block;background:var(--red);color:#fff;width:24px;height:24px;border-radius:50%;text-align:center;line-height:24px;font-size:12px;margin-right:8px}
+
+/* ウェルカム */
+.welcome{text-align:center;padding:24px 16px;background:linear-gradient(180deg,#fff 0%,#fff6f0 100%);border-radius:var(--radius);margin:12px 0;border:2px solid var(--red)}
+.welcome .welcome-logo{width:100px;height:100px;margin:0 auto 12px;border-radius:50%;border:3px solid var(--red);padding:4px;background:#fff}
+.welcome .welcome-logo img{width:100%;height:100%;object-fit:contain;border-radius:50%}
+.welcome h2{font-size:22px;color:var(--red);font-weight:800;letter-spacing:.05em}
+.welcome p{color:var(--sub);font-size:13px;margin-top:8px}
+
+/* コースタブ */
+.tabs{display:flex;gap:4px;margin-bottom:12px;background:#f4ede5;padding:4px;border-radius:10px}
+.tab{flex:1;padding:10px 4px;text-align:center;font-size:11px;font-weight:700;border-radius:8px;cursor:pointer;color:var(--sub);transition:all .2s}
+.tab.active{background:var(--red);color:#fff;box-shadow:0 2px 6px rgba(219,68,76,.3)}
+
+.plan-group{margin-bottom:16px}
+.plan-group-title{font-size:12px;color:var(--gray);font-weight:700;padding:6px 10px;background:#f9f4ee;border-radius:6px;margin-bottom:8px}
+.plan{border:2px solid var(--border);border-radius:10px;padding:14px;margin-bottom:8px;cursor:pointer;transition:all .2s;background:#fff;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.plan:active{transform:scale(.98)}
+.plan.selected{border-color:var(--red);background:#fff6f0;box-shadow:0 4px 12px rgba(219,68,76,.15)}
+.plan.kick.selected{border-color:var(--blue);background:#eaf7fa;box-shadow:0 4px 12px rgba(91,185,205,.15)}
+.plan.spar.selected{border-color:var(--gray);background:#f5f5f5;box-shadow:0 4px 12px rgba(114,116,116,.15)}
+.plan-name{font-weight:700;font-size:14px;flex:1;line-height:1.4}
+.plan-name .grade{display:inline-block;padding:2px 6px;font-size:10px;border-radius:4px;background:#eee;color:#555;margin-right:4px}
+.plan-name .grade.kick{background:#eaf7fa;color:var(--blue)}
+.plan-name .grade.light{background:#fdecee;color:var(--red)}
+.plan-name .grade.spar{background:#f0f0f0;color:var(--gray)}
+.plan-price{font-weight:800;color:var(--red);font-size:16px;white-space:nowrap}
+.plan-price .yen{font-size:11px;font-weight:400}
+.plan-price .mo{font-size:10px;color:var(--sub);font-weight:400}
+
+/* 曜日選択（週1コース用） */
+.weekday-picker{display:none;margin-top:12px;padding:12px;background:#fef5f5;border-radius:10px;border:1px dashed var(--red)}
+.weekday-picker.show{display:block}
+.weekday-picker p{font-size:12px;color:var(--red);font-weight:700;margin-bottom:8px}
+.weekdays{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.weekday{aspect-ratio:1;border:2px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;cursor:pointer;background:#fff;transition:all .2s;font-size:13px}
+.weekday.selected{background:var(--red);color:#fff;border-color:var(--red)}
+.weekday.disabled{opacity:.3;pointer-events:none}
+
+/* 入会日ボタン */
+.joindate-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px}
+.joindate-btn{padding:12px 4px;border:2px solid var(--border);border-radius:10px;background:#fff;font-weight:700;font-size:12px;cursor:pointer;transition:all .2s;color:var(--text)}
+.joindate-btn.active{background:var(--red);color:#fff;border-color:var(--red)}
+
+/* 人数選択（いっしょ割） */
+.people-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.people-btn{padding:14px 4px;border:2px solid var(--border);border-radius:10px;background:#fff;cursor:pointer;transition:all .2s;text-align:center}
+.people-btn.active{border-color:var(--red);background:#fff6f0}
+.people-btn .n{font-size:20px;font-weight:800;color:var(--red);display:block}
+.people-btn .f{font-size:11px;color:var(--sub);margin-top:2px}
+.people-btn.active .f{color:var(--red);font-weight:700}
+
+/* フォーム */
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:700;margin-bottom:6px;color:var(--gray)}
+.field label .req{color:var(--red);margin-left:3px}
+.field input,.field select,.field textarea{width:100%;padding:12px;border:1.5px solid var(--border);border-radius:10px;font-size:15px;background:#fff;font-family:inherit;color:var(--text)}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 3px rgba(219,68,76,.12)}
+.field .hint{font-size:11px;color:var(--sub);margin-top:4px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* 規約 */
+.terms-box{max-height:180px;overflow-y:auto;background:#faf6f1;padding:12px;border-radius:10px;font-size:12px;line-height:1.7;margin-bottom:10px;border:1px solid var(--border);color:var(--gray)}
+.chk{display:flex;align-items:flex-start;gap:8px;cursor:pointer;padding:10px;background:#fff6f0;border-radius:10px;border:2px solid transparent}
+.chk input{width:20px;height:20px;accent-color:var(--red);margin-top:2px;flex-shrink:0}
+.chk span{font-size:13px;font-weight:700;color:var(--text);flex:1}
+.chk.checked{background:#fff0f0;border-color:var(--red)}
+
+/* クーポン（超小さい） */
+.coupon-link{text-align:center;padding:8px;color:#dcdcdc;font-size:10px;cursor:pointer;margin-top:8px;letter-spacing:.3em}
+.coupon-link:hover{color:var(--sub)}
+.coupon-box{display:none;margin-top:8px;padding:12px;background:#f0f9fb;border-radius:10px;border:1.5px dashed var(--blue)}
+.coupon-box.show{display:block}
+.coupon-box input{width:100%;padding:10px;border:1.5px solid var(--blue);border-radius:8px;font-size:14px;text-transform:uppercase}
+.coupon-box button{width:100%;margin-top:8px;padding:10px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer}
+.coupon-msg{font-size:12px;margin-top:6px;font-weight:700}
+.coupon-msg.ok{color:#2a9f42}
+.coupon-msg.ng{color:var(--red)}
+
+/* 確認画面 */
+.confirm-list{display:flex;flex-direction:column;gap:6px}
+.confirm-row{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px dotted #eadfd3;gap:8px;font-size:13px}
+.confirm-row:last-child{border-bottom:none}
+.confirm-row .lbl{color:var(--sub);font-weight:600;flex-shrink:0;min-width:84px}
+.confirm-row .val{font-weight:700;color:var(--text);text-align:right;word-break:break-all}
+
+.price-summary{background:linear-gradient(135deg,#fff6f0 0%,#ffffff 100%);border:2px solid var(--red);border-radius:var(--radius);padding:16px;margin-top:12px}
+.price-row{display:flex;justify-content:space-between;padding:6px 0;font-size:14px}
+.price-row.discount{color:var(--blue)}
+.price-row.total{border-top:2px solid var(--red);margin-top:8px;padding-top:10px;font-size:18px;font-weight:800;color:var(--red)}
+.price-row .amt{font-weight:700}
+.price-row.total .amt{font-size:22px}
+
+/* 未成年警告 */
+.minor-alert{display:none;background:#fff3cd;border:2px solid #ffb74a;border-radius:10px;padding:12px;margin-top:10px}
+.minor-alert.show{display:block}
+.minor-alert p{font-size:12px;color:#925500;margin-bottom:8px;font-weight:700}
+
+/* ボタン */
+.btn-group{position:fixed;bottom:0;left:0;right:0;background:#fff;padding:12px 16px;box-shadow:0 -4px 16px rgba(0,0,0,.08);display:flex;gap:8px;z-index:50;max-width:560px;margin:0 auto}
+.btn{flex:1;padding:14px 16px;border:none;border-radius:12px;font-weight:800;font-size:15px;cursor:pointer;transition:all .2s;font-family:inherit}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:linear-gradient(135deg,var(--red) 0%,#c73841 100%);color:#fff;box-shadow:0 4px 12px rgba(219,68,76,.3)}
+.btn-primary:disabled{background:#ccc;box-shadow:none;color:#888}
+.btn-secondary{background:#fff;color:var(--gray);border:2px solid var(--border);max-width:120px}
+
+/* ステップ制御 */
+.step-panel{display:none}
+.step-panel.active{display:block;animation:fadeIn .3s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ローディング */
+.loader{display:none;position:fixed;inset:0;background:rgba(255,255,255,.95);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+.loader.show{display:flex}
+.spinner{width:48px;height:48px;border:5px solid #f4ede5;border-top:5px solid var(--red);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loader p{font-weight:700;color:var(--red)}
+
+/* 完了画面 */
+.complete{text-align:center;padding:40px 20px}
+.complete .icon{width:80px;height:80px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;color:#fff;font-size:40px;font-weight:700}
+.complete h2{font-size:22px;color:var(--red);margin-bottom:12px}
+.complete p{color:var(--text);font-size:14px;line-height:1.8;margin-bottom:12px}
+.complete .id-box{background:#fff6f0;border:2px dashed var(--red);border-radius:10px;padding:14px;margin:20px 0;font-family:monospace;font-size:18px;font-weight:700;color:var(--red)}
+.complete a{color:var(--red);font-weight:700;text-decoration:underline}
+
+/* エラー表示 */
+.err-inline{color:var(--red);font-size:11px;margin-top:4px;font-weight:700;display:none}
+.err-inline.show{display:block}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><img src="https://onebalanceyume-beep.github.io/onebalance-member/v9ロゴ.png" alt="ONE-BALANCE" onerror="this.style.display='none'"></div>
+  <h1>ONE-BALANCE BOXING GYM</h1>
+  <p>入会申込フォーム</p>
+</header>
+
+<div class="stepper">
+  <div class="step active" data-step="1"><span class="circle">1</span><span class="lbl">コース</span></div>
+  <div class="step" data-step="2"><span class="circle">2</span><span class="lbl">情報</span></div>
+  <div class="step" data-step="3"><span class="circle">3</span><span class="lbl">規約</span></div>
+  <div class="step" data-step="4"><span class="circle">4</span><span class="lbl">確認</span></div>
+</div>
+
+<div class="wrap">
+
+<div class="welcome" id="welcome">
+  <div class="welcome-logo"><img src="https://onebalanceyume-beep.github.io/onebalance-member/v9ロゴ.png" alt="ロゴ" onerror="this.style.display='none'"></div>
+  <h2>WELCOME!</h2>
+  <p>ご入会ありがとうございます<br>まずはコースをお選びください</p>
+</div>
+
+<!-- STEP 1: コース選択 -->
+<div class="step-panel active" id="panel1">
+
+  <div class="card">
+    <h2><span class="num">1</span>コースをお選びください</h2>
+    <div class="tabs">
+      <div class="tab active" data-gender="male">男性</div>
+      <div class="tab" data-gender="female">女性・小学生</div>
+      <div class="tab" data-gender="week1">週1共通</div>
+    </div>
+
+    <div id="plan-list"></div>
+
+    <div class="weekday-picker" id="weekday-picker">
+      <p>週1コース：通う曜日を2つお選びください</p>
+      <div class="weekdays">
+        <div class="weekday" data-day="月">月</div>
+        <div class="weekday" data-day="火">火</div>
+        <div class="weekday" data-day="水">水</div>
+        <div class="weekday" data-day="木">木</div>
+        <div class="weekday" data-day="金">金</div>
+        <div class="weekday" data-day="土">土</div>
+        <div class="weekday disabled" data-day="日">日</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span class="num">2</span>入会日</h2>
+    <div class="joindate-btns">
+      <button type="button" class="joindate-btn active" data-jd="today">今日から</button>
+      <button type="button" class="joindate-btn" data-jd="next">来週から</button>
+      <button type="button" class="joindate-btn" data-jd="custom">日付指定</button>
+    </div>
+    <input type="date" id="custom-date" style="display:none;margin-top:8px;padding:10px;width:100%;border:1.5px solid var(--border);border-radius:8px">
+  </div>
+
+  <div class="card">
+    <h2><span class="num">3</span>同時入会人数（いっしょ割）</h2>
+    <div class="people-btns">
+      <div class="people-btn active" data-n="1"><span class="n">1</span><span class="f">¥8,800</span></div>
+      <div class="people-btn" data-n="2"><span class="n">2</span><span class="f">¥4,400/人</span></div>
+      <div class="people-btn" data-n="3"><span class="n">3</span><span class="f">¥0/人</span></div>
+    </div>
+    <p class="hint" style="font-size:11px;color:var(--sub);margin-top:6px">※お友達やご家族と同時入会で入会金がお得に</p>
+  </div>
+
+  <div class="coupon-link" onclick="toggleCoupon()">・</div>
+  <div class="coupon-box" id="coupon-box">
+    <input type="text" id="coupon-code" placeholder="クーポンコードを入力">
+    <button type="button" onclick="applyCoupon()">適用する</button>
+    <div class="coupon-msg" id="coupon-msg"></div>
+  </div>
+</div>
+
+<!-- STEP 2: 個人情報 -->
+<div class="step-panel" id="panel2">
+  <div class="card">
+    <h2><span class="num">1</span>お客様情報</h2>
+    <div class="field"><label>お名前<span class="req">*</span></label><input id="name" placeholder="山田 太郎"></div>
+    <div class="field"><label>フリガナ<span class="req">*</span></label><input id="kana" placeholder="ヤマダ タロウ"></div>
+    <div class="row">
+      <div class="field"><label>性別<span class="req">*</span></label>
+        <select id="gender"><option value="">選択</option><option>男性</option><option>女性</option><option>その他</option></select>
+      </div>
+      <div class="field"><label>生年月日<span class="req">*</span></label><input type="date" id="birthday"></div>
+    </div>
+    <div class="minor-alert" id="minor-alert">
+      <p>⚠ 18歳未満の方は保護者様の同意が必要です</p>
+      <label class="chk"><input type="checkbox" id="parent-consent"><span>保護者の同意を得ています</span></label>
+    </div>
+    <div class="field"><label>電話番号<span class="req">*</span></label><input type="tel" id="tel" placeholder="09012345678"></div>
+    <div class="field"><label>メールアドレス<span class="req">*</span></label><input type="email" id="email" placeholder="example@email.com"></div>
+    <div class="field"><label>ご住所<span class="req">*</span></label><input id="address" placeholder="鳥取県米子市〇〇"></div>
+    <div class="field"><label>勤務先・学校名</label><input id="workplace" placeholder="〇〇株式会社"></div>
+  </div>
+
+  <div class="card">
+    <h2><span class="num">2</span>緊急連絡先</h2>
+    <div class="field"><label>お名前</label><input id="emergency-name" placeholder="山田 花子"></div>
+    <div class="row">
+      <div class="field"><label>電話番号</label><input type="tel" id="emergency-tel" placeholder="09087654321"></div>
+      <div class="field"><label>続柄</label>
+        <select id="emergency-rel"><option value="">選択</option><option>配偶者</option><option>親</option><option>子</option><option>兄弟姉妹</option><option>その他</option></select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span class="num">3</span>口座情報</h2>
+    <div class="field"><label>口座登録銀行<span class="req">*</span></label>
+      <select id="bank">
+        <option value="">選択</option>
+        <option>山陰合同銀行</option><option>鳥取銀行</option><option>島根銀行</option>
+        <option>ゆうちょ銀行</option><option>JAバンク</option><option>その他</option>
+      </select>
+    </div>
+    <div class="field"><label>口座名義（カナ）<span class="req">*</span></label><input id="account-holder" placeholder="ヤマダ タロウ"></div>
+  </div>
+</div>
+
+<!-- STEP 3: 規約同意 -->
+<div class="step-panel" id="panel3">
+  <div class="card">
+    <h2><span class="num">1</span>利用規約</h2>
+    <div class="terms-box">
+【ONE-BALANCE BOXING GYM 会員規約】
+
+第1条（入会）
+入会希望者は本規約を承諾の上、所定の手続きを行うものとします。
+
+第2条（会費）
+月会費は登録口座から毎月振替にて自動引落とします。
+
+第3条（休会・退会）
+休会・退会をご希望の場合は前月末日までにお申し出ください。
+退会手続き不完了の場合、翌月以降も会費が発生します。
+
+第4条（施設利用）
+施設内での事故・怪我については、当ジムは一切の責任を負いません。
+各自十分な注意のもとご利用ください。
+
+第5条(禁止事項)
+・他会員への迷惑行為
+・施設・備品の破損
+・営利目的での施設利用
+・ジム内の盗撮、録音、SNSでの無断投稿
+
+第6条（規約変更）
+当ジムは必要に応じて本規約を変更できるものとします。
+
+第7条（個人情報）
+ご提供いただいた個人情報は、会員管理・連絡以外には使用いたしません。
+
+制定日：2024年1月1日
+ONE-BALANCE BOXING GYM
+鳥取県米子市車尾6丁目8-59
+TEL: 0859-49-5275
+    </div>
+    <label class="chk" id="terms-chk-lbl">
+      <input type="checkbox" id="terms-agree">
+      <span>上記の規約をすべて確認し、同意いたします</span>
+    </label>
+  </div>
+</div>
+
+<!-- STEP 4: 確認 -->
+<div class="step-panel" id="panel4">
+  <div class="card">
+    <h2><span class="num">1</span>お申込内容の確認</h2>
+    <div class="confirm-list" id="confirm-list"></div>
+  </div>
+
+  <div class="price-summary">
+    <div class="price-row"><span>入会金</span><span class="amt" id="summary-entry">¥8,800</span></div>
+    <div class="price-row"><span>初月日割り月会費</span><span class="amt" id="summary-first">¥0</span></div>
+    <div class="price-row discount" id="summary-discount-row" style="display:none"><span>クーポン割引</span><span class="amt" id="summary-discount">-¥0</span></div>
+    <div class="price-row total"><span>初回お支払い合計</span><span class="amt" id="summary-total">¥8,800</span></div>
+  </div>
+
+  <div id="free-months-banner" style="display:none;margin-top:12px;padding:14px;background:linear-gradient(135deg,#5BB9CD 0%,#4a9fb3 100%);color:#fff;border-radius:12px;text-align:center;box-shadow:0 4px 12px rgba(91,185,205,.3)">
+    <div style="font-size:11px;opacity:.9">🎁 特典</div>
+    <div style="font-size:17px;font-weight:800;margin-top:4px"><span id="free-months-text">-</span></div>
+    <div style="font-size:11px;margin-top:4px;opacity:.95"><span id="free-months-start">-</span>から月会費が無料になります</div>
+  </div>
+
+  <p style="text-align:center;font-size:11px;color:var(--sub);margin-top:12px;line-height:1.7">
+    ※初回は現金でお支払いください<br>
+    ※翌月以降は登録口座から自動引落しとなります
+  </p>
+</div>
+
+<!-- 完了 -->
+<div class="step-panel" id="panel-done">
+  <div class="complete">
+    <div class="icon">✓</div>
+    <h2>お申込み完了！</h2>
+    <p>ご入会ありがとうございます。<br>
+       ご登録のメールアドレスにマイページURLをお送りしました。</p>
+    <div class="id-box" id="done-id">-</div>
+    <p>初回はご予約の上、ジムまでお越しください。<br>
+       TEL: 0859-49-5275</p>
+    <p style="margin-top:20px"><a href="https://onebalanceyume-beep.github.io/onebalance-member/" target="_blank">マイページを開く</a></p>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<div class="btn-group" id="btn-group">
+  <button type="button" class="btn btn-secondary" id="btn-back" onclick="prevStep()" style="display:none">戻る</button>
+  <button type="button" class="btn btn-primary" id="btn-next" onclick="nextStep()">次へすすむ</button>
+</div>
+
+<div class="loader" id="loader">
+  <div class="spinner"></div>
+  <p>お申込み送信中...</p>
+</div>
+
+<script>
+// ============ 設定 ============
+const GAS2_URL = 'https://script.google.com/macros/s/AKfycbxOLa7yOFNUi7IaLRKVQlJ30s85Fk0nwMrrEk49b4upLAMDMZcnQWgd9XJxMDbxb8O6QQ/exec';
+const GAS1_URL = 'https://script.google.com/macros/s/AKfycbxNxYgejS-1NZvt33PuIkh-DIEtHS9-hTFyAxUjO_8a6E9MM9CPxxDV8KMhX189c8oyrg/exec';
+
+// ============ コースデータ ============
+const COURSES = {
+  male: [
+    {group:'キックエクササイズ',items:[
+      {id:'いつでもキックエクササイズ（男性）7,260', name:'いつでもキック', fee:7260, grade:'kick'}
+    ]},
+    {group:'ライトボクシング',items:[
+      {id:'いつでもライトボクシング（男性）7,260', name:'いつでもライト', fee:7260, grade:'light'},
+      {id:'いつでもライト（男性）6,380', name:'いつでもライト（お得）', fee:6380, grade:'light'}
+    ]},
+    {group:'スパーリング',items:[
+      {id:'いつでもスパーリングボクシング（男性）7,810', name:'いつでもスパー', fee:7810, grade:'spar'}
+    ]}
+  ],
+  female: [
+    {group:'キックエクササイズ',items:[
+      {id:'いつでもキックエクササイズ（女性）6,380', name:'いつでもキック（女性・小学生）', fee:6380, grade:'kick'}
+    ]},
+    {group:'ライトボクシング',items:[
+      {id:'いつでもライトボクシング（女性）6,380', name:'いつでもライト（女性・小学生）', fee:6380, grade:'light'},
+      {id:'いつでもライト（女性）5,500', name:'いつでもライト（女性・小学生・お得）', fee:5500, grade:'light'}
+    ]},
+    {group:'スパーリング',items:[
+      {id:'いつでもスパーリングボクシング（女性）6,930', name:'いつでもスパー（女性・小学生）', fee:6930, grade:'spar'}
+    ]}
+  ],
+  week1: [
+    {group:'週1コース',items:[
+      {id:'週１キックエクササイズ 4,620', name:'週1キック', fee:4620, grade:'kick'},
+      {id:'週１ライトボクシング 4,620', name:'週1ライト', fee:4620, grade:'light'},
+      {id:'週１ライト 3,850', name:'週1ライト（お得）', fee:3850, grade:'light'},
+      {id:'週１スパーリングボクシング 4,950', name:'週1スパー', fee:4950, grade:'spar'}
+    ]}
+  ]
+};
+
+// ============ 状態 ============
+let state = {
+  currentStep: 1,
+  gender: 'male',
+  course: null,
+  weeklyDays: [],
+  joinDate: formatDate(new Date()),
+  joinDateType: 'today',
+  people: 1,
+  coupon: null,
+  memberId: null
+};
+
+// ============ 初期化 ============
+window.addEventListener('DOMContentLoaded', ()=>{
+  renderPlans('male');
+  setupTabs();
+  setupWeekdays();
+  setupJoindate();
+  setupPeople();
+  setupBirthday();
+  setupTermsChk();
+  updateUI();
+});
+
+function formatDate(d){
+  const y=d.getFullYear(),m=('0'+(d.getMonth()+1)).slice(-2),da=('0'+d.getDate()).slice(-2);
+  return `${y}-${m}-${da}`;
+}
+function formatDateJP(s){
+  if(!s)return'';const d=new Date(s);return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;
+}
+
+// ============ コース一覧描画 ============
+function renderPlans(gender){
+  const list = document.getElementById('plan-list');
+  list.innerHTML = '';
+  COURSES[gender].forEach(gr=>{
+    const grDiv = document.createElement('div');
+    grDiv.className = 'plan-group';
+    grDiv.innerHTML = `<div class="plan-group-title">${gr.group}</div>`;
+    gr.items.forEach(item=>{
+      const p = document.createElement('div');
+      p.className = `plan ${item.grade}`;
+      p.dataset.courseId = item.id;
+      p.innerHTML = `
+        <div class="plan-name"><span class="grade ${item.grade}">${gr.group.slice(0,3)}</span>${item.name}</div>
+        <div class="plan-price">¥${item.fee.toLocaleString()}<span class="mo">/月</span></div>`;
+      p.addEventListener('click',()=>selectPlan(item,gender));
+      grDiv.appendChild(p);
+    });
+    list.appendChild(grDiv);
+  });
+  // 週1の曜日選択表示制御
+  document.getElementById('weekday-picker').classList.toggle('show', gender==='week1' && state.course);
+}
+
+function selectPlan(item,gender){
+  document.querySelectorAll('.plan').forEach(el=>el.classList.remove('selected'));
+  document.querySelector(`.plan[data-course-id="${item.id}"]`).classList.add('selected');
+  state.course = item;
+  state.gender = gender;
+  document.getElementById('weekday-picker').classList.toggle('show', gender==='week1');
+  if(gender!=='week1')state.weeklyDays=[];
+  updateUI();
+}
+
+// ============ タブ ============
+function setupTabs(){
+  document.querySelectorAll('.tab').forEach(tab=>{
+    tab.addEventListener('click',()=>{
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active');
+      const g = tab.dataset.gender;
+      state.gender = g;
+      state.course = null;
+      renderPlans(g);
+      updateUI();
+    });
+  });
+}
+
+// ============ 曜日 ============
+function setupWeekdays(){
+  document.querySelectorAll('.weekday').forEach(wd=>{
+    wd.addEventListener('click',()=>{
+      if(wd.classList.contains('disabled'))return;
+      const day = wd.dataset.day;
+      if(wd.classList.contains('selected')){
+        wd.classList.remove('selected');
+        state.weeklyDays = state.weeklyDays.filter(d=>d!==day);
+      }else{
+        if(state.weeklyDays.length>=2){
+          alert('曜日は2つまで選択可能です');return;
+        }
+        wd.classList.add('selected');
+        state.weeklyDays.push(day);
+      }
+      updateUI();
+    });
+  });
+}
+
+// ============ 入会日 ============
+function setupJoindate(){
+  const today = new Date();
+  document.querySelectorAll('.joindate-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.joindate-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      state.joinDateType = btn.dataset.jd;
+      if(btn.dataset.jd==='today'){
+        state.joinDate = formatDate(today);
+        document.getElementById('custom-date').style.display='none';
+      }else if(btn.dataset.jd==='next'){
+        const nx = new Date(today); nx.setDate(nx.getDate()+7);
+        state.joinDate = formatDate(nx);
+        document.getElementById('custom-date').style.display='none';
+      }else{
+        document.getElementById('custom-date').style.display='block';
+      }
+      updateUI();
+    });
+  });
+  document.getElementById('custom-date').addEventListener('change',e=>{
+    state.joinDate = e.target.value;
+    updateUI();
+  });
+}
+
+// ============ 人数 ============
+function setupPeople(){
+  document.querySelectorAll('.people-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.people-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      state.people = Number(btn.dataset.n);
+      updateUI();
+    });
+  });
+}
+
+// ============ 誕生日（未成年チェック） ============
+function setupBirthday(){
+  document.getElementById('birthday').addEventListener('change',e=>{
+    const b = new Date(e.target.value);
+    const today = new Date();
+    let age = today.getFullYear() - b.getFullYear();
+    const m = today.getMonth() - b.getMonth();
+    if(m<0 || (m===0 && today.getDate()<b.getDate())) age--;
+    document.getElementById('minor-alert').classList.toggle('show', age<18);
+  });
+}
+
+// ============ 規約チェック ============
+function setupTermsChk(){
+  document.getElementById('terms-agree').addEventListener('change',e=>{
+    document.getElementById('terms-chk-lbl').classList.toggle('checked', e.target.checked);
+    updateUI();
+  });
+}
+
+// ============ クーポン ============
+function toggleCoupon(){
+  document.getElementById('coupon-box').classList.toggle('show');
+}
+function applyCoupon(){
+  const code = document.getElementById('coupon-code').value.trim().toUpperCase();
+  if(!code){document.getElementById('coupon-msg').textContent='コード入力してください';return}
+  const msgEl = document.getElementById('coupon-msg');
+  msgEl.textContent='確認中...';msgEl.className='coupon-msg';
+  
+  jsonp(GAS1_URL + '?action=checkCoupon_Nyukai&code=' + encodeURIComponent(code), res=>{
+    if(res.valid){
+      state.coupon = {code:code, type:res.type, amount:res.amount};
+      msgEl.textContent = '✅ ' + res.message;
+      msgEl.className = 'coupon-msg ok';
+    }else{
+      state.coupon = null;
+      msgEl.textContent = '❌ ' + res.message;
+      msgEl.className = 'coupon-msg ng';
+    }
+    updateUI();
+  });
+}
+
+// ============ 料金計算 ============
+function calcFees(){
+  const entryMap = {1:8800, 2:4400, 3:0};
+  let entry = entryMap[state.people];
+  let firstMonth = 0;
+  let discount = 0;
+
+  if(state.course){
+    const monthly = state.course.fee;
+    const jd = new Date(state.joinDate);
+    const nextMonth10 = new Date(jd.getFullYear(), jd.getMonth(), 10);
+    if(jd > nextMonth10) nextMonth10.setMonth(nextMonth10.getMonth()+1);
+
+    if(state.gender==='week1'){
+      // 週1: 月額÷4×残り週数
+      let weeks = 0;
+      const cur = new Date(jd);
+      while(cur <= nextMonth10){
+        const dayJP = ['日','月','火','水','木','金','土'][cur.getDay()];
+        if(state.weeklyDays.includes(dayJP)) weeks++;
+        cur.setDate(cur.getDate()+1);
+      }
+      firstMonth = Math.round(monthly/4 * Math.min(weeks, 4));
+    }else{
+      // いつでも: 月額÷26×残り日数
+      const days = Math.max(0, Math.ceil((nextMonth10 - jd)/(1000*60*60*24)));
+      firstMonth = Math.round(monthly/26 * Math.min(days, 26));
+    }
+  }
+
+  // 月会費無料情報
+  let freeMonths = 0;
+  let freeStartMonth = '';
+
+  if(state.coupon){
+    const c = state.coupon;
+    switch(c.type){
+      case 'entry_free': 
+        discount = entry; 
+        entry = 0; 
+        break;
+      case 'entry_fixed': 
+        discount = Math.min(c.amount, entry); 
+        entry = Math.max(0, entry - c.amount); 
+        break;
+      case 'months_free':
+        // 翌月以降 amount ヶ月無料（今回支払いには影響しない）
+        freeMonths = c.amount;
+        const jd2 = new Date(state.joinDate);
+        const startDate = new Date(jd2.getFullYear(), jd2.getMonth()+1, 1);
+        freeStartMonth = `${startDate.getFullYear()}年${startDate.getMonth()+1}月`;
+        // 金額上の「割引額」は月額×ヶ月数として表示
+        discount = state.course ? (state.course.fee * c.amount) : 0;
+        break;
+    }
+  }
+
+  const total = Math.max(0, entry + firstMonth);
+  return {entry, firstMonth, discount, total, freeMonths, freeStartMonth};
+}
+
+// ============ UI更新 ============
+function updateUI(){
+  // ステッパー
+  document.querySelectorAll('.step').forEach(s=>{
+    const n = Number(s.dataset.step);
+    s.classList.toggle('active', n === state.currentStep);
+    s.classList.toggle('done', n < state.currentStep);
+  });
+
+  // パネル
+  document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('active'));
+  if(state.currentStep<=4){
+    document.getElementById(`panel${state.currentStep}`).classList.add('active');
+    document.getElementById('welcome').style.display = state.currentStep===1?'block':'none';
+  }
+
+  // ボタン
+  const btnBack = document.getElementById('btn-back');
+  const btnNext = document.getElementById('btn-next');
+  btnBack.style.display = state.currentStep===1?'none':'block';
+  btnNext.textContent = state.currentStep===4?'この内容で申込む':'次へすすむ';
+  btnNext.disabled = !canProceed();
+
+  // 確認画面データ更新
+  if(state.currentStep===4) renderConfirm();
+}
+
+function canProceed(){
+  switch(state.currentStep){
+    case 1:
+      if(!state.course) return false;
+      if(state.gender==='week1' && state.weeklyDays.length!==2) return false;
+      return true;
+    case 2:
+      const req = ['name','kana','gender','birthday','tel','email','address','bank','account-holder'];
+      for(const id of req){if(!document.getElementById(id).value.trim())return false}
+      // 未成年チェック
+      if(document.getElementById('minor-alert').classList.contains('show')){
+        if(!document.getElementById('parent-consent').checked)return false;
+      }
+      return true;
+    case 3:
+      return document.getElementById('terms-agree').checked;
+    case 4: return true;
+  }
+  return false;
+}
+
+// step2のinput変更時もボタン活性を更新
+document.addEventListener('input', ()=>{ if(state.currentStep===2 || state.currentStep===3) updateUI(); });
+document.addEventListener('change', ()=>{ if(state.currentStep===2 || state.currentStep===3) updateUI(); });
+
+// ============ 確認画面描画 ============
+function renderConfirm(){
+  const list = document.getElementById('confirm-list');
+  const f = calcFees();
+  const parts = [
+    ['お名前', document.getElementById('name').value],
+    ['フリガナ', document.getElementById('kana').value],
+    ['性別', document.getElementById('gender').value],
+    ['生年月日', formatDateJP(document.getElementById('birthday').value)],
+    ['電話', document.getElementById('tel').value],
+    ['メール', document.getElementById('email').value],
+    ['住所', document.getElementById('address').value],
+    ['コース', state.course?state.course.name:''],
+    ...(state.weeklyDays.length?[['曜日', state.weeklyDays.join('・')]]:[]),
+    ['入会日', formatDateJP(state.joinDate)],
+    ['同時入会', state.people+'名'],
+    ['銀行', document.getElementById('bank').value],
+    ['口座名義', document.getElementById('account-holder').value]
+  ];
+  list.innerHTML = parts.map(([l,v])=>`<div class="confirm-row"><span class="lbl">${l}</span><span class="val">${v||'-'}</span></div>`).join('');
+
+  document.getElementById('summary-entry').textContent = '¥'+f.entry.toLocaleString();
+  document.getElementById('summary-first').textContent = '¥'+f.firstMonth.toLocaleString();
+  document.getElementById('summary-total').textContent = '¥'+f.total.toLocaleString();
+  
+  // クーポン割引表示
+  if(f.discount>0 && state.coupon && state.coupon.type !== 'months_free'){
+    document.getElementById('summary-discount-row').style.display='flex';
+    document.getElementById('summary-discount').textContent = '-¥'+f.discount.toLocaleString();
+  }else{
+    document.getElementById('summary-discount-row').style.display='none';
+  }
+  
+  // 無料月数バナー（months_freeクーポン適用時のみ）
+  const banner = document.getElementById('free-months-banner');
+  if(f.freeMonths > 0){
+    banner.style.display = 'block';
+    document.getElementById('free-months-text').textContent = `${f.freeMonths}ヶ月分の月会費が無料！（約¥${f.discount.toLocaleString()}相当）`;
+    document.getElementById('free-months-start').textContent = f.freeStartMonth;
+  }else{
+    banner.style.display = 'none';
+  }
+}
+
+// ============ ステップ移動 ============
+function nextStep(){
+  if(!canProceed()){alert('必要な項目を入力してください');return}
+  if(state.currentStep===4){submit();return}
+  state.currentStep++;
+  window.scrollTo({top:0,behavior:'smooth'});
+  updateUI();
+}
+function prevStep(){
+  if(state.currentStep===1)return;
+  state.currentStep--;
+  window.scrollTo({top:0,behavior:'smooth'});
+  updateUI();
+}
+
+// ============ JSONP ============
+function jsonp(url, cb){
+  const cbName = 'cb_'+Date.now()+'_'+Math.floor(Math.random()*10000);
+  window[cbName] = function(data){
+    cb(data);
+    delete window[cbName];
+    document.body.removeChild(s);
+  };
+  const s = document.createElement('script');
+  s.src = url + (url.includes('?')?'&':'?') + 'callback=' + cbName;
+  s.onerror = ()=>{cb({valid:false, success:false, message:'通信エラー'});delete window[cbName]};
+  document.body.appendChild(s);
+}
+
+// ============ 送信 ============
+function submit(){
+  document.getElementById('loader').classList.add('show');
+  const f = calcFees();
+
+  // 18歳未満判定
+  const b = new Date(document.getElementById('birthday').value);
+  const today = new Date();
+  let age = today.getFullYear() - b.getFullYear();
+  const m = today.getMonth() - b.getMonth();
+  if(m<0 || (m===0 && today.getDate()<b.getDate())) age--;
+
+  const payload = {
+    name: document.getElementById('name').value.trim(),
+    kana: document.getElementById('kana').value.trim(),
+    gender: document.getElementById('gender').value,
+    birthday: document.getElementById('birthday').value,
+    tel: document.getElementById('tel').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    address: document.getElementById('address').value.trim(),
+    workplace: document.getElementById('workplace').value.trim(),
+    joinDate: state.joinDate,
+    course: state.course.id,
+    bank: document.getElementById('bank').value,
+    accountHolder: document.getElementById('account-holder').value.trim(),
+    emergencyName: document.getElementById('emergency-name').value.trim(),
+    emergencyTel: document.getElementById('emergency-tel').value.trim(),
+    emergencyRel: document.getElementById('emergency-rel').value,
+    peopleCount: state.people,
+    weekly1Day: state.weeklyDays.join(''),
+    couponCode: state.coupon?state.coupon.code:'',
+    discountAmount: f.discount,
+    entryFee: f.entry,
+    firstMonthFee: f.firstMonth,
+    firstMonthTotal: f.total,
+    isMinor: age<18,
+    parentConsent: age<18 ? document.getElementById('parent-consent').checked : false,
+    termsAgreed: true,
+    freeMonths: f.freeMonths || 0,
+    freeStartMonth: f.freeStartMonth || '',
+    source: '新アプリ'
+  };
+
+  const url = GAS2_URL + '?action=submitNyukai&data=' + encodeURIComponent(JSON.stringify(payload));
+
+  jsonp(url, res=>{
+    document.getElementById('loader').classList.remove('show');
+    if(res.success){
+      state.memberId = res.memberId;
+      document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('active'));
+      document.getElementById('panel-done').classList.add('active');
+      document.getElementById('welcome').style.display='none';
+      document.getElementById('btn-group').style.display='none';
+      document.getElementById('done-id').textContent = '会員ID: ' + res.memberId;
+    }else{
+      alert('お申込みに失敗しました。\n' + (res.message||'時間をおいて再度お試しください'));
+    }
+  });
+}
+</script>
+</body>
+</html>
