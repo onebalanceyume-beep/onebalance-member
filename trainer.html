@@ -8,6 +8,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="トレーナー管理">
 <meta name="application-name" content="トレーナー管理">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <link rel="apple-touch-icon" href="icons/icon-192x192.png">
 <link rel="manifest" href="trainer-manifest.json">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
@@ -21,6 +24,9 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 .logo span{color:rgba(255,255,255,0.8);font-size:11px;display:block;font-weight:400;letter-spacing:2px;}
 .hdate{font-size:12px;opacity:.9;text-align:right;}
 .hdate .big{font-size:16px;font-weight:700;}
+.header-actions{display:flex;gap:8px;padding:0 16px 8px;flex-wrap:wrap;}
+.coupon-link-btn{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;background:rgba(255,255,255,.2);color:#fff;border:1.5px solid rgba(255,255,255,.4);border-radius:20px;font-size:11px;font-weight:700;text-decoration:none;cursor:pointer;transition:all .2s;}
+.coupon-link-btn:hover{background:rgba(255,255,255,.3);}
 .tabs{background:var(--blue);display:flex;overflow-x:auto;scrollbar-width:none;}
 .tabs::-webkit-scrollbar{display:none;}
 .tab-btn{flex:none;padding:11px 16px;color:rgba(255,255,255,0.7);font-size:12px;font-weight:600;border:none;background:none;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s;letter-spacing:.5px;}
@@ -143,7 +149,6 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 .month-sel{padding:10px 12px;border:2px solid var(--blue);border-radius:8px;font-size:14px;font-weight:700;outline:none;font-family:inherit;background:white;color:var(--blue-dark);}
 .fee-month-summary{font-size:12px;color:var(--text2);margin-top:8px;font-weight:600;line-height:1.8;}
 
-/* ===== 体験予約タブ専用スタイル ===== */
 .r-filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
 .rf-btn{padding:7px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:2px solid transparent;background:#f0f0f0;color:#555;transition:all .15s;font-family:inherit;}
 .rf-btn.active{border-color:var(--red);background:var(--red-light);color:var(--red);box-shadow:0 0 0 2px rgba(219,68,76,.2);}
@@ -164,6 +169,17 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 .r-status-badge{font-size:10px;padding:3px 10px;border-radius:20px;font-weight:700;white-space:nowrap;}
 .r-empty{padding:40px 20px;text-align:center;color:var(--text2);font-size:13px;}
 
+.fm-card{background:white;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:14px;border-left:4px solid var(--blue);margin-bottom:8px;}
+.fm-row-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px;}
+.fm-name{font-size:15px;font-weight:800;}
+.fm-badge{background:linear-gradient(135deg,var(--blue),#4a9fb3);color:#fff;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap;}
+.fm-info{font-size:12px;color:var(--text2);margin-bottom:8px;line-height:1.6;}
+.fm-edit-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.fm-edit-row input{padding:6px 10px;border:1.5px solid var(--gray2);border-radius:6px;font-size:12px;font-family:inherit;outline:none;}
+.fm-edit-row input:focus{border-color:var(--blue);}
+.fm-edit-row input[type="number"]{width:70px;}
+.fm-edit-row input[type="text"]{flex:1;min-width:120px;}
+
 @media(min-width:600px){.sgrid{grid-template-columns:repeat(4,1fr);}.ggrid{grid-template-columns:repeat(4,1fr);}.badge-award{grid-template-columns:repeat(4,1fr);}}
 </style>
 </head>
@@ -173,18 +189,21 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
     <div class="logo">one-BALANCE<span>BOXING GYM TRAINER</span></div>
     <div class="hdate"><div class="big" id="dd"></div><div id="dt"></div></div>
   </div>
+  <div class="header-actions">
+    <a href="coupon-admin.html" class="coupon-link-btn">🎟️ クーポン管理</a>
+  </div>
   <div class="tabs">
     <button class="tab-btn active" onclick="sw('dashboard',this)">📊 ダッシュボード</button>
     <button class="tab-btn" onclick="sw('members',this)">👥 会員管理</button>
     <button class="tab-btn" onclick="sw('reserve',this)">🗓️ 体験予約</button>
     <button class="tab-btn" onclick="sw('fee',this)">💰 月会費</button>
+    <button class="tab-btn" onclick="sw('freemonth',this)">🎁 無料月管理</button>
     <button class="tab-btn" onclick="sw('stats',this)">📈 統計</button>
     <button class="tab-btn" onclick="sw('settings',this)">⚙️ 設定</button>
   </div>
 </div>
 <div class="content">
 
-<!-- ダッシュボード -->
 <div class="tab-content active" id="tab-dashboard">
   <div id="dl" class="loading"><div class="spin"></div>読み込み中...</div>
   <div id="db" style="display:none">
@@ -232,7 +251,6 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
   </div>
 </div>
 
-<!-- 会員管理 -->
 <div class="tab-content" id="tab-members">
   <div class="ib">
     <button class="btn btn-red" onclick="importM()">📥 新規取込</button>
@@ -255,7 +273,6 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
   <div class="pager" id="pg"></div>
 </div>
 
-<!-- 体験予約 -->
 <div class="tab-content" id="tab-reserve">
   <div class="ib">
     <button class="btn btn-red" onclick="loadR()">🔄 予約を更新</button>
@@ -272,7 +289,6 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
   <div id="rl"></div>
 </div>
 
-<!-- 月会費 -->
 <div class="tab-content" id="tab-fee">
   <div class="card">
     <div class="card-title">📅 対象月を選択</div>
@@ -296,7 +312,32 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
   </div>
 </div>
 
-<!-- 統計 -->
+<div class="tab-content" id="tab-freemonth">
+  <div class="card">
+    <div class="card-title">🎁 無料月適用中の会員</div>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">
+      クーポンで月会費無料になっている会員の一覧です。<br>
+      新規入会時は自動で記入されます。必要に応じて手動で編集できます。
+    </p>
+    <div class="ib">
+      <button class="btn btn-red" onclick="loadFreeMonth()">🔄 更新</button>
+      <span id="fm-count" style="font-size:12px;color:var(--text2)"></span>
+    </div>
+    <div id="fm-loading" class="loading" style="display:none"><div class="spin"></div>読み込み中...</div>
+    <div id="fm-list"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">➕ 手動で無料月を設定</div>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">
+      会員マスタから会員を選んで、無料月数を手動で設定できます。
+    </p>
+    <div style="margin-bottom:12px">
+      <input type="text" id="fm-search" class="si" placeholder="会員名で検索..." oninput="renderFMAll()" style="margin-bottom:8px">
+    </div>
+    <div id="fm-all-list"></div>
+  </div>
+</div>
+
 <div class="tab-content" id="tab-stats">
   <div id="stl" class="loading"><div class="spin"></div>読み込み中...</div>
   <div id="stb" style="display:none">
@@ -340,7 +381,6 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
   </div>
 </div>
 
-<!-- 設定 -->
 <div class="tab-content" id="tab-settings">
   <div class="card">
     <div class="card-title">GAS設定（会員管理）</div>
@@ -355,10 +395,16 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
     <button class="btn btn-red btn-full" onclick="saveR()">保存する</button>
   </div>
   <div class="card">
+    <div class="card-title">GAS設定（クーポン・無料月管理）</div>
+    <div style="font-size:13px;font-weight:700;margin-bottom:6px">GAS① URL（会員マスタ側）</div>
+    <input type="text" class="si" id="gu1" placeholder="https://script.google.com/macros/s/...">
+    <button class="btn btn-red btn-full" onclick="saveG1()">保存する</button>
+  </div>
+  <div class="card">
     <div class="card-title">アプリ情報</div>
     <div style="font-size:13px;color:var(--text2);line-height:2.2">
       <div>アプリ名：one-BALANCE トレーナー管理</div>
-      <div>バージョン：1.7.0（体験予約タブ追加）</div>
+      <div>バージョン：1.8.0（無料月管理タブ＋キャッシュ対策）</div>
       <div>赤 #DB444C / 青 #5BB9CD</div>
     </div>
   </div>
@@ -366,7 +412,6 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 
 </div>
 
-<!-- 会員詳細モーダル -->
 <div class="modal-overlay" id="mm" onclick="clm(event)">
   <div class="modal">
     <div class="mh"><div class="mt" id="mn">-</div><button class="mx" onclick="clmd()">×</button></div>
@@ -425,8 +470,31 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 <div class="toast" id="toast"></div>
 
 <script>
+(function cacheControl(){
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.getRegistrations().then(regs=>{
+      regs.forEach(r=>r.unregister());
+    }).catch(()=>{});
+  }
+  if('caches' in window){
+    caches.keys().then(keys=>{keys.forEach(k=>caches.delete(k));}).catch(()=>{});
+  }
+  window.addEventListener('pageshow',(e)=>{
+    if(e.persisted)window.location.reload();
+  });
+  let lastHidden=null;
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden){lastHidden=Date.now();}
+    else if(lastHidden){
+      if(Date.now()-lastHidden>5*60*1000)window.location.reload();
+      lastHidden=null;
+    }
+  });
+})();
+
 const DGAS='https://script.google.com/macros/s/AKfycbwjQ6_xHKcArfU0zdZtSCPdutJ71DQJG_1v9XYz-R8mFwa-srMB9aChV-ZcI4iSGwWrHw/exec';
 const DGAS_RESERVE='https://script.google.com/macros/s/AKfycbzWPH4cO-kPMGqbJqHEsYG1yefxa0FoKQOgDJeIeUHIe9alN1yrsDVHe6E7yFY1DFiY/exec';
+const DGAS1='https://script.google.com/macros/s/AKfycbxNxYgejS-1NZvt33PuIkh-DIEtHS9-hTFyAxUjO_8a6E9MM9CPxxDV8KMhX189c8oyrg/exec';
 
 const GR=[
   {n:'ホワイト前', b:'#f5f5f5', c:'#666',    d:'入会直後の初期状態'},
@@ -480,15 +548,18 @@ const GRADE_COLORS={
 
 let AM=[],FM=[],CP=1,CM=null,SD=null,GF='';
 let SELECTED_MONTH='';
-let AR=[],RF='upcoming'; // 体験予約データ・フィルター
+let AR=[],RF='upcoming';
+let FREE_MONTH_APPLIED=[],FREE_MONTH_ALL=[];
 const PG=20,CH={};
 const gurl=()=>localStorage.getItem('gasUrl')||DGAS;
 const rurl=()=>localStorage.getItem('gasReserveUrl')||DGAS_RESERVE;
+const g1url=()=>localStorage.getItem('gas1Url')||DGAS1;
 
 window.onload=()=>{
   tick();setInterval(tick,1e3);
   document.getElementById('gu').value=gurl();
   document.getElementById('ru').value=rurl();
+  document.getElementById('gu1').value=g1url();
   renderGradeFilter();
   initCourseSelect();
   initMonthSelect();
@@ -530,16 +601,17 @@ function sw(name,btn){
   if(name==='fee'&&AM.length)renderFL();
   if(name==='stats'&&!SD)loadSt();
   if(name==='reserve'&&!AR.length)loadR();
+  if(name==='freemonth')loadFreeMonth();
 }
 
 async function api(p){
   const u=new URL(gurl());
   Object.entries(p).forEach(([k,v])=>u.searchParams.set(k,v));
-  const r=await fetch(u.toString());
+  u.searchParams.set('_t',Date.now());
+  const r=await fetch(u.toString(),{cache:'no-store'});
   return r.json();
 }
 
-// 予約GAS用 JSONP呼び出し（CORS回避）
 function apiReserve(params){
   return new Promise((resolve,reject)=>{
     const cbName='cb_'+Date.now()+'_'+Math.floor(Math.random()*10000);
@@ -557,6 +629,37 @@ function apiReserve(params){
     const u=new URL(rurl());
     Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v));
     u.searchParams.set('callback',cbName);
+    u.searchParams.set('_t',Date.now());
+    const script=document.createElement('script');
+    script.src=u.toString();
+    script.onerror=()=>{
+      clearTimeout(timeoutId);
+      delete window[cbName];
+      if(script.parentNode)script.parentNode.removeChild(script);
+      reject(new Error('network error'));
+    };
+    document.body.appendChild(script);
+  });
+}
+
+function apiGas1(params){
+  return new Promise((resolve,reject)=>{
+    const cbName='cb_'+Date.now()+'_'+Math.floor(Math.random()*10000);
+    const timeoutId=setTimeout(()=>{
+      delete window[cbName];
+      if(script.parentNode)script.parentNode.removeChild(script);
+      reject(new Error('timeout'));
+    },30000);
+    window[cbName]=(data)=>{
+      clearTimeout(timeoutId);
+      delete window[cbName];
+      if(script.parentNode)script.parentNode.removeChild(script);
+      resolve(data);
+    };
+    const u=new URL(g1url());
+    Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v));
+    u.searchParams.set('callback',cbName);
+    u.searchParams.set('_t',Date.now());
     const script=document.createElement('script');
     script.src=u.toString();
     script.onerror=()=>{
@@ -903,9 +1006,6 @@ async function importM(){
   }catch(e){toast('エラー',true);}
 }
 
-// ============================================
-// 体験予約タブ関連
-// ============================================
 async function loadR(){
   sh('rl2');
   document.getElementById('rl').innerHTML='';
@@ -927,18 +1027,14 @@ function setRF(f,btn){
   renderR();
 }
 
-// "2026年04月24日" みたいな文字列を Date に変換
 function parseReserveDate(str){
   if(!str)return null;
   if(str instanceof Date)return str;
   const s=String(str);
-  // yyyy年MM月dd日 HH:mm
   let m=s.match(/(\d{4})年(\d{1,2})月(\d{1,2})日\s*(\d{1,2}):(\d{2})/);
   if(m)return new Date(+m[1],+m[2]-1,+m[3],+m[4],+m[5]);
-  // yyyy年MM月dd日
   m=s.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
   if(m)return new Date(+m[1],+m[2]-1,+m[3]);
-  // ISOっぽいもの
   const d=new Date(s);
   if(!isNaN(d.getTime()))return d;
   return null;
@@ -1053,7 +1149,6 @@ function renderR(){
 async function cancelReserve(reservationId,name,dateStr){
   if(!reservationId){toast('予約IDが見つかりません',true);return;}
 
-  // 第一確認：キャンセル意思確認
   const confirm1=confirm(
     `【予約キャンセルの確認】\n\n`+
     `お客様：${name} 様\n`+
@@ -1064,7 +1159,6 @@ async function cancelReserve(reservationId,name,dateStr){
   );
   if(!confirm1)return;
 
-  // キャンセル理由入力（任意）
   const reason=prompt(
     `キャンセル理由を入力してください（任意）\n\n`+
     `※お詫びメールに記載されます。\n`+
@@ -1072,9 +1166,8 @@ async function cancelReserve(reservationId,name,dateStr){
     `例：トレーナー急病のため / 設備メンテナンスのため`,
     ''
   );
-  if(reason===null)return; // キャンセルボタン押下
+  if(reason===null)return;
 
-  // 最終確認
   const confirm2=confirm(
     `【最終確認】\n\n`+
     `${name} 様に以下を実行します：\n\n`+
@@ -1222,6 +1315,115 @@ function nk(s){
   return r.replace(/[\s　]/g,'');
 }
 
+async function loadFreeMonth(){
+  sh('fm-loading');
+  document.getElementById('fm-list').innerHTML='';
+  document.getElementById('fm-all-list').innerHTML='';
+  try{
+    const applied=await apiGas1({action:'getFreeMonthMembers_Nyukai'});
+    const all=await apiGas1({action:'getAllMembersForFreeMonth_Nyukai'});
+    FREE_MONTH_APPLIED=Array.isArray(applied)?applied:[];
+    FREE_MONTH_ALL=Array.isArray(all)?all:[];
+    renderFreeMonth();
+    renderFMAll();
+  }catch(e){
+    document.getElementById('fm-list').innerHTML=`<p style="color:#e74c3c;padding:16px">読み込み失敗。GAS① URLを確認してください。<br>${String(e.message||e)}</p>`;
+  }
+  hd('fm-loading');
+}
+
+function renderFreeMonth(){
+  const list=FREE_MONTH_APPLIED;
+  document.getElementById('fm-count').textContent=`${list.length}件`;
+  if(!list.length){
+    document.getElementById('fm-list').innerHTML='<p style="color:var(--text2);padding:20px;text-align:center;background:#f8f9fa;border-radius:10px">現在、無料月適用中の会員はいません</p>';
+    return;
+  }
+  document.getElementById('fm-list').innerHTML=list.map(m=>{
+    return `<div class="fm-card">
+      <div class="fm-row-top">
+        <div class="fm-name">${escapeHtml(m.name||'-')}</div>
+        <span class="fm-badge">🎁 ${m.freeMonths}ヶ月無料</span>
+      </div>
+      <div class="fm-info">
+        ID：${escapeHtml(m.memberId)}　・　コース：${escapeHtml(m.course||'-')}<br>
+        無料開始月：${escapeHtml(m.freeStartMonth||'-')}
+      </div>
+      <div class="fm-edit-row">
+        <input type="number" id="fm-months-${escapeAttr(m.memberId)}" value="${m.freeMonths}" min="0" max="12" placeholder="月数">
+        <input type="text" id="fm-start-${escapeAttr(m.memberId)}" value="${escapeAttr(m.freeStartMonth||'')}" placeholder="例: 2026年5月">
+        <button class="btn btn-blue btn-sm" onclick="updateFreeMonth('${escapeAttr(m.memberId)}','${escapeAttr(m.name)}')">💾 更新</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderFMAll(){
+  const q=(document.getElementById('fm-search')||{}).value||'';
+  const list=FREE_MONTH_ALL.filter(m=>!q||(m.name||'').includes(q));
+  if(!list.length){
+    document.getElementById('fm-all-list').innerHTML='<p style="color:var(--text2);padding:20px;text-align:center">該当なし</p>';
+    return;
+  }
+  const showList=list.slice(0,30);
+  document.getElementById('fm-all-list').innerHTML=showList.map(m=>{
+    const hasFree=Number(m.freeMonths||0)>0;
+    return `<div class="mi" style="border-left-color:${hasFree?'var(--blue)':'var(--gray2)'}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <div>
+          <div class="mname">${escapeHtml(m.name)}</div>
+          <div class="mkana">${escapeHtml(m.course||'')}${hasFree?` ・ 🎁 ${m.freeMonths}ヶ月無料`:''}</div>
+        </div>
+      </div>
+      <div class="fm-edit-row">
+        <input type="number" id="fm-all-months-${escapeAttr(m.memberId)}" value="${m.freeMonths||0}" min="0" max="12" placeholder="月数">
+        <input type="text" id="fm-all-start-${escapeAttr(m.memberId)}" value="${escapeAttr(m.freeStartMonth||'')}" placeholder="例: 2026年5月">
+        <button class="btn btn-blue btn-sm" onclick="updateFreeMonthFromAll('${escapeAttr(m.memberId)}','${escapeAttr(m.name)}')">💾 保存</button>
+      </div>
+    </div>`;
+  }).join('')+(list.length>30?`<p style="color:var(--text2);padding:12px;text-align:center;font-size:11px">※検索で絞り込んでください（全${list.length}人中30人表示）</p>`:'');
+}
+
+async function updateFreeMonth(memberId,name){
+  const months=Number(document.getElementById(`fm-months-${memberId}`).value)||0;
+  const startMonth=document.getElementById(`fm-start-${memberId}`).value.trim();
+  if(!confirm(`${name}さんの無料月を更新しますか？\n無料月数：${months}ヶ月\n開始月：${startMonth||'未設定'}`))return;
+  try{
+    const res=await apiGas1({
+      action:'updateFreeMonthForMember_Nyukai',
+      memberId:memberId,
+      freeMonths:months,
+      freeStartMonth:startMonth
+    });
+    if(res.success){
+      toast(`${name}さんを更新しました`);
+      await loadFreeMonth();
+    }else{
+      toast(`エラー：${res.message||'不明'}`,true);
+    }
+  }catch(e){toast('通信エラー',true);}
+}
+
+async function updateFreeMonthFromAll(memberId,name){
+  const months=Number(document.getElementById(`fm-all-months-${memberId}`).value)||0;
+  const startMonth=document.getElementById(`fm-all-start-${memberId}`).value.trim();
+  if(!confirm(`${name}さんの無料月を更新しますか？\n無料月数：${months}ヶ月\n開始月：${startMonth||'未設定'}`))return;
+  try{
+    const res=await apiGas1({
+      action:'updateFreeMonthForMember_Nyukai',
+      memberId:memberId,
+      freeMonths:months,
+      freeStartMonth:startMonth
+    });
+    if(res.success){
+      toast(`${name}さんを更新しました`);
+      await loadFreeMonth();
+    }else{
+      toast(`エラー：${res.message||'不明'}`,true);
+    }
+  }catch(e){toast('通信エラー',true);}
+}
+
 function saveS(){
   const u=document.getElementById('gu').value.trim();
   if(!u){toast('URLを入力してください',true);return;}
@@ -1232,6 +1434,12 @@ function saveR(){
   const u=document.getElementById('ru').value.trim();
   if(!u){toast('URLを入力してください',true);return;}
   localStorage.setItem('gasReserveUrl',u);toast('予約GAS URLを保存しました');
+}
+
+function saveG1(){
+  const u=document.getElementById('gu1').value.trim();
+  if(!u){toast('URLを入力してください',true);return;}
+  localStorage.setItem('gas1Url',u);toast('GAS① URLを保存しました');
 }
 
 function mk(id,type,labels,data,colors,opts={}){
