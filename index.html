@@ -7,6 +7,12 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="マイページ">
 <meta name="application-name" content="マイページ">
+<!-- ========== キャッシュ対策強化版（132名対応） ========== -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="format-detection" content="telephone=no">
+<!-- ====================================================== -->
 <link rel="apple-touch-icon" href="icons/icon-192x192.png">
 <link rel="manifest" href="manifest.json">
 <title>one-BALANCE マイページ</title>
@@ -135,6 +141,13 @@ body.no-scroll{overflow:hidden;}
 .comm-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px;}
 .comm-desc{font-size:11px;color:var(--text2);line-height:1.6;margin-bottom:16px;}
 .comm-btn{display:block;width:100%;background:#1877F2;color:white;border:none;border-radius:var(--radius);padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;text-decoration:none;}
+
+/* ========== 無料月表示用（新規追加） ========== */
+.free-month-banner{background:linear-gradient(135deg,var(--blue) 0%,#4a9fb3 100%);color:#fff;border-radius:12px;padding:14px;margin:10px 0;text-align:center;box-shadow:0 4px 12px rgba(91,185,205,.25)}
+.free-month-banner .fm-label{font-size:10px;opacity:.9;font-weight:700;letter-spacing:.1em;margin-bottom:4px}
+.free-month-banner .fm-main{font-size:16px;font-weight:800;margin:4px 0}
+.free-month-banner .fm-sub{font-size:11px;opacity:.95;margin-top:4px}
+/* ============================================= */
 </style>
 </head>
 <body>
@@ -225,6 +238,7 @@ body.no-scroll{overflow:hidden;}
 
 <!-- カリキュラム -->
 <div class="content active" id="tab-curriculum">
+  <div id="free-month-info" style="display:none"></div>
   <div class="card progress-card">
     <div class="prog-label">カリキュラム達成状況</div>
     <div class="prog-num" id="prog-count">0<span> / 16</span></div>
@@ -323,7 +337,52 @@ body.no-scroll{overflow:hidden;}
 <div class="toast" id="toast"></div>
 
 <script>
+/* ====================================================================
+   キャッシュ対策（132名対応・中レベル＋最善の策）
+   ==================================================================== */
+(function cacheControl(){
+  // 1. Service Worker自動削除（旧キャッシュ強制削除）
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.getRegistrations().then(regs=>{
+      regs.forEach(r=>r.unregister());
+    }).catch(()=>{});
+  }
+  
+  // 2. 全てのcacheStorage削除
+  if('caches' in window){
+    caches.keys().then(keys=>{
+      keys.forEach(k=>caches.delete(k));
+    }).catch(()=>{});
+  }
+  
+  // 3. ホーム画面復帰時（pageshow）・他アプリ戻り時（visibilitychange）リロード
+  window.addEventListener('pageshow', (e)=>{
+    // bfcache（戻るキャッシュ）から復帰した場合は強制リロード
+    if(e.persisted){
+      window.location.reload();
+    }
+  });
+  
+  // 4. 5分以上バックグラウンドだったら戻った時にリロード
+  let lastHidden = null;
+  document.addEventListener('visibilitychange', ()=>{
+    if(document.hidden){
+      lastHidden = Date.now();
+    }else if(lastHidden){
+      const diff = Date.now() - lastHidden;
+      if(diff > 5 * 60 * 1000){
+        window.location.reload();
+      }
+      lastHidden = null;
+    }
+  });
+})();
+
+/* ====================================================================
+   本体コード
+   ==================================================================== */
 const GAS_URL = localStorage.getItem('gasUrl') || 'https://script.google.com/macros/s/AKfycbxrU7YC63kYJpPlYn29-C0G97J8pRG7U9LgcqrSisvo4aidOrZ_kqosYG_nlm9tuqFdNQ/exec';
+const GAS1_URL = 'https://script.google.com/macros/s/AKfycbxNxYgejS-1NZvt33PuIkh-DIEtHS9-hTFyAxUjO_8a6E9MM9CPxxDV8KMhX189c8oyrg/exec';
 const urlParams = new URLSearchParams(window.location.search);
 const MEMBER_ID = urlParams.get('id') || '';
 
@@ -392,7 +451,6 @@ const TECH_CATS = [
   {name:'ボケシング', color:'#888', url:'https://www.youtube.com/playlist?list=PL-gAc3kb2RX1eJ9qfI9tGjBxwscDDHxAI'},
 ];
 
-// 基礎動画の視聴状態（localStorageで管理）
 const BASICS_KEY = 'basics_watch';
 function getBasicsWatch(){try{return JSON.parse(localStorage.getItem(BASICS_KEY)||'{}');}catch{return{};}}
 function saveBasicsWatch(obj){localStorage.setItem(BASICS_KEY,JSON.stringify(obj));}
@@ -411,9 +469,11 @@ function sw(tab, btn, title){
   document.getElementById('page-title').textContent = title;
 }
 
-async function api(params){
-  const url = new URL(GAS_URL);
+async function api(params, useGas1){
+  const baseUrl = useGas1 ? GAS1_URL : GAS_URL;
+  const url = new URL(baseUrl);
   Object.entries(params).forEach(([k,v])=>url.searchParams.set(k,v));
+  url.searchParams.set('_t', Date.now());
   return new Promise((resolve)=>{
     const cb = 'cb_' + Math.random().toString(36).slice(2);
     window[cb] = (data)=>{
@@ -439,6 +499,7 @@ window.onload = async () => {
   renderWeightPage();
   if(MEMBER_ID){
     await loadMember();
+    await loadFreeMonthInfo();
   } else {
     document.getElementById('member-name').textContent = 'ゲスト';
     document.getElementById('member-grade').textContent = 'URLを確認してください';
@@ -466,6 +527,23 @@ async function loadMember(){
     document.getElementById('star-count').textContent = '---';
     renderCurriculumItems();
   }
+}
+
+async function loadFreeMonthInfo(){
+  try{
+    const res = await api({action:'getFreeMonthMembers_Nyukai'}, true);
+    if(!Array.isArray(res))return;
+    const myInfo = res.find(m=>String(m.memberId)===String(MEMBER_ID));
+    if(myInfo && myInfo.freeMonths > 0){
+      document.getElementById('free-month-info').style.display='block';
+      document.getElementById('free-month-info').innerHTML = `
+        <div class="free-month-banner">
+          <div class="fm-label">🎁 月会費無料特典 適用中</div>
+          <div class="fm-main">${myInfo.freeMonths}ヶ月無料</div>
+          <div class="fm-sub">${myInfo.freeStartMonth} から自動適用</div>
+        </div>`;
+    }
+  }catch(e){}
 }
 
 function updateHeader(){
@@ -506,7 +584,6 @@ function updateProgress(){
 
 function getStatus(id){return PROGRESS[id] || '未着手';}
 
-// 基礎動画：未視聴/視聴済み の2択
 function renderBasics(){
   const watch = getBasicsWatch();
   document.getElementById('basics-list').innerHTML = BASICS.map(item=>{
