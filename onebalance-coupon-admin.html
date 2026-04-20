@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>クーポン管理 | ONE-BALANCE</title>
 <style>
 :root{
@@ -18,12 +21,15 @@ header{background:linear-gradient(135deg,var(--red) 0%,#c73841 100%);color:#fff;
 header h1{font-size:17px;font-weight:800;letter-spacing:.05em}
 header p{font-size:12px;opacity:.9;margin-top:4px}
 
-/* タブ */
+/* トレーナー戻るボタン（新規追加） */
+.back-to-trainer{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:rgba(255,255,255,.2);color:#fff;border:1.5px solid rgba(255,255,255,.4);border-radius:20px;font-size:12px;font-weight:700;text-decoration:none;margin-top:10px;cursor:pointer;transition:all .2s}
+.back-to-trainer:hover{background:rgba(255,255,255,.3)}
+.back-to-trainer:active{transform:scale(.97)}
+
 .view-tabs{display:flex;background:#f4ede5;margin:12px 0;padding:4px;border-radius:10px;gap:4px}
 .view-tab{flex:1;padding:10px;text-align:center;font-size:13px;font-weight:700;border-radius:8px;cursor:pointer;color:var(--sub);transition:all .2s}
 .view-tab.active{background:var(--red);color:#fff;box-shadow:0 2px 6px rgba(219,68,76,.3)}
 
-/* クーポン一覧カード */
 .coupon-card{background:var(--card);border-radius:14px;padding:16px;margin:10px 0;border:2px solid var(--border);position:relative;transition:all .2s}
 .coupon-card.inactive{opacity:.5;background:#f9f9f9}
 .coupon-card .code{font-size:20px;font-weight:800;color:var(--red);font-family:monospace;letter-spacing:.05em;margin-bottom:6px}
@@ -38,20 +44,17 @@ header p{font-size:12px;opacity:.9;margin-top:4px}
 .coupon-card .btn-edit{background:var(--blue);color:#fff}
 .coupon-card .btn-del{background:var(--red);color:#fff}
 
-/* 統計 */
 .stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:10px 0}
 .stat{background:#fff;border-radius:10px;padding:14px 8px;text-align:center;border:1px solid var(--border)}
 .stat .n{font-size:24px;font-weight:800;color:var(--red)}
 .stat .l{font-size:10px;color:var(--sub);margin-top:2px}
 
-/* プリセット */
 .presets{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
 .preset{padding:12px;border:2px solid var(--border);border-radius:10px;background:#fff;cursor:pointer;text-align:center;transition:all .2s}
 .preset:hover{border-color:var(--red);background:#fff6f0}
 .preset .ttl{font-weight:700;font-size:13px;color:var(--red)}
 .preset .dsc{font-size:10px;color:var(--sub);margin-top:3px}
 
-/* フォーム */
 .card{background:var(--card);border-radius:14px;padding:20px 16px;margin:12px 0;border:1px solid var(--border)}
 .card h2{font-size:15px;color:var(--red);margin-bottom:14px;padding-bottom:8px;border-bottom:2px dotted #f3d9db;font-weight:700}
 .field{margin-bottom:14px}
@@ -63,12 +66,10 @@ header p{font-size:12px;opacity:.9;margin-top:4px}
 .chk{display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 0}
 .chk input{width:18px;height:18px;accent-color:var(--red)}
 
-/* ボタン */
 .btn{padding:12px 16px;border:none;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer;transition:all .2s;font-family:inherit}
 .btn-primary{background:var(--red);color:#fff;width:100%;box-shadow:0 4px 10px rgba(219,68,76,.25)}
 .btn-primary:active{transform:scale(.97)}
 
-/* モーダル */
 .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:16px}
 .modal.show{display:flex}
 .modal-content{background:#fff;border-radius:16px;padding:20px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto}
@@ -76,7 +77,6 @@ header p{font-size:12px;opacity:.9;margin-top:4px}
 .modal-actions{display:flex;gap:8px;margin-top:16px}
 .btn-cancel{background:#eee;color:var(--gray);flex:1}
 
-/* ローダー */
 .loader{display:none;position:fixed;inset:0;background:rgba(255,255,255,.95);z-index:300;align-items:center;justify-content:center;flex-direction:column;gap:12px}
 .loader.show{display:flex}
 .spinner{width:40px;height:40px;border:4px solid #f4ede5;border-top:4px solid var(--red);border-radius:50%;animation:spin .8s linear infinite}
@@ -85,7 +85,6 @@ header p{font-size:12px;opacity:.9;margin-top:4px}
 .empty{text-align:center;padding:40px 20px;color:var(--sub)}
 .empty p{margin-bottom:8px}
 
-/* FAB */
 .fab{position:fixed;bottom:20px;right:20px;width:60px;height:60px;border-radius:50%;background:var(--red);color:#fff;border:none;font-size:28px;font-weight:800;cursor:pointer;box-shadow:0 6px 16px rgba(219,68,76,.4);z-index:90}
 .fab:active{transform:scale(.95)}
 </style>
@@ -95,6 +94,7 @@ header p{font-size:12px;opacity:.9;margin-top:4px}
 <header>
   <h1>🎟️ クーポン管理</h1>
   <p>ONE-BALANCE BOXING GYM</p>
+  <a href="trainer.html" class="back-to-trainer">← トレーナー画面に戻る</a>
 </header>
 
 <div class="wrap">
@@ -110,12 +110,10 @@ header p{font-size:12px;opacity:.9;margin-top:4px}
     <div class="view-tab" data-view="create">➕ 新規作成</div>
   </div>
 
-  <!-- 一覧 -->
   <div id="view-list">
     <div id="coupons"></div>
   </div>
 
-  <!-- 新規作成 -->
   <div id="view-create" style="display:none">
 
     <div class="card">
@@ -134,7 +132,7 @@ header p{font-size:12px;opacity:.9;margin-top:4px}
       <div class="field"><label>割引タイプ</label>
         <select id="f-type">
           <option value="entry_free">入会金：完全無料</option>
-          <option value="entry_fixed">入会金：定額引き（円）</option>
+          <option value="entry_fixed">入会金:定額引き（円）</option>
           <option value="months_free">月会費：翌月以降◯ヶ月無料</option>
         </select>
       </div>
@@ -154,7 +152,6 @@ header p{font-size:12px;opacity:.9;margin-top:4px}
 
 </div>
 
-<!-- 編集モーダル -->
 <div class="modal" id="edit-modal">
   <div class="modal-content">
     <h3>✏️ クーポン編集</h3>
@@ -163,7 +160,7 @@ header p{font-size:12px;opacity:.9;margin-top:4px}
     <div class="field"><label>タイプ</label>
       <select id="e-type">
         <option value="entry_free">入会金：完全無料</option>
-        <option value="entry_fixed">入会金：定額引き（円）</option>
+        <option value="entry_fixed">入会金:定額引き（円）</option>
         <option value="months_free">月会費：翌月以降◯ヶ月無料</option>
       </select>
     </div>
@@ -187,6 +184,22 @@ header p{font-size:12px;opacity:.9;margin-top:4px}
 <button class="fab" onclick="switchView('create')">＋</button>
 
 <script>
+/* キャッシュ対策 */
+(function cacheControl(){
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.getRegistrations().then(regs=>{regs.forEach(r=>r.unregister());}).catch(()=>{});
+  }
+  if('caches' in window){
+    caches.keys().then(keys=>{keys.forEach(k=>caches.delete(k));}).catch(()=>{});
+  }
+  window.addEventListener('pageshow',(e)=>{if(e.persisted)window.location.reload();});
+  let lastHidden=null;
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden){lastHidden=Date.now();}
+    else if(lastHidden){if(Date.now()-lastHidden>5*60*1000)window.location.reload();lastHidden=null;}
+  });
+})();
+
 const GAS1_URL = 'https://script.google.com/macros/s/AKfycbxNxYgejS-1NZvt33PuIkh-DIEtHS9-hTFyAxUjO_8a6E9MM9CPxxDV8KMhX189c8oyrg/exec';
 
 const TYPE_LABELS = {
@@ -259,7 +272,6 @@ function createCoupon(){
   };
   if(!data.code){alert('コードを入力してください');return}
   createWithData(data);
-  // フォームリセット
   document.getElementById('f-code').value='';
   document.getElementById('f-amount').value='0';
   document.getElementById('f-expiry').value='';
@@ -269,7 +281,7 @@ function createCoupon(){
 
 function loadCoupons(){
   showLoader();
-  jsonp(GAS1_URL + '?action=getCoupons_Nyukai', (res)=>{
+  jsonp(GAS1_URL + '?action=getCoupons_Nyukai&_t=' + Date.now(), (res)=>{
     hideLoader();
     if(!Array.isArray(res)){alert('読み込み失敗');return}
     renderCoupons(res);
