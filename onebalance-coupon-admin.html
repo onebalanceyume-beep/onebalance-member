@@ -32,9 +32,9 @@ header p{font-size:12px;opacity:.9;margin-top:4px}
 
 .coupon-card{background:var(--card);border-radius:14px;padding:16px;margin:10px 0;border:2px solid var(--border);position:relative;transition:all .2s}
 .coupon-card.inactive{opacity:.5;background:#f9f9f9}
-.coupon-card .code{font-size:20px;font-weight:800;color:var(--red);font-family:monospace;letter-spacing:.05em;margin-bottom:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.coupon-card .code-text{flex:1;min-width:150px}
-.copy-btn{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;background:var(--blue);color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;white-space:nowrap}
+.coupon-card .code{font-size:22px;font-weight:800;color:var(--red);font-family:monospace;letter-spacing:.05em;margin-bottom:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding-right:0}
+.coupon-card .code-text{flex:1;min-width:120px;word-break:break-all}
+.copy-btn{display:inline-flex;align-items:center;gap:4px;padding:8px 14px;background:var(--blue);color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;white-space:nowrap;box-shadow:0 2px 4px rgba(91,185,205,.3)}
 .copy-btn:active{transform:scale(.95)}
 .copy-btn.copied{background:#2a9f42}
 .coupon-card .type{display:inline-block;padding:3px 10px;font-size:11px;background:var(--blue);color:#fff;border-radius:4px;font-weight:700;margin-bottom:8px}
@@ -43,8 +43,8 @@ header p{font-size:12px;opacity:.9;margin-top:4px}
 .coupon-card .meta div{text-align:center}
 .coupon-card .meta .lbl{color:var(--sub);display:block;margin-bottom:2px}
 .coupon-card .meta .val{color:var(--text);font-weight:700}
-.coupon-card .actions{position:absolute;top:12px;right:12px;display:flex;gap:6px}
-.coupon-card .actions button{padding:6px 10px;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer}
+.coupon-card .actions{display:flex;gap:8px;margin-top:12px;padding-top:10px;border-top:1px dotted #eadfd3;justify-content:flex-end}
+.coupon-card .actions button{padding:8px 16px;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer}
 .coupon-card .btn-edit{background:var(--blue);color:#fff}
 .coupon-card .btn-del{background:var(--red);color:#fff}
 
@@ -308,10 +308,6 @@ function renderCoupons(list){
         : '¥' + Number(x.amount||0).toLocaleString();
     return `
     <div class="coupon-card ${active?'':'inactive'}">
-      <div class="actions">
-        <button class="btn-edit" onclick="openEdit(${JSON.stringify(x).replace(/"/g,'&quot;')})">編集</button>
-        <button class="btn-del" onclick="deleteCoupon(${x.row}, '${x.code}')">削除</button>
-      </div>
       <div class="code">
         <span class="code-text">${x.code}</span>
         <button class="copy-btn" onclick="copyCouponCode('${x.code}', this)">📋 コピー</button>
@@ -322,6 +318,10 @@ function renderCoupons(list){
         <div><span class="lbl">有効期限</span><span class="val">${x.expiry||'無期限'}</span></div>
         <div><span class="lbl">使用数</span><span class="val">${x.used}/${x.limit||'∞'}</span></div>
         <div><span class="lbl">状態</span><span class="val" style="color:${active?'#2a9f42':'#999'}">${active?'✅有効':isExpired?'期限切れ':isMaxed?'上限到達':'無効'}</span></div>
+      </div>
+      <div class="actions">
+        <button class="btn-edit" onclick="openEdit(${JSON.stringify(x).replace(/"/g,'&quot;')})">編集</button>
+        <button class="btn-del" onclick="deleteCoupon(${x.row}, '${x.code}')">削除</button>
       </div>
     </div>`;
   }).join('');
