@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="体験受付">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>体験受付 | ONE-BALANCE BOXING GYM</title>
+<link rel="apple-touch-icon" href="https://onebalanceyume-beep.github.io/onebalance-member/icons/logo-welcome.jpg">
+<link rel="icon" href="https://onebalanceyume-beep.github.io/onebalance-member/icons/logo-welcome.jpg">
+<style>
+:root{
+  --red:#DB444C; --blue:#5BB9CD; --gray:#727474;
+  --bg:#fffaf5; --card:#ffffff; --border:#f0e6dc;
+  --text:#2b2b2b; --sub:#7a7a7a;
+  --radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;touch-action:manipulation}
+html,body{font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.6}
+body{min-height:100vh;padding-bottom:100px}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px}
+
+header{background:linear-gradient(135deg,var(--red) 0%,#c73841 100%);color:#fff;padding:16px 16px;text-align:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+header .logo-banner{background:#fff;border-radius:8px;padding:8px 14px;margin:0 auto 6px;display:inline-block;max-width:280px;width:90%}
+header .logo-banner img{width:100%;height:auto;max-height:60px;object-fit:contain;display:block}
+header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
+
+.stepper{display:flex;justify-content:space-between;align-items:center;padding:20px 16px 8px;max-width:560px;margin:0 auto}
+.step{flex:1;text-align:center;position:relative}
+.step .circle{width:32px;height:32px;border-radius:50%;background:#e8ddd3;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;transition:all .3s}
+.step.active .circle{background:var(--red);box-shadow:0 4px 12px rgba(219,68,76,.4)}
+.step.done .circle{background:var(--blue)}
+.step .lbl{font-size:10px;color:var(--sub);margin-top:4px;display:block}
+.step.active .lbl{color:var(--red);font-weight:700}
+.step:not(:last-child)::after{content:'';position:absolute;top:16px;right:-50%;width:100%;height:2px;background:#e8ddd3;z-index:-1}
+.step.done:not(:last-child)::after{background:var(--blue)}
+
+.card{background:var(--card);border-radius:var(--radius);padding:20px 16px;margin:12px 0;box-shadow:0 2px 10px rgba(0,0,0,.04);border:1px solid var(--border)}
+.card h2{font-size:16px;color:var(--red);margin-bottom:12px;padding-bottom:8px;border-bottom:2px dotted #f3d9db;font-weight:700}
+.card h2 .num{display:inline-block;background:var(--red);color:#fff;width:24px;height:24px;border-radius:50%;text-align:center;line-height:24px;font-size:12px;margin-right:8px}
+
+.welcome{text-align:center;padding:24px 16px;background:linear-gradient(180deg,#fff 0%,#fff6f0 100%);border-radius:var(--radius);margin:12px 0;border:2px solid var(--red)}
+.welcome .welcome-logo{width:100px;height:100px;margin:0 auto 12px;border-radius:50%;border:3px solid var(--red);padding:4px;background:#fff;overflow:hidden}
+.welcome .welcome-logo img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.welcome h2{font-size:22px;color:var(--red);font-weight:800;letter-spacing:.05em}
+.welcome p{color:var(--sub);font-size:13px;margin-top:8px}
+
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:700;margin-bottom:6px;color:var(--gray)}
+.field label .req{color:var(--red);margin-left:3px}
+.field input,.field select,.field textarea{width:100%;padding:12px;border:1.5px solid var(--border);border-radius:10px;font-size:16px;background:#fff;font-family:inherit;color:var(--text)}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 3px rgba(219,68,76,.12)}
+.field .hint{font-size:11px;color:var(--sub);margin-top:4px}
+
+/* 3択ボタン（性別など） */
+.btn-group-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.btn-opt{padding:12px 4px;border:1.5px solid var(--border);border-radius:10px;background:#fff;cursor:pointer;transition:all .2s;text-align:center;font-size:13px;font-weight:700;color:var(--text)}
+.btn-opt.active{border-color:var(--red);background:#fff6f0;color:var(--red);border-width:2px}
+
+/* 2列グリッド（きっかけ等） */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.grid-1{display:grid;grid-template-columns:1fr;gap:6px}
+
+/* イメージ用のピル */
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{padding:8px 14px;border:1.5px solid var(--border);border-radius:20px;background:#fff;font-size:12px;color:var(--text);cursor:pointer;transition:all .2s;font-weight:700}
+.pill.active{border-color:var(--red);background:#fff6f0;color:var(--red);border-width:2px}
+
+.terms-box{max-height:280px;overflow-y:auto;background:#faf6f1;padding:14px 12px;border-radius:10px;font-size:12px;line-height:1.8;margin-bottom:10px;border:1px solid var(--border);color:var(--text)}
+.terms-box .terms-cat{font-size:13px;font-weight:700;color:var(--red);margin:12px 0 8px;padding-bottom:4px;border-bottom:1px solid #f3d9db}
+.terms-box .terms-cat:first-child{margin-top:0}
+.terms-box p{margin-bottom:6px}
+.terms-box .strong{font-weight:700;color:var(--red)}
+.chk{display:flex;align-items:flex-start;gap:8px;cursor:pointer;padding:10px;background:#fff6f0;border-radius:10px;border:2px solid transparent}
+.chk input{width:20px;height:20px;accent-color:var(--red);margin-top:2px;flex-shrink:0}
+.chk span{font-size:13px;font-weight:700;color:var(--text);flex:1}
+.chk.checked{background:#fff0f0;border-color:var(--red)}
+
+.confirm-list{display:flex;flex-direction:column;gap:6px}
+.confirm-row{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px dotted #eadfd3;gap:8px;font-size:13px}
+.confirm-row:last-child{border-bottom:none}
+.confirm-row .lbl{color:var(--sub);font-weight:600;flex-shrink:0;min-width:84px}
+.confirm-row .val{font-weight:700;color:var(--text);text-align:right;word-break:break-all}
+
+.btn-group{position:fixed;bottom:0;left:0;right:0;background:#fff;padding:12px 16px calc(12px + env(safe-area-inset-bottom));box-shadow:0 -4px 16px rgba(0,0,0,.08);display:flex;gap:8px;z-index:50}
+.btn-group-inner{max-width:560px;margin:0 auto;display:flex;gap:8px;width:100%}
+.btn{flex:1;padding:14px 16px;border:none;border-radius:12px;font-weight:800;font-size:15px;cursor:pointer;transition:all .2s;font-family:inherit}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:linear-gradient(135deg,var(--red) 0%,#c73841 100%);color:#fff;box-shadow:0 4px 12px rgba(219,68,76,.3)}
+.btn-primary:disabled{background:#ccc;box-shadow:none;color:#888}
+.btn-secondary{background:#fff;color:var(--gray);border:2px solid var(--border);max-width:120px}
+
+.step-panel{display:none}
+.step-panel.active{display:block;animation:fadeIn .3s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.loader{display:none;position:fixed;inset:0;background:rgba(255,255,255,.95);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+.loader.show{display:flex}
+.spinner{width:48px;height:48px;border:5px solid #f4ede5;border-top:5px solid var(--red);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loader p{font-weight:700;color:var(--red)}
+
+.complete{text-align:center;padding:40px 20px}
+.complete .icon{width:80px;height:80px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;color:#fff;font-size:40px;font-weight:700}
+.complete h2{font-size:22px;color:var(--red);margin-bottom:12px}
+.complete p{color:var(--text);font-size:14px;line-height:1.8;margin-bottom:12px}
+.complete .info-box{background:#fff6f0;border:2px dashed var(--red);border-radius:10px;padding:14px;margin:20px 0;color:var(--red);font-weight:700}
+
+.other-input{margin-top:8px;display:none}
+.other-input.show{display:block}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-banner"><img src="https://onebalanceyume-beep.github.io/onebalance-member/logo.jpg" alt="ONE-BALANCE BOXING GYM" onerror="this.style.display='none'"></div>
+  <p>30分・ボクシング体験受付フォーム</p>
+</header>
+
+<div class="stepper">
+  <div class="step active" data-step="1"><span class="circle">1</span><span class="lbl">情報</span></div>
+  <div class="step" data-step="2"><span class="circle">2</span><span class="lbl">アンケート</span></div>
+  <div class="step" data-step="3"><span class="circle">3</span><span class="lbl">規約</span></div>
+  <div class="step" data-step="4"><span class="circle">4</span><span class="lbl">確認</span></div>
+</div>
+
+<div class="wrap">
+
+<div class="welcome" id="welcome">
+  <div class="welcome-logo"><img src="https://onebalanceyume-beep.github.io/onebalance-member/icons/logo-welcome.jpg" alt="ロゴ" onerror="this.style.display='none'"></div>
+  <h2>WELCOME!</h2>
+  <p>本日はご来店ありがとうございます<br>ご記入をお願いします</p>
+</div>
+
+<!-- Step 1: お客様情報 -->
+<div class="step-panel active" id="panel1">
+  <div class="card">
+    <h2><span class="num">1</span>お客様情報</h2>
+
+    <div class="field">
+      <label>お名前<span class="req">*</span></label>
+      <input id="name" placeholder="山田 太郎">
+    </div>
+
+    <div class="field">
+      <label>性別<span class="req">*</span></label>
+      <div class="btn-group-3">
+        <div class="btn-opt" data-gender="男性">男性</div>
+        <div class="btn-opt" data-gender="女性">女性</div>
+        <div class="btn-opt" data-gender="どちらでもない">どちらでもない</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>電話番号<span class="req">*</span></label>
+      <input type="tel" id="tel" placeholder="09012345678" inputmode="numeric">
+    </div>
+
+    <div class="field">
+      <label>住所<span class="req">*</span></label>
+      <input id="address" placeholder="米子市車尾6丁目8-59">
+    </div>
+
+    <div class="field">
+      <label>生年月日<span class="req">*</span></label>
+      <input type="date" id="birthday">
+    </div>
+  </div>
+</div>
+
+<!-- Step 2: アンケート -->
+<div class="step-panel" id="panel2">
+  <div class="card">
+    <h2><span class="num">1</span>当ジムを知ったきっかけ</h2>
+    <p style="font-size:11px;color:var(--sub);margin-bottom:10px">※1つお選びください</p>
+    <div class="grid-2" id="kikkake-list">
+      <div class="btn-opt" data-kikkake="Instagram">Instagram</div>
+      <div class="btn-opt" data-kikkake="YouTube">YouTube</div>
+      <div class="btn-opt" data-kikkake="Google検索">Google検索</div>
+      <div class="btn-opt" data-kikkake="友人の紹介">友人の紹介</div>
+      <div class="btn-opt" data-kikkake="看板、通りがかり">看板・通りがかり</div>
+      <div class="btn-opt" data-kikkake="ホームページ">ホームページ</div>
+    </div>
+    <div class="btn-opt" data-kikkake="その他" style="margin-top:6px">その他</div>
+    <div class="other-input" id="kikkake-other-box">
+      <input type="text" id="kikkake-other" placeholder="きっかけを入力してください" style="margin-top:8px">
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span class="num">2</span>運動経験</h2>
+    <p style="font-size:11px;color:var(--sub);margin-bottom:10px">※1つお選びください</p>
+    <div class="grid-1">
+      <div class="btn-opt" data-undou="ない" style="text-align:left;padding-left:14px">ない</div>
+      <div class="btn-opt" data-undou="少しある" style="text-align:left;padding-left:14px">少しある</div>
+      <div class="btn-opt" data-undou="部活経験がある" style="text-align:left;padding-left:14px">部活経験がある</div>
+      <div class="btn-opt" data-undou="スポーツジム経験ある" style="text-align:left;padding-left:14px">スポーツジム経験がある</div>
+      <div class="btn-opt" data-undou="現在運動している" style="text-align:left;padding-left:14px">現在運動している</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span class="num">3</span>今のボクシングのイメージ</h2>
+    <p style="font-size:11px;color:var(--sub);margin-bottom:10px">※複数選択できます</p>
+    <div class="pills" id="image-list">
+      <div class="pill" data-image="カッコいい">カッコいい</div>
+      <div class="pill" data-image="怖い">怖い</div>
+      <div class="pill" data-image="つらい">つらい</div>
+      <div class="pill" data-image="しんどそう">しんどそう</div>
+      <div class="pill" data-image="難しそう">難しそう</div>
+      <div class="pill" data-image="楽しそう">楽しそう</div>
+      <div class="pill" data-image="痩せそう">痩せそう</div>
+      <div class="pill" data-image="ストレス発散">ストレス発散</div>
+    </div>
+  </div>
+</div>
+
+<!-- Step 3: 規約 -->
+<div class="step-panel" id="panel3">
+  <div class="card">
+    <h2><span class="num">1</span>体験利用規約</h2>
+    <div class="terms-box">
+      <div class="terms-cat">■ 体験について</div>
+      <p>● 原則として体験は1度だけとなります。</p>
+      <p>※ ただし、ご友人・ご家族などが体験をご希望の場合は、もう1度体験いただくことも可能です。お気軽にご相談ください。</p>
+
+      <div class="terms-cat">■ ケガ・事故について</div>
+      <p>● 激しい運動や危険なトレーニングは行いませんが、体験中に万が一、ケガや体調不良等が発生した場合は<span class="strong">自己責任</span>となります。</p>
+      <p>● ジムでは応急処置までの対応となります。</p>
+
+      <div class="terms-cat">■ 持ち物・服装について</div>
+      <p>● 動きやすい服装、室内シューズ、タオル、飲み物をご持参ください。</p>
+      <p>● 貴重品はご自身で管理してください。盗難・紛失については一切責任を負いかねます。</p>
+
+      <div class="terms-cat">■ 写真・動画について</div>
+      <p>● 体験中に撮影した写真・動画を、当ジムのSNS・広告等に使用させていただく場合があります。</p>
+      <p>● 掲載を希望されない場合は、事前にお申し出ください。</p>
+
+      <div class="terms-cat">■ 18歳未満の方について</div>
+      <p>● 18歳未満の方は、必ず保護者の同意を得てご参加ください。</p>
+
+      <div style="font-size:10px;color:var(--sub);margin-top:14px;text-align:center;border-top:1px dotted #eadfd3;padding-top:10px">ONE-BALANCE BOXING GYM<br>鳥取県米子市車尾6丁目8-59 / TEL: 0859-49-5275</div>
+    </div>
+    <label class="chk" id="terms-chk-lbl">
+      <input type="checkbox" id="terms-agree">
+      <span>上記の体験利用規約をすべて読み、内容に同意します</span>
+    </label>
+  </div>
+</div>
+
+<!-- Step 4: 確認 -->
+<div class="step-panel" id="panel4">
+  <div class="card">
+    <h2><span class="num">1</span>ご記入内容の確認</h2>
+    <div class="confirm-list" id="confirm-list"></div>
+  </div>
+  <p style="text-align:center;font-size:11px;color:var(--sub);margin-top:12px;line-height:1.7">
+    この内容で受付を送信します<br>
+    内容を修正したい場合は「戻る」を押してください
+  </p>
+</div>
+
+<!-- 完了画面 -->
+<div class="step-panel" id="panel-done">
+  <div class="complete">
+    <div class="icon">✓</div>
+    <h2>受付完了！</h2>
+    <p>ご記入ありがとうございました。<br>スタッフがご案内しますので<br>少々お待ちください。</p>
+    <div class="info-box">
+      30分間のボクシング体験<br>楽しんでいってください！
+    </div>
+    <p style="font-size:12px;color:var(--sub)">ONE-BALANCE BOXING GYM<br>TEL: 0859-49-5275</p>
+  </div>
+</div>
+
+</div>
+
+<div class="btn-group" id="btn-group">
+  <div class="btn-group-inner">
+    <button type="button" class="btn btn-secondary" id="btn-back" onclick="prevStep()" style="display:none">戻る</button>
+    <button type="button" class="btn btn-primary" id="btn-next" onclick="nextStep()">次へすすむ</button>
+  </div>
+</div>
+
+<div class="loader" id="loader">
+  <div class="spinner"></div>
+  <p>送信中...</p>
+</div>
+
+<script>
+// ============================================
+// 設定：GAS URLをここに貼ってください
+// ============================================
+const GAS_URL = 'ここにGASのURLを貼る';
+
+// ============================================
+// キャッシュクリア（ホーム画面追加時の更新対策）
+// ============================================
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.getRegistrations().then(regs=>regs.forEach(r=>r.unregister()));
+}
+if('caches' in window){
+  caches.keys().then(keys=>keys.forEach(k=>caches.delete(k)));
+}
+
+// ダブルタップズーム防止
+let lastTouch = 0;
+document.addEventListener('touchend', e=>{
+  const now = Date.now();
+  if(now - lastTouch < 300) e.preventDefault();
+  lastTouch = now;
+}, {passive:false});
+
+// ============================================
+// 状態管理
+// ============================================
+let state = {
+  currentStep: 1,
+  gender: null,
+  kikkake: null,
+  kikkakeOther: '',
+  undou: null,
+  images: []
+};
+
+// ============================================
+// 初期化
+// ============================================
+window.addEventListener('DOMContentLoaded', ()=>{
+  setupGenderBtns();
+  setupKikkakeBtns();
+  setupUndouBtns();
+  setupImagePills();
+  setupTermsChk();
+  updateUI();
+});
+
+// ============================================
+// 選択ボタンのセットアップ
+// ============================================
+function setupGenderBtns(){
+  document.querySelectorAll('[data-gender]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('[data-gender]').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      state.gender = btn.dataset.gender;
+      updateUI();
+    });
+  });
+}
+
+function setupKikkakeBtns(){
+  document.querySelectorAll('[data-kikkake]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('[data-kikkake]').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      state.kikkake = btn.dataset.kikkake;
+      document.getElementById('kikkake-other-box').classList.toggle('show', btn.dataset.kikkake==='その他');
+      updateUI();
+    });
+  });
+  document.getElementById('kikkake-other').addEventListener('input',e=>{
+    state.kikkakeOther = e.target.value;
+    updateUI();
+  });
+}
+
+function setupUndouBtns(){
+  document.querySelectorAll('[data-undou]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('[data-undou]').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      state.undou = btn.dataset.undou;
+      updateUI();
+    });
+  });
+}
+
+function setupImagePills(){
+  document.querySelectorAll('[data-image]').forEach(pill=>{
+    pill.addEventListener('click',()=>{
+      const img = pill.dataset.image;
+      if(pill.classList.contains('active')){
+        pill.classList.remove('active');
+        state.images = state.images.filter(i=>i!==img);
+      }else{
+        pill.classList.add('active');
+        state.images.push(img);
+      }
+      updateUI();
+    });
+  });
+}
+
+function setupTermsChk(){
+  document.getElementById('terms-agree').addEventListener('change',e=>{
+    document.getElementById('terms-chk-lbl').classList.toggle('checked', e.target.checked);
+    updateUI();
+  });
+}
+
+// ============================================
+// UI更新
+// ============================================
+function updateUI(){
+  document.querySelectorAll('.step').forEach(s=>{
+    const n = Number(s.dataset.step);
+    s.classList.toggle('active', n === state.currentStep);
+    s.classList.toggle('done', n < state.currentStep);
+  });
+
+  document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('active'));
+  if(state.currentStep<=4){
+    document.getElementById(`panel${state.currentStep}`).classList.add('active');
+    document.getElementById('welcome').style.display = state.currentStep===1?'block':'none';
+  }
+
+  const btnBack = document.getElementById('btn-back');
+  const btnNext = document.getElementById('btn-next');
+  btnBack.style.display = state.currentStep===1?'none':'block';
+  btnNext.textContent = state.currentStep===4?'この内容で送信する':'次へすすむ';
+  btnNext.disabled = !canProceed();
+
+  if(state.currentStep===4) renderConfirm();
+}
+
+function canProceed(){
+  switch(state.currentStep){
+    case 1:
+      if(!document.getElementById('name').value.trim())return false;
+      if(!state.gender)return false;
+      if(!document.getElementById('tel').value.trim())return false;
+      if(!document.getElementById('address').value.trim())return false;
+      if(!document.getElementById('birthday').value)return false;
+      return true;
+    case 2:
+      if(!state.kikkake)return false;
+      if(state.kikkake==='その他' && !state.kikkakeOther.trim())return false;
+      if(!state.undou)return false;
+      if(state.images.length===0)return false;
+      return true;
+    case 3:
+      return document.getElementById('terms-agree').checked;
+    case 4: return true;
+  }
+  return false;
+}
+
+document.addEventListener('input', ()=>{ if(state.currentStep===1||state.currentStep===2) updateUI(); });
+document.addEventListener('change', ()=>{ if(state.currentStep===1||state.currentStep===3) updateUI(); });
+
+// ============================================
+// 確認画面
+// ============================================
+function formatDateJP(s){
+  if(!s)return'';
+  const d=new Date(s);
+  return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;
+}
+
+function renderConfirm(){
+  const list = document.getElementById('confirm-list');
+  const kikkakeDisplay = state.kikkake==='その他' ? `その他：${state.kikkakeOther}` : state.kikkake;
+  const parts = [
+    ['お名前', document.getElementById('name').value],
+    ['性別', state.gender],
+    ['電話番号', document.getElementById('tel').value],
+    ['住所', document.getElementById('address').value],
+    ['生年月日', formatDateJP(document.getElementById('birthday').value)],
+    ['知ったきっかけ', kikkakeDisplay],
+    ['運動経験', state.undou],
+    ['ボクシングのイメージ', state.images.join('・')]
+  ];
+  list.innerHTML = parts.map(([l,v])=>`<div class="confirm-row"><span class="lbl">${l}</span><span class="val">${v||'-'}</span></div>`).join('');
+}
+
+// ============================================
+// ステップ移動
+// ============================================
+function nextStep(){
+  if(!canProceed()){alert('必要な項目を入力してください');return}
+  if(state.currentStep===4){submit();return}
+  state.currentStep++;
+  window.scrollTo({top:0,behavior:'smooth'});
+  updateUI();
+}
+function prevStep(){
+  if(state.currentStep===1)return;
+  state.currentStep--;
+  window.scrollTo({top:0,behavior:'smooth'});
+  updateUI();
+}
+
+// ============================================
+// JSONP送信
+// ============================================
+function jsonp(url, cb){
+  const cbName = 'cb_'+Date.now()+'_'+Math.floor(Math.random()*10000);
+  window[cbName] = function(data){
+    cb(data);
+    delete window[cbName];
+    document.body.removeChild(s);
+  };
+  const s = document.createElement('script');
+  s.src = url + (url.includes('?')?'&':'?') + 'callback=' + cbName;
+  s.onerror = ()=>{cb({success:false, message:'通信エラー'});delete window[cbName]};
+  document.body.appendChild(s);
+}
+
+function submit(){
+  document.getElementById('loader').classList.add('show');
+
+  const kikkakeFinal = state.kikkake==='その他' ? `その他：${state.kikkakeOther}` : state.kikkake;
+
+  const payload = {
+    name: document.getElementById('name').value.trim(),
+    gender: state.gender,
+    tel: document.getElementById('tel').value.trim(),
+    address: document.getElementById('address').value.trim(),
+    birthday: document.getElementById('birthday').value,
+    kikkake: kikkakeFinal,
+    undou: state.undou,
+    images: state.images.join(','),
+    termsAgreed: '上記の体験利用規約をすべて読み、内容に同意します'
+  };
+
+  const url = GAS_URL + '?action=submitTaiken&data=' + encodeURIComponent(JSON.stringify(payload));
+
+  jsonp(url, res=>{
+    document.getElementById('loader').classList.remove('show');
+    if(res.success){
+      document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('active'));
+      document.getElementById('panel-done').classList.add('active');
+      document.getElementById('welcome').style.display='none';
+      document.getElementById('btn-group').style.display='none';
+      window.scrollTo({top:0,behavior:'smooth'});
+    }else{
+      alert('送信に失敗しました。\n' + (res.message||'時間をおいて再度お試しください'));
+    }
+  });
+}
+</script>
+</body>
+</html>
