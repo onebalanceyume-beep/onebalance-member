@@ -2,390 +2,1475 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>one-BALANCE トレーナー管理</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="トレーナー管理">
+<meta name="application-name" content="トレーナー管理">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>クーポン管理 | ONE-BALANCE</title>
+<link rel="apple-touch-icon" href="icons/icon-192x192.png">
+<link rel="manifest" href="trainer-manifest.json">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
-:root{
-  --red:#DB444C; --blue:#5BB9CD; --gray:#727474;
-  --bg:#fffaf5; --card:#fff; --border:#f0e6dc;
-  --text:#2b2b2b; --sub:#7a7a7a;
-}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;min-height:100vh;padding-bottom:100px}
-.wrap{max-width:720px;margin:0 auto;padding:0 16px}
-
-header{background:linear-gradient(135deg,var(--red) 0%,#c73841 100%);color:#fff;padding:20px 16px;text-align:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.08)}
-header h1{font-size:17px;font-weight:800;letter-spacing:.05em}
-header p{font-size:12px;opacity:.9;margin-top:4px}
-
-/* トレーナー戻るボタン（新規追加） */
-.back-to-trainer{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:rgba(255,255,255,.2);color:#fff;border:1.5px solid rgba(255,255,255,.4);border-radius:20px;font-size:12px;font-weight:700;text-decoration:none;margin-top:10px;cursor:pointer;transition:all .2s}
-.back-to-trainer:hover{background:rgba(255,255,255,.3)}
-.back-to-trainer:active{transform:scale(.97)}
-
-.view-tabs{display:flex;background:#f4ede5;margin:12px 0;padding:4px;border-radius:10px;gap:4px}
-.view-tab{flex:1;padding:10px;text-align:center;font-size:13px;font-weight:700;border-radius:8px;cursor:pointer;color:var(--sub);transition:all .2s}
-.view-tab.active{background:var(--red);color:#fff;box-shadow:0 2px 6px rgba(219,68,76,.3)}
-
-.coupon-card{background:var(--card);border-radius:14px;padding:16px;margin:10px 0;border:2px solid var(--border);position:relative;transition:all .2s}
-.coupon-card.inactive{opacity:.5;background:#f9f9f9}
-.coupon-card .code{font-size:20px;font-weight:800;color:var(--red);font-family:monospace;letter-spacing:.05em;margin-bottom:6px}
-.coupon-card .type{display:inline-block;padding:3px 10px;font-size:11px;background:var(--blue);color:#fff;border-radius:4px;font-weight:700;margin-bottom:8px}
-.coupon-card .memo{font-size:13px;color:var(--gray);margin-bottom:10px}
-.coupon-card .meta{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;font-size:11px;padding-top:10px;border-top:1px dotted #eadfd3}
-.coupon-card .meta div{text-align:center}
-.coupon-card .meta .lbl{color:var(--sub);display:block;margin-bottom:2px}
-.coupon-card .meta .val{color:var(--text);font-weight:700}
-.coupon-card .actions{position:absolute;top:12px;right:12px;display:flex;gap:6px}
-.coupon-card .actions button{padding:6px 10px;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer}
-.coupon-card .btn-edit{background:var(--blue);color:#fff}
-.coupon-card .btn-del{background:var(--red);color:#fff}
-
-.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:10px 0}
-.stat{background:#fff;border-radius:10px;padding:14px 8px;text-align:center;border:1px solid var(--border)}
-.stat .n{font-size:24px;font-weight:800;color:var(--red)}
-.stat .l{font-size:10px;color:var(--sub);margin-top:2px}
-
-.presets{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
-.preset{padding:12px;border:2px solid var(--border);border-radius:10px;background:#fff;cursor:pointer;text-align:center;transition:all .2s}
-.preset:hover{border-color:var(--red);background:#fff6f0}
-.preset .ttl{font-weight:700;font-size:13px;color:var(--red)}
-.preset .dsc{font-size:10px;color:var(--sub);margin-top:3px}
-
-.card{background:var(--card);border-radius:14px;padding:20px 16px;margin:12px 0;border:1px solid var(--border)}
-.card h2{font-size:15px;color:var(--red);margin-bottom:14px;padding-bottom:8px;border-bottom:2px dotted #f3d9db;font-weight:700}
-.field{margin-bottom:14px}
-.field label{display:block;font-size:12px;font-weight:700;margin-bottom:6px;color:var(--gray)}
-.field input,.field select,.field textarea{width:100%;padding:11px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;background:#fff;font-family:inherit}
-.field input:focus,.field select:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 3px rgba(219,68,76,.12)}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-
-.chk{display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 0}
-.chk input{width:18px;height:18px;accent-color:var(--red)}
-
-.btn{padding:12px 16px;border:none;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer;transition:all .2s;font-family:inherit}
-.btn-primary{background:var(--red);color:#fff;width:100%;box-shadow:0 4px 10px rgba(219,68,76,.25)}
-.btn-primary:active{transform:scale(.97)}
-
-.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:16px}
-.modal.show{display:flex}
-.modal-content{background:#fff;border-radius:16px;padding:20px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto}
-.modal-content h3{color:var(--red);margin-bottom:16px;font-size:16px}
-.modal-actions{display:flex;gap:8px;margin-top:16px}
-.btn-cancel{background:#eee;color:var(--gray);flex:1}
-
-.loader{display:none;position:fixed;inset:0;background:rgba(255,255,255,.95);z-index:300;align-items:center;justify-content:center;flex-direction:column;gap:12px}
-.loader.show{display:flex}
-.spinner{width:40px;height:40px;border:4px solid #f4ede5;border-top:4px solid var(--red);border-radius:50%;animation:spin .8s linear infinite}
+:root{--red:#DB444C;--red-dark:#C0392B;--red-light:#FFF0F0;--blue:#5BB9CD;--blue-dark:#4aa8bb;--blue-light:#E8F7FA;--gray:#f5f5f5;--gray2:#e0e0e0;--text:#2c2c2c;--text2:#666;--shadow:0 4px 20px rgba(0,0,0,0.08);--radius:12px;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f9fa;color:var(--text);min-height:100vh;}
+.header{background:var(--red);color:white;position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(219,68,76,0.4);}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;}
+.logo{font-size:18px;font-weight:900;letter-spacing:1px;}
+.logo span{color:rgba(255,255,255,0.8);font-size:11px;display:block;font-weight:400;letter-spacing:2px;}
+.hdate{font-size:12px;opacity:.9;text-align:right;}
+.hdate .big{font-size:16px;font-weight:700;}
+.header-actions{display:flex;gap:8px;padding:0 16px 8px;flex-wrap:wrap;}
+.coupon-link-btn{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;background:rgba(255,255,255,.2);color:#fff;border:1.5px solid rgba(255,255,255,.4);border-radius:20px;font-size:11px;font-weight:700;text-decoration:none;cursor:pointer;transition:all .2s;}
+.coupon-link-btn:hover{background:rgba(255,255,255,.3);}
+.tabs{background:var(--blue);display:flex;overflow-x:auto;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab-btn{flex:none;padding:11px 16px;color:rgba(255,255,255,0.7);font-size:12px;font-weight:600;border:none;background:none;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s;letter-spacing:.5px;}
+.tab-btn.active{color:white;border-bottom-color:white;background:rgba(255,255,255,0.15);}
+.tab-btn:hover{color:white;background:rgba(255,255,255,0.1);}
+.content{padding:16px;max-width:800px;margin:0 auto;}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+.card{background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:16px;}
+.card-title{font-size:13px;font-weight:700;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.card-title::before{content:'';width:4px;height:14px;background:var(--red);border-radius:2px;display:inline-block;}
+.sgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px;}
+.sc{background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;border-left:4px solid var(--red);}
+.sc.blue{border-left-color:var(--blue);}
+.sc.green{border-left-color:#27ae60;}
+.sc.red2{border-left-color:var(--red);}
+.slabel{font-size:11px;color:var(--text2);font-weight:600;}
+.sval{font-size:24px;font-weight:900;color:var(--text);line-height:1.1;margin-top:4px;}
+.sval span{font-size:14px;font-weight:500;color:var(--text2);}
+.fee-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:4px;}
+.fee-sum-card{background:#f8f9fa;border-radius:10px;padding:12px;text-align:center;}
+.fee-sum-label{font-size:11px;color:var(--text2);font-weight:600;margin-bottom:6px;}
+.fee-sum-val{font-size:16px;font-weight:900;}
+.fee-sum-val.total{color:var(--text);}
+.fee-sum-val.paid{color:#27ae60;}
+.fee-sum-val.unpaid{color:var(--red);}
+.cw{position:relative;height:200px;}
+.cw.s{height:160px;}
+.msearch{display:flex;gap:8px;margin-bottom:12px;}
+.msearch input,.msearch select{padding:10px 12px;border:2px solid var(--gray2);border-radius:8px;font-size:13px;outline:none;font-family:inherit;background:white;}
+.msearch input{flex:1;}
+.msearch input:focus,.msearch select:focus{border-color:var(--red);}
+.grade-filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.gf-btn{padding:6px 12px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:2px solid transparent;transition:all .15s;font-family:inherit;}
+.gf-btn.active{border-color:var(--red);box-shadow:0 0 0 2px rgba(219,68,76,.2);}
+.mlist{display:flex;flex-direction:column;gap:8px;}
+.mi{background:white;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:12px 14px;border-left:4px solid var(--gray2);cursor:pointer;transition:all .15s;}
+.mi:hover{box-shadow:0 4px 16px rgba(0,0,0,.12);transform:translateY(-1px);}
+.mi.act{border-left-color:var(--red);}
+.mi.vac{border-left-color:var(--blue);}
+.mi.res{border-left-color:var(--gray2);opacity:.6;}
+.mname{font-size:15px;font-weight:700;}
+.mkana{font-size:11px;color:var(--text2);}
+.minfo{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;}
+.badge{font-size:10px;padding:3px 8px;border-radius:20px;font-weight:600;white-space:nowrap;}
+.br{background:var(--red-light);color:var(--red);}
+.bb{background:var(--blue-light);color:var(--blue-dark);}
+.bg{background:#eafaf1;color:#27ae60;}
+.bgr{background:#f5f5f5;color:#888;}
+.bo{background:#fef9e7;color:#d4a017;}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:white;border-radius:16px 16px 0 0;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;padding:20px;animation:up .25s ease;}
+@keyframes up{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.mt{font-size:17px;font-weight:800;}
+.mx{font-size:24px;color:var(--text2);cursor:pointer;background:none;border:none;line-height:1;}
+.ms{margin-bottom:16px;}
+.mst{font-size:12px;color:var(--text2);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--gray2);}
+.ir{display:flex;gap:8px;margin-bottom:6px;align-items:baseline;}
+.il{font-size:12px;color:var(--text2);width:80px;flex-shrink:0;}
+.iv{font-size:14px;font-weight:600;}
+.btn{padding:10px 18px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .15s;}
+.btn-red{background:var(--red);color:white;}
+.btn-red:hover{background:var(--red-dark);}
+.btn-blue{background:var(--blue);color:white;}
+.btn-blue:hover{background:var(--blue-dark);}
+.btn-green{background:#27ae60;color:white;}
+.btn-gray{background:var(--gray);color:var(--text);}
+.btn-out{background:white;color:var(--red);border:2px solid var(--red);}
+.btn-sm{padding:7px 14px;font-size:12px;}
+.btn-full{width:100%;margin-top:8px;}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;}
+.ggrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.gbtn{padding:10px 8px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:2px solid transparent;transition:all .15s;text-align:center;font-family:inherit;}
+.gbtn.sel{border-color:var(--red)!important;box-shadow:0 0 0 2px rgba(219,68,76,.3);}
+.csv-area{border:2px dashed var(--gray2);border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:all .2s;}
+.csv-area:hover{border-color:var(--red);background:var(--red-light);}
+.cri{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-radius:8px;margin-bottom:6px;font-size:13px;}
+.cok{background:#eafaf1;}
+.cng{background:#fef9e7;}
+.cun{background:#f5f5f5;}
+.si{width:100%;padding:12px 14px;border:2px solid var(--gray2);border-radius:8px;font-size:13px;outline:none;font-family:inherit;margin-bottom:12px;}
+.si:focus{border-color:var(--red);}
+.loading{text-align:center;padding:40px;color:var(--text2);}
+.spin{width:32px;height:32px;border:3px solid var(--gray2);border-top-color:var(--red);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px;}
 @keyframes spin{to{transform:rotate(360deg)}}
+.ib{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;}
+.pager{display:flex;justify-content:center;gap:6px;margin-top:16px;flex-wrap:wrap;}
+.pb{width:32px;height:32px;border-radius:6px;border:2px solid var(--gray2);background:white;cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;font-family:inherit;}
+.pb.a{background:var(--red);color:white;border-color:var(--red);}
+.pb:hover:not(.a){border-color:var(--red);color:var(--red);}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:#1a1a2e;color:white;padding:12px 24px;border-radius:24px;font-size:14px;font-weight:600;z-index:999;transition:transform .3s ease;white-space:nowrap;pointer-events:none;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.fb{padding:7px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:none;font-family:inherit;white-space:nowrap;}
+.fp{background:#eafaf1;color:#27ae60;}
+.fu{background:#fef9e7;color:#e67e22;}
+.fe{background:var(--red-light);color:var(--red);}
+.cur-list{display:flex;flex-direction:column;gap:6px;}
+.cur-item{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:8px;background:#f8f9fa;font-size:12px;}
+.cur-item.done{background:#eafaf1;}
+.cur-item.trying{background:#e8f7fa;}
+.cur-name{font-weight:700;flex:1;}
+.cur-status{font-size:11px;font-weight:700;padding:3px 8px;border-radius:12px;}
+.cs-done{background:#27ae60;color:white;}
+.cs-try{background:var(--blue);color:white;}
+.cs-none{background:#e0e0e0;color:#888;}
+.badge-award{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.ba-btn{padding:10px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;border:2px solid transparent;font-family:inherit;text-align:center;transition:all .15s;}
+.ba-btn.awarded{border-color:var(--red);background:var(--red-light);}
+.course-select-wrap{margin-bottom:8px;}
+.course-select-wrap select{width:100%;padding:10px 12px;border:2px solid var(--gray2);border-radius:8px;font-size:13px;outline:none;font-family:inherit;background:white;}
+.course-select-wrap select:focus{border-color:var(--blue);}
+.course-fee-preview{font-size:12px;color:var(--blue-dark);font-weight:700;margin-bottom:8px;min-height:18px;}
+.section-label{font-size:12px;font-weight:700;color:var(--text2);letter-spacing:1px;margin-bottom:8px;padding:4px 0;}
+.grade-bar-wrap{margin-bottom:6px;}
+.grade-bar-label{display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:4px;}
+.grade-bar-bg{background:#f0f0f0;border-radius:6px;height:16px;overflow:hidden;}
+.grade-bar-fill{height:100%;border-radius:6px;transition:width .6s ease;}
+.month-sel{padding:10px 12px;border:2px solid var(--blue);border-radius:8px;font-size:14px;font-weight:700;outline:none;font-family:inherit;background:white;color:var(--blue-dark);}
+.fee-month-summary{font-size:12px;color:var(--text2);margin-top:8px;font-weight:600;line-height:1.8;}
 
-.empty{text-align:center;padding:40px 20px;color:var(--sub)}
-.empty p{margin-bottom:8px}
+.r-filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.rf-btn{padding:7px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:2px solid transparent;background:#f0f0f0;color:#555;transition:all .15s;font-family:inherit;}
+.rf-btn.active{border-color:var(--red);background:var(--red-light);color:var(--red);box-shadow:0 0 0 2px rgba(219,68,76,.2);}
+.r-card{background:white;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:14px;border-left:4px solid var(--red);margin-bottom:8px;}
+.r-card.cancelled{border-left-color:#bbb;opacity:.6;}
+.r-card.past{border-left-color:var(--gray2);opacity:.7;}
+.r-card.today{border-left-color:var(--blue);background:#f8fcfd;}
+.r-row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px;}
+.r-name{font-size:15px;font-weight:800;}
+.r-date{font-size:13px;font-weight:700;color:var(--red);margin:2px 0 6px;}
+.r-date.past{color:var(--text2);}
+.r-info-row{display:flex;flex-wrap:wrap;gap:10px;font-size:11px;color:var(--text2);margin-bottom:8px;}
+.r-info-row span{display:inline-flex;align-items:center;gap:3px;}
+.r-btn-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.r-btn-cancel{padding:8px 14px;background:linear-gradient(135deg,#DB444C,#C0392B);color:white;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex:1;min-width:140px;}
+.r-btn-cancel:hover{opacity:.9;}
+.r-btn-call{padding:8px 14px;background:white;color:var(--blue-dark);border:2px solid var(--blue);border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;text-decoration:none;text-align:center;}
+.r-status-badge{font-size:10px;padding:3px 10px;border-radius:20px;font-weight:700;white-space:nowrap;}
+.r-empty{padding:40px 20px;text-align:center;color:var(--text2);font-size:13px;}
 
-.fab{position:fixed;bottom:20px;right:20px;width:60px;height:60px;border-radius:50%;background:var(--red);color:#fff;border:none;font-size:28px;font-weight:800;cursor:pointer;box-shadow:0 6px 16px rgba(219,68,76,.4);z-index:90}
-.fab:active{transform:scale(.95)}
+.fm-card{background:white;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:14px;border-left:4px solid var(--blue);margin-bottom:8px;}
+.fm-row-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px;}
+.fm-name{font-size:15px;font-weight:800;}
+.fm-badge{background:linear-gradient(135deg,var(--blue),#4a9fb3);color:#fff;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap;}
+.fm-info{font-size:12px;color:var(--text2);margin-bottom:8px;line-height:1.6;}
+.fm-edit-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.fm-edit-row input{padding:6px 10px;border:1.5px solid var(--gray2);border-radius:6px;font-size:12px;font-family:inherit;outline:none;}
+.fm-edit-row input:focus{border-color:var(--blue);}
+.fm-edit-row input[type="number"]{width:70px;}
+.fm-edit-row input[type="text"]{flex:1;min-width:120px;}
+
+@media(min-width:600px){.sgrid{grid-template-columns:repeat(4,1fr);}.ggrid{grid-template-columns:repeat(4,1fr);}.badge-award{grid-template-columns:repeat(4,1fr);}}
 </style>
 </head>
 <body>
-
-<header>
-  <h1>🎟️ クーポン管理</h1>
-  <p>ONE-BALANCE BOXING GYM</p>
-  <a href="trainer.html" class="back-to-trainer">← トレーナー画面に戻る</a>
-</header>
-
-<div class="wrap">
-
-  <div class="stats" id="stats">
-    <div class="stat"><div class="n" id="stat-total">-</div><div class="l">総数</div></div>
-    <div class="stat"><div class="n" id="stat-active">-</div><div class="l">有効</div></div>
-    <div class="stat"><div class="n" id="stat-used">-</div><div class="l">使用回数</div></div>
+<div class="header">
+  <div class="header-inner">
+    <div class="logo">one-BALANCE<span>BOXING GYM TRAINER</span></div>
+    <div class="hdate"><div class="big" id="dd"></div><div id="dt"></div></div>
   </div>
-
-  <div class="view-tabs">
-    <div class="view-tab active" data-view="list">📋 一覧</div>
-    <div class="view-tab" data-view="create">➕ 新規作成</div>
+  <div class="header-actions">
+    <a href="onebalance-coupon-admin.html" class="coupon-link-btn">🎟️ クーポン管理</a>
   </div>
-
-  <div id="view-list">
-    <div id="coupons"></div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="sw('dashboard',this)">📊 ダッシュボード</button>
+    <button class="tab-btn" onclick="sw('members',this)">👥 会員管理</button>
+    <button class="tab-btn" onclick="sw('reserve',this)">🗓️ 体験予約</button>
+    <button class="tab-btn" onclick="sw('fee',this)">💰 月会費</button>
+    <button class="tab-btn" onclick="sw('freemonth',this)">🎁 無料月管理</button>
+    <button class="tab-btn" onclick="sw('stats',this)">📈 統計</button>
+    <button class="tab-btn" onclick="sw('settings',this)">⚙️ 設定</button>
   </div>
+</div>
+<div class="content">
 
-  <div id="view-create" style="display:none">
-
+<div class="tab-content active" id="tab-dashboard">
+  <div id="dl" class="loading"><div class="spin"></div>読み込み中...</div>
+  <div id="db" style="display:none">
+    <div class="sgrid">
+      <div class="sc"><div class="slabel">在籍会員数</div><div class="sval" id="s1">-<span>人</span></div></div>
+      <div class="sc blue"><div class="slabel">今月新規</div><div class="sval" id="s2">-<span>人</span></div></div>
+      <div class="sc green"><div class="slabel">今月体験</div><div class="sval" id="s3">-<span>人</span></div></div>
+      <div class="sc red2"><div class="slabel">今月成約率</div><div class="sval" id="s4">-<span>%</span></div></div>
+    </div>
     <div class="card">
-      <h2>⚡ プリセット（ワンタップ作成）</h2>
-      <div class="presets">
-        <div class="preset" data-preset="entry_free"><div class="ttl">入会金 完全無料</div><div class="dsc">¥8,800 → ¥0</div></div>
-        <div class="preset" data-preset="entry_half"><div class="ttl">入会金 半額引き</div><div class="dsc">¥4,400引き</div></div>
-        <div class="preset" data-preset="free2"><div class="ttl">月会費 2ヶ月無料</div><div class="dsc">翌月から2ヶ月間</div></div>
-        <div class="preset" data-preset="free3"><div class="ttl">月会費 3ヶ月無料</div><div class="dsc">翌月から3ヶ月間</div></div>
+      <div class="card-title">💴 今月の会費状況</div>
+      <div class="fee-summary">
+        <div class="fee-sum-card">
+          <div class="fee-sum-label">見込み総額</div>
+          <div class="fee-sum-val total" id="fee-total">-</div>
+          <div style="font-size:10px;color:var(--text2);margin-top:2px">円</div>
+        </div>
+        <div class="fee-sum-card">
+          <div class="fee-sum-label">✅ 入金済み</div>
+          <div class="fee-sum-val paid" id="fee-paid">-</div>
+          <div style="font-size:10px;color:var(--text2);margin-top:2px">円</div>
+        </div>
+        <div class="fee-sum-card">
+          <div class="fee-sum-label">❌ 未入金</div>
+          <div class="fee-sum-val unpaid" id="fee-unpaid">-</div>
+          <div style="font-size:10px;color:var(--text2);margin-top:2px">円</div>
+        </div>
       </div>
     </div>
-
     <div class="card">
-      <h2>🛠️ 詳細設定で作成</h2>
-      <div class="field"><label>クーポンコード（英数字）</label><input type="text" id="f-code" placeholder="例: SPRING2026" style="text-transform:uppercase"></div>
-      <div class="field"><label>割引タイプ</label>
-        <select id="f-type">
-          <option value="entry_free">入会金：完全無料</option>
-          <option value="entry_fixed">入会金:定額引き（円）</option>
-          <option value="months_free">月会費：翌月以降◯ヶ月無料</option>
+      <div class="card-title">男女比（会員）</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:center">
+        <div class="cw s"><canvas id="gc"></canvas></div>
+        <div>
+          <div style="margin-bottom:10px"><div style="font-size:12px;color:var(--text2)">男性</div><div style="font-size:24px;font-weight:900;color:var(--blue)" id="sm">-人</div></div>
+          <div><div style="font-size:12px;color:var(--text2)">女性</div><div style="font-size:24px;font-weight:900;color:var(--red)" id="sf">-人</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">年代別人数</div>
+      <div class="cw"><canvas id="agec"></canvas></div>
+    </div>
+    <div class="card"><div class="card-title">コース別人数</div><div class="cw"><canvas id="cc"></canvas></div></div>
+  </div>
+</div>
+
+<div class="tab-content" id="tab-members">
+  <div class="ib">
+    <button class="btn btn-red" onclick="importM()">📥 新規取込</button>
+    <button class="btn btn-gray" onclick="loadM()">🔄 更新</button>
+    <span id="mc" style="font-size:12px;color:var(--text2)"></span>
+  </div>
+  <div class="msearch">
+    <input type="text" id="ms" placeholder="名前・フリガナで検索" oninput="filterM()">
+    <select id="mf" onchange="filterM()">
+      <option value="">全員</option>
+      <option value="在籍">在籍</option>
+      <option value="休会">休会</option>
+      <option value="退会予定">退会予定</option>
+      <option value="退会">退会</option>
+    </select>
+  </div>
+  <div class="grade-filter" id="grade-filter"></div>
+  <div id="ml2" class="loading" style="display:none"><div class="spin"></div>読み込み中...</div>
+  <div id="ml" class="mlist"></div>
+  <div class="pager" id="pg"></div>
+</div>
+
+<div class="tab-content" id="tab-reserve">
+  <div class="ib">
+    <button class="btn btn-red" onclick="loadR()">🔄 予約を更新</button>
+    <span id="rc" style="font-size:12px;color:var(--text2)"></span>
+  </div>
+  <div class="r-filter">
+    <button class="rf-btn active" onclick="setRF('upcoming',this)">📅 今後の予約</button>
+    <button class="rf-btn" onclick="setRF('today',this)">本日</button>
+    <button class="rf-btn" onclick="setRF('past',this)">過去</button>
+    <button class="rf-btn" onclick="setRF('cancelled',this)">キャンセル済み</button>
+    <button class="rf-btn" onclick="setRF('all',this)">すべて</button>
+  </div>
+  <div id="rl2" class="loading" style="display:none"><div class="spin"></div>読み込み中...</div>
+  <div id="rl"></div>
+</div>
+
+<div class="tab-content" id="tab-fee">
+  <div class="card">
+    <div class="card-title">📅 対象月を選択</div>
+    <select class="month-sel" id="month-select" onchange="onMonthChange()"></select>
+    <div class="fee-month-summary" id="fee-month-summary"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">CSVから自動チェック</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:12px">照合結果はスプレッドシートに自動反映されます。</p>
+    <div class="csv-area" onclick="document.getElementById('cf').click()">
+      <div style="font-size:36px;margin-bottom:8px">📂</div>
+      <div style="font-size:13px;color:var(--text2)">CSVファイルをタップして選択</div>
+      <input type="file" id="cf" accept=".csv" style="display:none" onchange="procCSV(this)">
+    </div>
+    <div id="cr" style="margin-top:12px"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">手動チェック・一覧</div>
+    <div class="msearch"><input type="text" id="fs" placeholder="名前で検索" oninput="renderFL()"></div>
+    <div id="fl" class="mlist"></div>
+  </div>
+</div>
+
+<div class="tab-content" id="tab-freemonth">
+  <div class="card">
+    <div class="card-title">🎁 無料月適用中の会員</div>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">
+      クーポンで月会費無料になっている会員の一覧です。<br>
+      新規入会時は自動で記入されます。必要に応じて手動で編集できます。
+    </p>
+    <div class="ib">
+      <button class="btn btn-red" onclick="loadFreeMonth()">🔄 更新</button>
+      <span id="fm-count" style="font-size:12px;color:var(--text2)"></span>
+    </div>
+    <div id="fm-loading" class="loading" style="display:none"><div class="spin"></div>読み込み中...</div>
+    <div id="fm-list"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">➕ 手動で無料月を設定</div>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">
+      会員マスタから会員を選んで、無料月数を手動で設定できます。
+    </p>
+    <div style="margin-bottom:12px">
+      <input type="text" id="fm-search" class="si" placeholder="会員名で検索..." oninput="renderFMAll()" style="margin-bottom:8px">
+    </div>
+    <div id="fm-all-list"></div>
+  </div>
+</div>
+
+<div class="tab-content" id="tab-stats">
+  <div id="stl" class="loading"><div class="spin"></div>読み込み中...</div>
+  <div id="stb" style="display:none">
+    <div class="section-label">📅 今月</div>
+    <div class="sgrid" style="margin-bottom:16px">
+      <div class="sc"><div class="slabel">今月体験数</div><div class="sval" id="st-trial-m">-<span>人</span></div></div>
+      <div class="sc blue"><div class="slabel">今月入会数</div><div class="sval" id="st-join-m">-<span>人</span></div></div>
+      <div class="sc green"><div class="slabel">今月成約率</div><div class="sval" id="st-conv-m">-<span>%</span></div></div>
+      <div class="sc red2"><div class="slabel">在籍会員数</div><div class="sval" id="st-total">-<span>人</span></div></div>
+    </div>
+    <div class="section-label">📆 年間（今年）</div>
+    <div class="sgrid" style="margin-bottom:16px">
+      <div class="sc"><div class="slabel">年間体験数</div><div class="sval" id="st-trial-y">-<span>人</span></div></div>
+      <div class="sc blue"><div class="slabel">年間入会数</div><div class="sval" id="st-join-y">-<span>人</span></div></div>
+      <div class="sc green"><div class="slabel">年間成約率</div><div class="sval" id="st-conv-y">-<span>%</span></div></div>
+      <div class="sc red2"><div class="slabel">累計体験数</div><div class="sval" id="st-trial-total">-<span>人</span></div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">月別 体験数・入会数（過去12ヶ月）</div>
+      <div class="cw"><canvas id="monthly-chart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">体験者 年代別（累計）</div>
+      <div class="cw"><canvas id="trial-age-chart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">在籍会員 年代別</div>
+      <div class="cw"><canvas id="member-age-chart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">体験者 知ったキッカケ</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:center">
+        <div class="cw s"><canvas id="source-chart"></canvas></div>
+        <div id="source-legend" style="font-size:12px;line-height:2.2"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">グレード別 在籍人数</div>
+      <div id="grade-bars" style="display:flex;flex-direction:column;gap:12px;margin-top:4px"></div>
+    </div>
+  </div>
+</div>
+
+<div class="tab-content" id="tab-settings">
+  <div class="card">
+    <div class="card-title">GAS設定（会員管理）</div>
+    <div style="font-size:13px;font-weight:700;margin-bottom:6px">会員管理 GAS URL</div>
+    <input type="text" class="si" id="gu" placeholder="https://script.google.com/macros/s/...">
+    <button class="btn btn-red btn-full" onclick="saveS()">保存する</button>
+  </div>
+  <div class="card">
+    <div class="card-title">GAS設定（予約・キャンセル）</div>
+    <div style="font-size:13px;font-weight:700;margin-bottom:6px">予約・キャンセル GAS URL</div>
+    <input type="text" class="si" id="ru" placeholder="https://script.google.com/macros/s/...">
+    <button class="btn btn-red btn-full" onclick="saveR()">保存する</button>
+  </div>
+  <div class="card">
+    <div class="card-title">GAS設定（クーポン・無料月管理）</div>
+    <div style="font-size:13px;font-weight:700;margin-bottom:6px">GAS① URL（会員マスタ側）</div>
+    <input type="text" class="si" id="gu1" placeholder="https://script.google.com/macros/s/...">
+    <button class="btn btn-red btn-full" onclick="saveG1()">保存する</button>
+  </div>
+  <div class="card">
+    <div class="card-title">アプリ情報</div>
+    <div style="font-size:13px;color:var(--text2);line-height:2.2">
+      <div>アプリ名：one-BALANCE トレーナー管理</div>
+      <div>バージョン：1.8.0（無料月管理タブ＋キャッシュ対策）</div>
+      <div>赤 #DB444C / 青 #5BB9CD</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="modal-overlay" id="mm" onclick="clm(event)">
+  <div class="modal">
+    <div class="mh"><div class="mt" id="mn">-</div><button class="mx" onclick="clmd()">×</button></div>
+    <div class="ms">
+      <div class="mst">基本情報</div>
+      <div class="ir"><span class="il">フリガナ</span><span class="iv" id="mk">-</span></div>
+      <div class="ir"><span class="il">性別</span><span class="iv" id="mg">-</span></div>
+      <div class="ir"><span class="il">生年月日</span><span class="iv" id="mb">-</span></div>
+      <div class="ir"><span class="il">コース</span><span class="iv" id="mco">-</span></div>
+      <div class="ir"><span class="il">月会費</span><span class="iv" id="mfee">-</span></div>
+      <div class="ir"><span class="il">入会日</span><span class="iv" id="mj">-</span></div>
+      <div class="ir"><span class="il">状態</span><span class="iv" id="mst2">-</span></div>
+      <div class="ir"><span class="il">口座名義人</span><span class="iv" id="mkouza">-</span></div>
+      <div class="ir" style="align-items:center">
+        <span class="il">名義変更</span>
+        <div style="display:flex;gap:6px;flex:1">
+          <input type="text" id="kouza-input" class="si" style="margin:0;flex:1;padding:8px 10px;font-size:13px" placeholder="口座名義人（半角カタカナ・スペースなし）">
+          <button class="btn btn-blue btn-sm" onclick="saveKouza()">保存</button>
+        </div>
+      </div>
+      <div class="ir"><span class="il">会員URL</span><a id="mu" href="#" target="_blank" style="font-size:11px;color:var(--blue);word-break:break-all">-</a></div>
+    </div>
+    <div class="ms">
+      <div class="mst">コース変更</div>
+      <div class="course-select-wrap">
+        <select id="course-select" onchange="previewCourse(this.value)">
+          <option value="">コースを選択してください</option>
         </select>
       </div>
-      <div class="field"><label>金額／月数</label><input type="number" id="f-amount" placeholder="0" value="0"></div>
-      <p class="hint" style="font-size:11px;color:var(--sub);margin-top:-8px;margin-bottom:10px">
-        ※入会金定額引き＝円単位／月会費◯ヶ月無料＝月数（1〜12）
-      </p>
-      <div class="row">
-        <div class="field"><label>有効期限</label><input type="date" id="f-expiry"></div>
-        <div class="field"><label>使用上限（0=無制限）</label><input type="number" id="f-limit" placeholder="0" value="0"></div>
+      <div class="course-fee-preview" id="course-fee-preview"></div>
+      <button class="btn btn-blue btn-sm" onclick="changeCourse()">💾 コースを変更する</button>
+    </div>
+    <div class="ms">
+      <div class="mst">グレード変更</div>
+      <div class="ggrid" id="gg"></div>
+    </div>
+    <div class="ms">
+      <div class="mst">マイスターバッジ付与</div>
+      <div class="badge-award" id="badge-award"></div>
+    </div>
+    <div class="ms">
+      <div class="mst">カリキュラム進捗</div>
+      <div class="cur-list" id="cur-list"></div>
+    </div>
+    <div class="ms">
+      <div class="mst">状態変更</div>
+      <div class="btn-row">
+        <button class="btn btn-green btn-sm" onclick="upSt('在籍')">✅ 在籍</button>
+        <button class="btn btn-blue btn-sm" onclick="upSt('休会')">⏸ 休会</button>
+        <button class="btn btn-gray btn-sm" onclick="setYotei()">📅 退会予定</button>
+        <button class="btn btn-out btn-sm" onclick="upSt('退会')">❌ 退会</button>
       </div>
-      <div class="field"><label>メモ</label><input type="text" id="f-memo" placeholder="キャンペーン説明"></div>
-      <label class="chk"><input type="checkbox" id="f-active" checked><span>有効にする</span></label>
-      <button class="btn btn-primary" onclick="createCoupon()" style="margin-top:10px">このクーポンを作成</button>
-    </div>
-  </div>
-
-</div>
-
-<div class="modal" id="edit-modal">
-  <div class="modal-content">
-    <h3>✏️ クーポン編集</h3>
-    <input type="hidden" id="e-row">
-    <div class="field"><label>コード</label><input type="text" id="e-code" style="text-transform:uppercase"></div>
-    <div class="field"><label>タイプ</label>
-      <select id="e-type">
-        <option value="entry_free">入会金：完全無料</option>
-        <option value="entry_fixed">入会金:定額引き（円）</option>
-        <option value="months_free">月会費：翌月以降◯ヶ月無料</option>
-      </select>
-    </div>
-    <div class="field"><label>金額／月数</label><input type="number" id="e-amount"></div>
-    <div class="row">
-      <div class="field"><label>有効期限</label><input type="date" id="e-expiry"></div>
-      <div class="field"><label>使用上限</label><input type="number" id="e-limit"></div>
-    </div>
-    <div class="field"><label>使用回数（手動調整）</label><input type="number" id="e-used"></div>
-    <div class="field"><label>メモ</label><input type="text" id="e-memo"></div>
-    <label class="chk"><input type="checkbox" id="e-active"><span>有効</span></label>
-    <div class="modal-actions">
-      <button class="btn btn-cancel" onclick="closeEdit()">キャンセル</button>
-      <button class="btn btn-primary" onclick="updateCoupon()">更新する</button>
     </div>
   </div>
 </div>
-
-<div class="loader" id="loader"><div class="spinner"></div><p>処理中...</p></div>
-
-<button class="fab" onclick="switchView('create')">＋</button>
+<div class="toast" id="toast"></div>
 
 <script>
-/* キャッシュ対策 */
 (function cacheControl(){
   if('serviceWorker' in navigator){
-    navigator.serviceWorker.getRegistrations().then(regs=>{regs.forEach(r=>r.unregister());}).catch(()=>{});
+    navigator.serviceWorker.getRegistrations().then(regs=>{
+      regs.forEach(r=>r.unregister());
+    }).catch(()=>{});
   }
   if('caches' in window){
     caches.keys().then(keys=>{keys.forEach(k=>caches.delete(k));}).catch(()=>{});
   }
-  window.addEventListener('pageshow',(e)=>{if(e.persisted)window.location.reload();});
+  window.addEventListener('pageshow',(e)=>{
+    if(e.persisted)window.location.reload();
+  });
   let lastHidden=null;
   document.addEventListener('visibilitychange',()=>{
     if(document.hidden){lastHidden=Date.now();}
-    else if(lastHidden){if(Date.now()-lastHidden>5*60*1000)window.location.reload();lastHidden=null;}
+    else if(lastHidden){
+      if(Date.now()-lastHidden>5*60*1000)window.location.reload();
+      lastHidden=null;
+    }
   });
 })();
 
-const GAS1_URL = 'https://script.google.com/macros/s/AKfycbxNxYgejS-1NZvt33PuIkh-DIEtHS9-hTFyAxUjO_8a6E9MM9CPxxDV8KMhX189c8oyrg/exec';
+const DGAS='https://script.google.com/macros/s/AKfycbwjQ6_xHKcArfU0zdZtSCPdutJ71DQJG_1v9XYz-R8mFwa-srMB9aChV-ZcI4iSGwWrHw/exec';
+const DGAS_RESERVE='https://script.google.com/macros/s/AKfycbzWPH4cO-kPMGqbJqHEsYG1yefxa0FoKQOgDJeIeUHIe9alN1yrsDVHe6E7yFY1DFiY/exec';
+const DGAS1='https://script.google.com/macros/s/AKfycbxNxYgejS-1NZvt33PuIkh-DIEtHS9-hTFyAxUjO_8a6E9MM9CPxxDV8KMhX189c8oyrg/exec';
 
-const TYPE_LABELS = {
-  entry_free:'入会金 完全無料',
-  entry_fixed:'入会金 -円引き',
-  months_free:'月会費 ◯ヶ月無料'
+const GR=[
+  {n:'ホワイト前', b:'#f5f5f5', c:'#666',    d:'入会直後の初期状態'},
+  {n:'ホワイト',   b:'#ecf0f1', c:'#7f8c8d', d:'基本カリキュラム75%以上合格'},
+  {n:'グリーン',   b:'#eafaf1', c:'#27ae60', d:'守る基礎技術ができる'},
+  {n:'ブルー',     b:'#e8f4fd', c:'#2980b9', d:'マスボクシングができる'},
+  {n:'オレンジ',   b:'#fff3e0', c:'#e67e22', d:'当てマスボクシングができる'},
+  {n:'レッド',     b:'#fdecea', c:'#e74c3c', d:'スパーリングができる'},
+  {n:'ゴールド',   b:'#fef9e7', c:'#d4a017', d:'ボクシングを理解してスパーリング'}
+];
+
+const COURSES=[
+  {n:'いつでもスパーリングボクシング（男性）', f:7810},
+  {n:'いつでもライトボクシング（男性）',       f:7260},
+  {n:'いつでもキックエクササイズ（男性）',     f:7260},
+  {n:'いつでもライトボクシング（女性）',       f:6380},
+  {n:'いつでもキックエクササイズ（女性）',     f:6380},
+  {n:'週１スパーリングボクシング',             f:4950},
+  {n:'週１ライトボクシング',                   f:4620},
+  {n:'週１キックエクササイズ',                 f:4620},
+  {n:'週１ライト',                             f:3850},
+  {n:'いつでもライト（男性）',                 f:6380},
+  {n:'いつでもスパーリングボクシング（女性）', f:6930},
+  {n:'いつでもライト（女性）',                 f:5500},
+];
+
+const BADGES_DEF=[
+  {key:'defense', name:'ディフェンスマイスター', stars:'⭐', color:'#DB444C', bg:'#fff0f0'},
+  {key:'step',    name:'ステップマイスター',     stars:'⭐', color:'#5BB9CD', bg:'#e8f7fa'},
+  {key:'counter', name:'カウンターマイスター',   stars:'⭐', color:'#E8621A', bg:'#fff3ec'},
+  {key:'basic',   name:'ベーシックマイスター',   stars:'🌟🌟', color:'#F39C12', bg:'#fffbf0'},
+];
+
+const CURRICULUM_ITEMS=[
+  {id:'kiso1',name:'基礎①'},{id:'kiso2',name:'基礎②'},{id:'kiso3',name:'基礎③'},
+  {id:'bandage_l',name:'バンテージ（左）'},{id:'bandage_r',name:'バンテージ（右）'},
+  {id:'jab',name:'①ジャブ'},{id:'onetwo',name:'②ワンツー'},{id:'hook',name:'③フック'},
+  {id:'onetwostep',name:'④ワンツーステップ'},{id:'upper',name:'⑤アッパー'},
+  {id:'sandbag',name:'⑥サンドバック'},{id:'guard',name:'⑦パンチ時のガード'},
+  {id:'simstep',name:'⑧同時ステップ'},{id:'randshadow',name:'⑨ランダムシャドー'},
+  {id:'bodyupper',name:'⑩ボディアッパー'},{id:'ball',name:'⑪ボール'},
+  {id:'bodyjab',name:'⑫ボディジャブ＆ストレート'},
+  {id:'rope1',name:'⑬ロープLv.1'},{id:'rope2',name:'⑭ロープLv.2'},
+  {id:'rope3',name:'⑮ロープLv.3'},{id:'rope4',name:'⑯ロープLv.4'},
+];
+
+const GRADE_COLORS={
+  'ホワイト前':'#bdc3c7','ホワイト':'#95a5a6','グリーン':'#27ae60',
+  'ブルー':'#2980b9','オレンジ':'#e67e22','レッド':'#e74c3c','ゴールド':'#d4a017'
 };
 
-window.addEventListener('DOMContentLoaded', ()=>{
-  setupTabs();
-  setupPresets();
-  loadCoupons();
-});
+let AM=[],FM=[],CP=1,CM=null,SD=null,GF='';
+let SELECTED_MONTH='';
+let AR=[],RF='upcoming';
+let FREE_MONTH_APPLIED=[],FREE_MONTH_ALL=[];
+const PG=20,CH={};
+const gurl=()=>localStorage.getItem('gasUrl')||DGAS;
+const rurl=()=>localStorage.getItem('gasReserveUrl')||DGAS_RESERVE;
+const g1url=()=>localStorage.getItem('gas1Url')||DGAS1;
 
-function setupTabs(){
-  document.querySelectorAll('.view-tab').forEach(t=>{
-    t.addEventListener('click', ()=>switchView(t.dataset.view));
+window.onload=()=>{
+  tick();setInterval(tick,1e3);
+  document.getElementById('gu').value=gurl();
+  document.getElementById('ru').value=rurl();
+  document.getElementById('gu1').value=g1url();
+  renderGradeFilter();
+  initCourseSelect();
+  initMonthSelect();
+  loadD();
+};
+
+function tick(){
+  const n=new Date(),dy=['日','月','火','水','木','金','土'];
+  document.getElementById('dd').textContent=`${n.getMonth()+1}/${n.getDate()}（${dy[n.getDay()]}）`;
+  document.getElementById('dt').textContent=`${p2(n.getHours())}:${p2(n.getMinutes())}`;
+}
+const p2=n=>String(n).padStart(2,'0');
+
+function initMonthSelect(){
+  const sel=document.getElementById('month-select');
+  const now=new Date();
+  const opts=[];
+  for(let i=0;i<7;i++){
+    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+    const label=`${d.getFullYear()}年${d.getMonth()+1}月`;
+    opts.push(`<option value="${label}">${label}</option>`);
+  }
+  sel.innerHTML=opts.join('');
+  SELECTED_MONTH=sel.value;
+}
+
+function onMonthChange(){
+  SELECTED_MONTH=document.getElementById('month-select').value;
+  renderFL();
+}
+
+function sw(name,btn){
+  document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+  if(name==='members'&&!AM.length)loadM();
+  if(name==='fee'&&!AM.length)loadM().then(()=>renderFL());
+  if(name==='fee'&&AM.length)renderFL();
+  if(name==='stats'&&!SD)loadSt();
+  if(name==='reserve'&&!AR.length)loadR();
+  if(name==='freemonth')loadFreeMonth();
+}
+
+async function api(p){
+  const u=new URL(gurl());
+  Object.entries(p).forEach(([k,v])=>u.searchParams.set(k,v));
+  u.searchParams.set('_t',Date.now());
+  const r=await fetch(u.toString(),{cache:'no-store'});
+  return r.json();
+}
+
+function apiReserve(params){
+  return new Promise((resolve,reject)=>{
+    const cbName='cb_'+Date.now()+'_'+Math.floor(Math.random()*10000);
+    const timeoutId=setTimeout(()=>{
+      delete window[cbName];
+      if(script.parentNode)script.parentNode.removeChild(script);
+      reject(new Error('timeout'));
+    },30000);
+    window[cbName]=(data)=>{
+      clearTimeout(timeoutId);
+      delete window[cbName];
+      if(script.parentNode)script.parentNode.removeChild(script);
+      resolve(data);
+    };
+    const u=new URL(rurl());
+    Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v));
+    u.searchParams.set('callback',cbName);
+    u.searchParams.set('_t',Date.now());
+    const script=document.createElement('script');
+    script.src=u.toString();
+    script.onerror=()=>{
+      clearTimeout(timeoutId);
+      delete window[cbName];
+      if(script.parentNode)script.parentNode.removeChild(script);
+      reject(new Error('network error'));
+    };
+    document.body.appendChild(script);
   });
 }
-function switchView(v){
-  document.querySelectorAll('.view-tab').forEach(t=>t.classList.toggle('active', t.dataset.view===v));
-  document.getElementById('view-list').style.display = v==='list'?'block':'none';
-  document.getElementById('view-create').style.display = v==='create'?'block':'none';
-}
 
-function setupPresets(){
-  document.querySelectorAll('.preset').forEach(p=>{
-    p.addEventListener('click', ()=>{
-      const k = p.dataset.preset;
-      const today = new Date();
-      const future = new Date(today.getFullYear()+1, today.getMonth(), today.getDate());
-      const exp = future.toISOString().slice(0,10);
-      let code;
-      if(k==='entry_free'){
-        code = 'ENTRY0-' + Date.now().toString().slice(-5);
-        createWithData({code, type:'entry_free', amount:0, expiry:exp, limit:0, active:true, memo:'入会金完全無料（プリセット）'});
-      }else if(k==='entry_half'){
-        code = 'ENTRY4400-' + Date.now().toString().slice(-5);
-        createWithData({code, type:'entry_fixed', amount:4400, expiry:exp, limit:0, active:true, memo:'入会金4,400円引き（プリセット）'});
-      }else if(k==='free2'){
-        code = 'FREE2M-' + Date.now().toString().slice(-5);
-        createWithData({code, type:'months_free', amount:2, expiry:exp, limit:0, active:true, memo:'翌月から2ヶ月無料（プリセット）'});
-      }else if(k==='free3'){
-        code = 'FREE3M-' + Date.now().toString().slice(-5);
-        createWithData({code, type:'months_free', amount:3, expiry:exp, limit:0, active:true, memo:'翌月から3ヶ月無料（プリセット）'});
-      }
-    });
+function apiGas1(params){
+  return new Promise((resolve,reject)=>{
+    const cbName='cb_'+Date.now()+'_'+Math.floor(Math.random()*10000);
+    const timeoutId=setTimeout(()=>{
+      delete window[cbName];
+      if(script.parentNode)script.parentNode.removeChild(script);
+      reject(new Error('timeout'));
+    },30000);
+    window[cbName]=(data)=>{
+      clearTimeout(timeoutId);
+      delete window[cbName];
+      if(script.parentNode)script.parentNode.removeChild(script);
+      resolve(data);
+    };
+    const u=new URL(g1url());
+    Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v));
+    u.searchParams.set('callback',cbName);
+    u.searchParams.set('_t',Date.now());
+    const script=document.createElement('script');
+    script.src=u.toString();
+    script.onerror=()=>{
+      clearTimeout(timeoutId);
+      delete window[cbName];
+      if(script.parentNode)script.parentNode.removeChild(script);
+      reject(new Error('network error'));
+    };
+    document.body.appendChild(script);
   });
 }
 
-function createWithData(data){
-  if(!confirm('以下のクーポンを作成します：\nコード: '+data.code+'\n'+TYPE_LABELS[data.type]+'\n\n作成しますか？'))return;
-  showLoader();
-  jsonp(GAS1_URL + '?action=addCoupon_Nyukai&data=' + encodeURIComponent(JSON.stringify(data)), res=>{
-    hideLoader();
-    if(res.success){alert('✅ 作成しました: '+data.code); loadCoupons(); switchView('list')}
-    else alert('❌ エラー: ' + (res.message||'不明'));
+async function loadD(){
+  sh('dl');hd('db');
+  try{
+    const d=await api({action:'getStats'});
+    if(d.status!=='ok')throw 0;
+    SD=d.data;renderD(SD);hd('dl');sh('db');
+    if(!AM.length)await loadM();
+    renderFeeSummary();
+  }catch(e){
+    document.getElementById('dl').innerHTML='<p style="color:#e74c3c;padding:16px">読み込み失敗。設定のGAS URLを確認してください。</p>';
+  }
+}
+
+function renderFeeSummary(){
+  if(!AM.length)return;
+  const now=new Date();
+  const mk=`${now.getFullYear()}年${now.getMonth()+1}月`;
+  const members=AM.filter(m=>m.status!=='退会');
+  const total=members.reduce((s,m)=>s+Number(m.fee||0),0);
+  const paid=members.filter(m=>m[mk]==='✅').reduce((s,m)=>s+Number(m.fee||0),0);
+  const unpaid=total-paid;
+  document.getElementById('fee-total').textContent=`¥${total.toLocaleString()}`;
+  document.getElementById('fee-paid').textContent=`¥${paid.toLocaleString()}`;
+  document.getElementById('fee-unpaid').textContent=`¥${unpaid.toLocaleString()}`;
+}
+
+function renderD(d){
+  const t=d.trial||{};
+  si('s1',`${d.total}<span>人</span>`);
+  si('s2',`${d.newThisMonth}<span>人</span>`);
+  si('s3',`${t.trialThisMonth||0}<span>人</span>`);
+  si('s4',`${t.convMonth||0}<span>%</span>`);
+  si('sm',`${d.male}人`);
+  si('sf',`${d.female}人`);
+  mk('gc','doughnut',['男性','女性'],[d.male,d.female],['#5BB9CD','#DB444C'],{cutout:'70%'});
+  const ageLabels=['10代','20代','30代','40代','50代','60代以上'];
+  mk('agec','bar',ageLabels,ageLabels.map(k=>(d.ageCounts||{})[k]||0),
+    ['#5BB9CD','#DB444C','#27ae60','#F39C12','#E8621A','#9b59b6'],{noLegend:true,multiColor:true});
+  const cl=Object.keys(d.courseCounts||{}).map(k=>k.replace('いつでも','').replace('週１','週1 '));
+  mk('cc','bar',cl,Object.values(d.courseCounts||{}),'#DB444C',{indexAxis:'y',noLegend:true});
+}
+
+async function loadSt(){
+  sh('stl');hd('stb');
+  try{
+    if(!SD){const d=await api({action:'getStats'});if(d.status!=='ok')throw 0;SD=d.data;}
+    renderSt(SD);hd('stl');sh('stb');
+  }catch(e){
+    document.getElementById('stl').innerHTML='<p style="color:#e74c3c;padding:16px">読み込み失敗。GAS URLを確認してください。</p>';
+  }
+}
+
+function renderSt(d){
+  const t=d.trial||{};
+  si('st-trial-m',`${t.trialThisMonth||0}<span>人</span>`);
+  si('st-join-m',`${t.joinedThisMonth||0}<span>人</span>`);
+  si('st-conv-m',`${t.convMonth||0}<span>%</span>`);
+  si('st-total',`${d.total||0}<span>人</span>`);
+  si('st-trial-y',`${t.trialYear||0}<span>人</span>`);
+  si('st-join-y',`${t.joinedYear||0}<span>人</span>`);
+  si('st-conv-y',`${t.convYear||0}<span>%</span>`);
+  si('st-trial-total',`${t.trialTotal||0}<span>人</span>`);
+  const mTrial=t.monthlyTrial||{};
+  const mJoined=t.monthlyJoined||{};
+  const mLabels=Object.keys(mTrial).map(k=>k.replace('年','/').replace('月',''));
+  mk('monthly-chart','bar',mLabels,[
+    {label:'体験数',data:Object.values(mTrial),backgroundColor:'rgba(91,185,205,0.8)',borderRadius:4,borderSkipped:false},
+    {label:'入会数',data:Object.values(mJoined),backgroundColor:'rgba(219,68,76,0.8)',borderRadius:4,borderSkipped:false}
+  ],null,{multiDataset:true,legend:true});
+  const ageLabels=['10代','20代','30代','40代','50代','60代以上'];
+  const ageColors=['#5BB9CD','#DB444C','#27ae60','#f39c12','#9b59b6','#e67e22'];
+  mk('trial-age-chart','bar',ageLabels,ageLabels.map(k=>(t.trialAge||{})[k]||0),ageColors,{noLegend:true,multiColor:true});
+  mk('member-age-chart','bar',ageLabels,ageLabels.map(k=>(d.ageCounts||{})[k]||0),ageColors,{noLegend:true,multiColor:true});
+  const src=t.trialSource||{};
+  const srcLabels=Object.keys(src);
+  const srcData=Object.values(src);
+  const srcColors=['#DB444C','#5BB9CD','#27ae60','#f39c12','#9b59b6','#e67e22','#1abc9c'];
+  if(srcLabels.length>0){
+    mk('source-chart','doughnut',srcLabels,srcData,srcColors,{cutout:'60%'});
+    const total=srcData.reduce((a,b)=>a+b,0)||1;
+    document.getElementById('source-legend').innerHTML=srcLabels.map((l,i)=>
+      `<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+        <span style="width:10px;height:10px;border-radius:50%;background:${srcColors[i]||'#ccc'};display:inline-block;flex-shrink:0"></span>
+        <span>${l}：${srcData[i]}人（${Math.round(srcData[i]/total*100)}%）</span>
+      </div>`
+    ).join('');
+  }
+  const gradeOrder=['ホワイト前','ホワイト','グリーン','ブルー','オレンジ','レッド','ゴールド'];
+  const gc=d.gradeCounts||{};
+  const maxG=Math.max(...gradeOrder.map(g=>gc[g]||0),1);
+  document.getElementById('grade-bars').innerHTML=gradeOrder.map(g=>{
+    const cnt=gc[g]||0;
+    const pct=Math.round(cnt/maxG*100);
+    const col=GRADE_COLORS[g]||'#ccc';
+    return `<div class="grade-bar-wrap">
+      <div class="grade-bar-label"><span style="color:${col};font-weight:800">${g}</span><span style="color:var(--text2)">${cnt}人</span></div>
+      <div class="grade-bar-bg"><div class="grade-bar-fill" style="background:${col};width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderGradeFilter(){
+  const container=document.getElementById('grade-filter');
+  const allBtn=`<button class="gf-btn active" style="background:#f0f0f0;color:#555;" onclick="setGF('',this)">全グレード</button>`;
+  const gradeBtns=GR.map(g=>`<button class="gf-btn" style="background:${g.b};color:${g.c};" onclick="setGF('${g.n}',this)">${g.n}</button>`).join('');
+  container.innerHTML=allBtn+gradeBtns;
+}
+
+function setGF(grade,btn){
+  GF=grade;
+  document.querySelectorAll('.gf-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  CP=1;filterM();
+}
+
+function initCourseSelect(){
+  const sel=document.getElementById('course-select');
+  sel.innerHTML='<option value="">コースを選択してください</option>'+
+    COURSES.map(c=>`<option value="${c.n}">${c.n}　¥${c.f.toLocaleString()}</option>`).join('');
+}
+
+function previewCourse(name){
+  const c=COURSES.find(c=>c.n===name);
+  document.getElementById('course-fee-preview').textContent=c?`変更後：¥${c.f.toLocaleString()}/月`:'';
+}
+
+async function changeCourse(){
+  if(!CM)return;
+  const name=document.getElementById('course-select').value;
+  if(!name){toast('コースを選択してください',true);return;}
+  const c=COURSES.find(c=>c.n===name);
+  if(!c)return;
+  if(!confirm(`${CM.name}さんのコースを\n「${c.n}」\n¥${c.f.toLocaleString()}/月\nに変更しますか？`))return;
+  try{
+    await api({action:'updateCourse',id:CM.id,course:c.n,fee:c.f});
+    CM.course=c.n;CM.fee=c.f;
+    const m=AM.find(m=>m.id===CM.id);
+    if(m){m.course=c.n;m.fee=c.f;}
+    document.getElementById('mco').textContent=c.n;
+    document.getElementById('mfee').textContent=`¥${c.f.toLocaleString()}`;
+    document.getElementById('course-fee-preview').textContent=`✅ 変更済：¥${c.f.toLocaleString()}/月`;
+    toast(`コースを「${c.n}」に変更しました`);
+    renderML();
+  }catch(e){toast('エラー',true);}
+}
+
+async function loadM(){
+  sh('ml2');
+  try{
+    const d=await api({action:'getMembers'});
+    if(d.status!=='ok')throw 0;
+    AM=d.data;FM=[...AM];CP=1;
+    renderML();renderFL();
+    document.getElementById('mc').textContent=`${AM.filter(m=>m.status==='在籍').length}人在籍`;
+    renderFeeSummary();
+  }catch(e){
+    document.getElementById('ml').innerHTML='<p style="color:#e74c3c;padding:16px">読み込み失敗</p>';
+  }
+  hd('ml2');
+}
+
+function filterM(){
+  const q=document.getElementById('ms').value.toLowerCase();
+  const f=document.getElementById('mf').value;
+  FM=AM.filter(m=>{
+    const nameOk=!q||m.name.includes(q)||(m.kana||'').toLowerCase().includes(q);
+    const statusOk=!f||m.status===f;
+    const gradeOk=!GF||m.grade===GF;
+    return nameOk&&statusOk&&gradeOk;
   });
+  CP=1;renderML();
 }
 
-function createCoupon(){
-  const data = {
-    code: document.getElementById('f-code').value.trim().toUpperCase(),
-    type: document.getElementById('f-type').value,
-    amount: Number(document.getElementById('f-amount').value) || 0,
-    expiry: document.getElementById('f-expiry').value,
-    limit: Number(document.getElementById('f-limit').value) || 0,
-    active: document.getElementById('f-active').checked,
-    memo: document.getElementById('f-memo').value.trim()
-  };
-  if(!data.code){alert('コードを入力してください');return}
-  createWithData(data);
-  document.getElementById('f-code').value='';
-  document.getElementById('f-amount').value='0';
-  document.getElementById('f-expiry').value='';
-  document.getElementById('f-limit').value='0';
-  document.getElementById('f-memo').value='';
-}
-
-function loadCoupons(){
-  showLoader();
-  jsonp(GAS1_URL + '?action=getCoupons_Nyukai&_t=' + Date.now(), (res)=>{
-    hideLoader();
-    if(!Array.isArray(res)){alert('読み込み失敗');return}
-    renderCoupons(res);
-    updateStats(res);
-  });
-}
-
-function renderCoupons(list){
-  const c = document.getElementById('coupons');
-  if(!list.length){c.innerHTML='<div class="empty"><p>📭 クーポンがありません</p><p style="font-size:12px">右下の＋ボタンから作成できます</p></div>';return}
-  c.innerHTML = list.map(x=>{
-    const isExpired = x.expiry && new Date(x.expiry) < new Date();
-    const isMaxed = x.limit > 0 && x.used >= x.limit;
-    const active = x.active && !isExpired && !isMaxed;
-    const memo = (x.memo||'').replace(/</g,'&lt;');
-    const amt = x.type === 'months_free' 
-      ? `${x.amount}ヶ月` 
-      : x.type === 'entry_free' 
-        ? '完全無料' 
-        : '¥' + Number(x.amount||0).toLocaleString();
-    return `
-    <div class="coupon-card ${active?'':'inactive'}">
-      <div class="actions">
-        <button class="btn-edit" onclick="openEdit(${JSON.stringify(x).replace(/"/g,'&quot;')})">編集</button>
-        <button class="btn-del" onclick="deleteCoupon(${x.row}, '${x.code}')">削除</button>
+function renderML(){
+  const st=(CP-1)*PG,pg=FM.slice(st,st+PG);
+  document.getElementById('mc').textContent=GF?`「${GF}」${FM.length}人`:`${AM.filter(m=>m.status==='在籍').length}人在籍`;
+  document.getElementById('ml').innerHTML=pg.map(m=>{
+    const sc=m.status==='在籍'?'act':m.status==='休会'?'vac':'res';
+    const stColor=m.status==='在籍'?'bg':m.status==='休会'?'bb':m.status==='退会予定'?'bo':'bgr';
+    const sb=`<span class="badge ${stColor}">${m.status}</span>`;
+    const cb=m.course?`<span class="badge br">${m.course.substring(0,16)}</span>`:'';
+    const gb=m.grade?`<span class="badge bo">${m.grade}</span>`:'';
+    return `<div class="mi ${sc}" onclick="opM('${m.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div><div class="mname">${m.name}</div><div class="mkana">${m.kana||''}</div></div>
+        ${sb}
       </div>
-      <div class="code">${x.code}</div>
-      <div class="type">${TYPE_LABELS[x.type]||x.type} / ${amt}</div>
-      <div class="memo">${memo||'（メモなし）'}</div>
-      <div class="meta">
-        <div><span class="lbl">有効期限</span><span class="val">${x.expiry||'無期限'}</span></div>
-        <div><span class="lbl">使用数</span><span class="val">${x.used}/${x.limit||'∞'}</span></div>
-        <div><span class="lbl">状態</span><span class="val" style="color:${active?'#2a9f42':'#999'}">${active?'✅有効':isExpired?'期限切れ':isMaxed?'上限到達':'無効'}</span></div>
+      <div class="minfo">${cb}${gb}</div>
+    </div>`;
+  }).join('')||'<p style="color:var(--text2);padding:20px;text-align:center">該当なし</p>';
+  const tot=Math.ceil(FM.length/PG);
+  document.getElementById('pg').innerHTML=tot<=1?'':Array.from({length:tot},(_,i)=>i+1).map(i=>`<button class="pb ${i===CP?'a':''}" onclick="gp(${i})">${i}</button>`).join('');
+}
+
+const gp=p=>{CP=p;renderML();};
+
+function opM(id){
+  CM=AM.find(m=>m.id===id);
+  if(!CM)return;
+  const m=CM;
+  document.getElementById('mn').textContent=m.name;
+  document.getElementById('mk').textContent=m.kana||'-';
+  document.getElementById('mg').textContent=m.gender||'-';
+  document.getElementById('mb').textContent=m.birth||'-';
+  document.getElementById('mco').textContent=m.course||'-';
+  document.getElementById('mfee').textContent=m.fee?`¥${Number(m.fee).toLocaleString()}`:'-';
+  document.getElementById('mj').textContent=m.joinDate||'-';
+  document.getElementById('mst2').textContent=m.status||(m['退会予定日']?`退会予定（${m['退会予定日']}）`:'');
+  document.getElementById('mkouza').textContent=m.kouzaName||'-';
+  document.getElementById('kouza-input').value='';
+  const ua=document.getElementById('mu');
+  ua.href=m.url||'#';ua.textContent=m.url||'-';
+  document.getElementById('course-select').value='';
+  document.getElementById('course-fee-preview').textContent=`現在：¥${Number(m.fee||0).toLocaleString()}/月`;
+  document.getElementById('gg').innerHTML=GR.map(g=>`
+    <button class="gbtn ${m.grade===g.n?'sel':''}" style="background:${g.b};color:${g.c}" onclick="selG('${g.n}')">
+      <div style="font-weight:700;">${g.n}</div>
+      <div style="font-size:9px;font-weight:500;margin-top:3px;opacity:0.85;line-height:1.3;">${g.d}</div>
+    </button>`).join('');
+  const badges=m.badges||{};
+  document.getElementById('badge-award').innerHTML=BADGES_DEF.map(b=>{
+    const awarded=!!badges[b.key];
+    return `<button class="ba-btn ${awarded?'awarded':''}" style="background:${b.bg};color:${b.color};" onclick="toggleBadge('${b.key}','${b.name}')">
+      ${b.stars} ${b.name.replace('マイスター','')}<br>
+      <span style="font-size:10px;font-weight:600;">${awarded?'✓ 付与済み':'タップで付与'}</span>
+    </button>`;
+  }).join('');
+  const prog=m.progress||{};
+  document.getElementById('cur-list').innerHTML=CURRICULUM_ITEMS.map(c=>{
+    const st=prog[c.id]||'未着手';
+    const cls=st==='合格'?'done':st==='挑戦中'?'trying':'';
+    const scls=st==='合格'?'cs-done':st==='挑戦中'?'cs-try':'cs-none';
+    return `<div class="cur-item ${cls}">
+      <span class="cur-name">${c.name}</span>
+      <span class="cur-status ${scls}">${st}</span>
+    </div>`;
+  }).join('');
+  document.getElementById('mm').classList.add('open');
+}
+
+function clm(e){if(e.target===document.getElementById('mm'))clmd();}
+function clmd(){document.getElementById('mm').classList.remove('open');}
+
+async function selG(grade){
+  if(!CM)return;
+  try{
+    await api({action:'updateGrade',id:CM.id,grade});
+    CM.grade=grade;
+    const m=AM.find(m=>m.id===CM.id);
+    if(m)m.grade=grade;
+    document.querySelectorAll('.gbtn').forEach(b=>{
+      const isThis=b.querySelector('div')?.textContent===grade;
+      b.classList.toggle('sel',isThis);
+    });
+    toast(`グレード「${grade}」に変更`);renderML();
+  }catch(e){toast('エラー',true);}
+}
+
+async function toggleBadge(key,name){
+  if(!CM)return;
+  const badges=CM.badges||{};
+  const current=!!badges[key];
+  const next=!current;
+  if(next&&!confirm(`${CM.name}さんに「${name}」を付与しますか？`))return;
+  if(!next&&!confirm(`${CM.name}さんの「${name}」を取り消しますか？`))return;
+  try{
+    await api({action:'updateBadge',id:CM.id,badge:key,value:next?'TRUE':'FALSE'});
+    badges[key]=next;CM.badges=badges;
+    const m=AM.find(m=>m.id===CM.id);
+    if(m)m.badges=badges;
+    document.getElementById('badge-award').innerHTML=BADGES_DEF.map(b=>{
+      const awarded=!!badges[b.key];
+      return `<button class="ba-btn ${awarded?'awarded':''}" style="background:${b.bg};color:${b.color};" onclick="toggleBadge('${b.key}','${b.name}')">
+        ${b.stars} ${b.name.replace('マイスター','')}<br>
+        <span style="font-size:10px;font-weight:600;">${awarded?'✓ 付与済み':'タップで付与'}</span>
+      </button>`;
+    }).join('');
+    toast(next?`「${name}」を付与しました`:`「${name}」を取り消しました`);
+  }catch(e){toast('エラー',true);}
+}
+
+async function saveKouza(){
+  if(!CM)return;
+  const val=document.getElementById('kouza-input').value.trim();
+  if(!val){toast('口座名義人を入力してください',true);return;}
+  if(!confirm(`${CM.name}さんの口座名義人を「${val}」に変更しますか？`))return;
+  try{
+    await api({action:'updateKouzaName',id:CM.id,kouzaName:val});
+    CM.kouzaName=val;
+    const m=AM.find(m=>m.id===CM.id);
+    if(m)m.kouzaName=val;
+    document.getElementById('mkouza').textContent=val;
+    document.getElementById('kouza-input').value='';
+    toast(`口座名義人を「${val}」に変更しました`);
+  }catch(e){toast('エラー',true);}
+}
+
+async function setYotei(){
+  if(!CM)return;
+  const d=prompt(`${CM.name}さんの退会予定日を入力\n例：2026/05/31`);
+  if(!d)return;
+  if(!confirm(`退会予定日を「${d}」に設定しますか？`))return;
+  try{
+    await api({action:'updateStatus',id:CM.id,status:'退会予定',退会予定日:d});
+    const m=AM.find(m=>m.id===CM.id);
+    if(m){m.status='退会予定';m['退会予定日']=d;}
+    document.getElementById('mst2').textContent=`退会予定（${d}）`;
+    toast(`退会予定日を${d}に設定しました`);
+    renderML();
+  }catch(e){toast('エラー',true);}
+}
+
+async function upSt(status){
+  if(!CM)return;
+  if(status==='退会'&&!confirm(`${CM.name}さんを退会にしますか？`))return;
+  try{
+    await api({action:'updateStatus',id:CM.id,status});
+    const m=AM.find(m=>m.id===CM.id);
+    if(m)m.status=status;
+    document.getElementById('mst2').textContent=status;
+    toast(`「${status}」に変更`);renderML();
+  }catch(e){toast('エラー',true);}
+}
+
+async function importM(){
+  if(!confirm('入会申し込みから新規会員を取り込みますか？'))return;
+  toast('取り込み中...');
+  try{
+    const d=await api({action:'importMembers'});
+    toast(d.message||'取込完了');
+    await loadM();
+  }catch(e){toast('エラー',true);}
+}
+
+async function loadR(){
+  sh('rl2');
+  document.getElementById('rl').innerHTML='';
+  try{
+    const d=await apiReserve({action:'getReservations'});
+    if(!d.ok)throw new Error(d.error||'読み込み失敗');
+    AR=d.data||[];
+    renderR();
+  }catch(e){
+    document.getElementById('rl').innerHTML=`<div class="r-empty" style="color:#e74c3c">読み込み失敗。設定の予約GAS URLを確認してください。<br>${String(e.message||e)}</div>`;
+  }
+  hd('rl2');
+}
+
+function setRF(f,btn){
+  RF=f;
+  document.querySelectorAll('.rf-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderR();
+}
+
+function parseReserveDate(str){
+  if(!str)return null;
+  if(str instanceof Date)return str;
+  const s=String(str);
+  let m=s.match(/(\d{4})年(\d{1,2})月(\d{1,2})日\s*(\d{1,2}):(\d{2})/);
+  if(m)return new Date(+m[1],+m[2]-1,+m[3],+m[4],+m[5]);
+  m=s.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
+  if(m)return new Date(+m[1],+m[2]-1,+m[3]);
+  const d=new Date(s);
+  if(!isNaN(d.getTime()))return d;
+  return null;
+}
+
+function fmtReserveDate(str){
+  const d=parseReserveDate(str);
+  if(!d)return str||'-';
+  const wd=['日','月','火','水','木','金','土'][d.getDay()];
+  const hasTime=/\d{1,2}:\d{2}/.test(String(str));
+  const base=`${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日(${wd})`;
+  return hasTime?`${base} ${p2(d.getHours())}:${p2(d.getMinutes())}`:base;
+}
+
+function renderR(){
+  const now=new Date();
+  const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const tomorrow=new Date(today.getTime()+86400000);
+
+  let list=AR.map(r=>{
+    const d=parseReserveDate(r.reserveDate);
+    return {...r,_date:d};
+  });
+
+  const isCancelled=(r)=>String(r.status||'').indexOf('キャンセル')>=0;
+
+  let filtered;
+  if(RF==='upcoming'){
+    filtered=list.filter(r=>!isCancelled(r)&&r._date&&r._date>=today);
+    filtered.sort((a,b)=>a._date-b._date);
+  }else if(RF==='today'){
+    filtered=list.filter(r=>!isCancelled(r)&&r._date&&r._date>=today&&r._date<tomorrow);
+    filtered.sort((a,b)=>a._date-b._date);
+  }else if(RF==='past'){
+    filtered=list.filter(r=>!isCancelled(r)&&r._date&&r._date<today);
+    filtered.sort((a,b)=>b._date-a._date);
+  }else if(RF==='cancelled'){
+    filtered=list.filter(r=>isCancelled(r));
+    filtered.sort((a,b)=>(b._date||0)-(a._date||0));
+  }else{
+    filtered=list.slice();
+    filtered.sort((a,b)=>(b._date||0)-(a._date||0));
+  }
+
+  document.getElementById('rc').textContent=`${filtered.length}件`;
+
+  if(!filtered.length){
+    const msgMap={
+      upcoming:'今後の予約はありません',
+      today:'本日の予約はありません',
+      past:'過去の予約はありません',
+      cancelled:'キャンセル済みの予約はありません',
+      all:'予約データがありません'
+    };
+    document.getElementById('rl').innerHTML=`<div class="r-empty">${msgMap[RF]||'データなし'}</div>`;
+    return;
+  }
+
+  document.getElementById('rl').innerHTML=filtered.map(r=>{
+    const d=r._date;
+    const cancelled=isCancelled(r);
+    const past=d&&d<today;
+    const isToday=d&&d>=today&&d<tomorrow;
+    let cls='r-card';
+    if(cancelled)cls+=' cancelled';
+    else if(isToday)cls+=' today';
+    else if(past)cls+=' past';
+
+    const dateStr=fmtReserveDate(r.reserveDate);
+    const gender=r.gender?`<span>👤 ${escapeHtml(r.gender)}</span>`:'';
+    const age=r.age?`<span>🎂 ${escapeHtml(r.age)}</span>`:'';
+    const kikkake=r.kikkake?`<span>📢 ${escapeHtml(r.kikkake)}</span>`:'';
+    const undou=r.undou?`<span>💪 ${escapeHtml(r.undou).substring(0,20)}</span>`:'';
+    const phone=r.phone?`<span>📞 ${escapeHtml(r.phone)}</span>`:'';
+    const email=r.email?`<span style="word-break:break-all">✉️ ${escapeHtml(r.email)}</span>`:'';
+    const addr=r.address?`<span>🏠 ${escapeHtml(r.address).substring(0,24)}</span>`:'';
+
+    let statusBadge='';
+    if(cancelled){
+      statusBadge='<span class="r-status-badge bgr">キャンセル済み</span>';
+    }else if(isToday){
+      statusBadge='<span class="r-status-badge bb">📍 本日</span>';
+    }else if(past){
+      statusBadge='<span class="r-status-badge bgr">終了</span>';
+    }else{
+      statusBadge='<span class="r-status-badge bg">予約中</span>';
+    }
+
+    const cancelBtn=(!cancelled&&!past)?`<button class="r-btn-cancel" onclick="cancelReserve('${escapeAttr(r.reservationId)}','${escapeAttr(r.name)}','${escapeAttr(dateStr)}')">❌ キャンセル＋お詫びメール送信</button>`:'';
+    const callBtn=r.phone?`<a class="r-btn-call" href="tel:${escapeAttr(r.phone)}">📞 電話する</a>`:'';
+    const btnRow=(cancelBtn||callBtn)?`<div class="r-btn-row">${cancelBtn}${callBtn}</div>`:'';
+
+    const cancelledAtRow=cancelled&&r.cancelledAt?`<div style="font-size:10px;color:var(--text2);margin-top:4px">キャンセル日時：${escapeHtml(r.cancelledAt)}</div>`:'';
+    const idRow=`<div style="font-size:10px;color:var(--text2);margin-top:4px">予約ID：${escapeHtml(r.reservationId||'-')}</div>`;
+
+    return `<div class="${cls}">
+      <div class="r-row">
+        <div style="flex:1">
+          <div class="r-name">${escapeHtml(r.name||'-')} 様</div>
+          <div class="r-date ${past?'past':''}">🗓 ${escapeHtml(dateStr)}</div>
+        </div>
+        ${statusBadge}
+      </div>
+      <div class="r-info-row">${gender}${age}${phone}${email}${addr}${kikkake}${undou}</div>
+      ${idRow}
+      ${cancelledAtRow}
+      ${btnRow}
+    </div>`;
+  }).join('');
+}
+
+async function cancelReserve(reservationId,name,dateStr){
+  if(!reservationId){toast('予約IDが見つかりません',true);return;}
+
+  const confirm1=confirm(
+    `【予約キャンセルの確認】\n\n`+
+    `お客様：${name} 様\n`+
+    `予約日時：${dateStr}\n`+
+    `予約ID：${reservationId}\n\n`+
+    `この予約をキャンセルしますか？\n`+
+    `※Googleカレンダーからも自動削除されます。`
+  );
+  if(!confirm1)return;
+
+  const reason=prompt(
+    `キャンセル理由を入力してください（任意）\n\n`+
+    `※お詫びメールに記載されます。\n`+
+    `※空欄のままでもOK（理由は記載されません）\n\n`+
+    `例：トレーナー急病のため / 設備メンテナンスのため`,
+    ''
+  );
+  if(reason===null)return;
+
+  const confirm2=confirm(
+    `【最終確認】\n\n`+
+    `${name} 様に以下を実行します：\n\n`+
+    `✓ Googleカレンダーから削除\n`+
+    `✓ 予約シートを「キャンセル済み」に更新\n`+
+    `✓ お客様へお詫びメール自動送信\n\n`+
+    (reason?`キャンセル理由：${reason}\n\n`:'')+
+    `実行してよろしいですか？`
+  );
+  if(!confirm2)return;
+
+  toast('キャンセル処理中...');
+  try{
+    const params={action:'cancelByTrainer',id:reservationId};
+    if(reason)params.reason=reason;
+    const d=await apiReserve(params);
+    if(!d.ok){
+      toast(d.error||'キャンセル失敗',true);
+      return;
+    }
+    toast(`${name}様のキャンセル＋お詫びメール送信完了`);
+    await loadR();
+  }catch(e){
+    toast('通信エラー：'+String(e.message||e),true);
+  }
+}
+
+function escapeHtml(s){
+  if(s==null)return'';
+  return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function escapeAttr(s){
+  if(s==null)return'';
+  return String(s).replace(/[\\'"]/g,'\\$&').replace(/</g,'&lt;');
+}
+
+function renderFL(){
+  const q=(document.getElementById('fs')||{}).value||'';
+  const month=SELECTED_MONTH;
+  const list=AM.filter(m=>m.status!=='退会'&&(!q||m.name.includes(q)));
+  const total=list.reduce((s,m)=>s+Number(m.fee||0),0);
+  const paid=list.filter(m=>m[month]==='✅').reduce((s,m)=>s+Number(m.fee||0),0);
+  const unpaid=total-paid;
+  const paidCount=list.filter(m=>m[month]==='✅').length;
+  const unpaidCount=list.filter(m=>m[month]!=='✅').length;
+  const el=document.getElementById('fee-month-summary');
+  if(el)el.innerHTML=`✅ 入金済 ${paidCount}人 ¥${paid.toLocaleString()}　／　❌ 未入金 ${unpaidCount}人 ¥${unpaid.toLocaleString()}`;
+  document.getElementById('fl').innerHTML=list.map(m=>{
+    const fs=m[month]||'';
+    const isPaid=fs==='✅';
+    const isWarn=fs==='⚠️';
+    let badge=isPaid
+      ?'<span class="fb fp">✅ 入金済</span>'
+      :isWarn
+      ?'<span class="fb fu">⚠️ 要確認</span>'
+      :`<button class="fb fe" onclick="manF('${m.id}')">タップで確認済</button>`;
+    const bc=isPaid?'#27ae60':isWarn?'#e67e22':'var(--red)';
+    return `<div class="mi" style="border-left-color:${bc}">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div class="mname">${m.name}</div>
+          <div class="mkana">¥${Number(m.fee||0).toLocaleString()}/月${m.kouzaName?' ・ '+m.kouzaName:''}</div>
+        </div>
+        ${badge}
+      </div>
+    </div>`;
+  }).join('')||'<p style="color:var(--text2);padding:20px;text-align:center">データなし</p>';
+}
+
+async function manF(id){
+  const m=AM.find(m=>m.id===id);
+  if(!m||!confirm(`${m.name}さんの${SELECTED_MONTH}を入金済みにしますか？`))return;
+  try{
+    await api({action:'updateFee',id,month:SELECTED_MONTH,status:'✅'});
+    m[SELECTED_MONTH]='✅';
+    renderFL();
+    renderFeeSummary();
+    toast('入金済みにしました');
+  }catch(e){toast('エラー',true);}
+}
+
+function procCSV(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>analyzeCSV(e.target.result);
+  reader.readAsText(file,'Shift_JIS');
+}
+
+async function analyzeCSV(text){
+  const lines=text.split('\n').filter(l=>l.trim());
+  const results=[];
+  const members=AM.filter(m=>m.status!=='退会');
+  const updateQueue=[];
+  for(let i=1;i<lines.length;i++){
+    const cols=lines[i].split(',');
+    if(cols[0]!=='2')continue;
+    const nr=(cols[7]||'').trim();
+    const amount=parseInt(cols[8]||0,10);
+    const rc=(cols[9]||'').trim();
+    const norm=nk(nr);
+    const matched=members.find(m=>nk(m.kouzaName||m.kana||'')===norm);
+    const ok=rc==='0';
+    results.push({name:matched?matched.name:nr,csvName:nr,amount,ok,matched:!!matched,member:matched});
+    if(matched&&ok)updateQueue.push(matched);
+  }
+  const okCount=results.filter(r=>r.matched&&r.ok).length;
+  const ngCount=results.filter(r=>!r.ok).length;
+  const unkCount=results.filter(r=>!r.matched).length;
+  document.getElementById('cr').innerHTML=
+    `<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+      <span class="badge bg">✅ ${okCount}件 入金確認</span>
+      <span class="badge br">⚠️ ${ngCount}件 要確認</span>
+      <span class="badge bgr">❓ ${unkCount}件 不明</span>
+    </div>`+
+    results.map(r=>`<div class="cri ${r.matched?(r.ok?'cok':'cng'):'cun'}">
+      <div>
+        <div style="font-weight:700">${r.name}</div>
+        <div style="font-size:11px;color:var(--text2)">${r.csvName} ¥${r.amount.toLocaleString()}</div>
+      </div>
+      <div style="font-size:20px">${r.matched?(r.ok?'✅':'⚠️'):'❓'}</div>
+    </div>`).join('');
+  if(updateQueue.length>0&&confirm(`${SELECTED_MONTH}の入金確認 ${updateQueue.length}件を\nスプレッドシートに反映しますか？`)){
+    toast('反映中...');
+    let done=0;
+    for(const m of updateQueue){
+      try{
+        await api({action:'updateFee',id:m.id,month:SELECTED_MONTH,status:'✅'});
+        m[SELECTED_MONTH]='✅';
+        done++;
+      }catch(e){}
+    }
+    toast(`${done}件をスプレッドシートに反映しました`);
+    renderFL();
+    renderFeeSummary();
+  }
+  document.getElementById('cf').value='';
+}
+
+function nk(s){
+  if(!s)return'';
+  const z='アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンァィゥェォッャュョーヴガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポ';
+  const h='ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜｦﾝｧｨｩｪｫｯｬｭｮｰｳﾞｶﾞｷﾞｸﾞｹﾞｺﾞｻﾞｼﾞｽﾞｾﾞｿﾞﾀﾞﾁﾞﾂﾞﾃﾞﾄﾞﾊﾞﾋﾞﾌﾞﾍﾞﾎﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟ';
+  let r='';
+  for(let i=0;i<s.length;i++){const idx=z.indexOf(s[i]);r+=idx>=0?h[idx]:s[i];}
+  return r.replace(/[\s　]/g,'');
+}
+
+async function loadFreeMonth(){
+  sh('fm-loading');
+  document.getElementById('fm-list').innerHTML='';
+  document.getElementById('fm-all-list').innerHTML='';
+  try{
+    const applied=await apiGas1({action:'getFreeMonthMembers_Nyukai'});
+    const all=await apiGas1({action:'getAllMembersForFreeMonth_Nyukai'});
+    FREE_MONTH_APPLIED=Array.isArray(applied)?applied:[];
+    FREE_MONTH_ALL=Array.isArray(all)?all:[];
+    renderFreeMonth();
+    renderFMAll();
+  }catch(e){
+    document.getElementById('fm-list').innerHTML=`<p style="color:#e74c3c;padding:16px">読み込み失敗。GAS① URLを確認してください。<br>${String(e.message||e)}</p>`;
+  }
+  hd('fm-loading');
+}
+
+function renderFreeMonth(){
+  const list=FREE_MONTH_APPLIED;
+  document.getElementById('fm-count').textContent=`${list.length}件`;
+  if(!list.length){
+    document.getElementById('fm-list').innerHTML='<p style="color:var(--text2);padding:20px;text-align:center;background:#f8f9fa;border-radius:10px">現在、無料月適用中の会員はいません</p>';
+    return;
+  }
+  document.getElementById('fm-list').innerHTML=list.map(m=>{
+    return `<div class="fm-card">
+      <div class="fm-row-top">
+        <div class="fm-name">${escapeHtml(m.name||'-')}</div>
+        <span class="fm-badge">🎁 ${m.freeMonths}ヶ月無料</span>
+      </div>
+      <div class="fm-info">
+        ID：${escapeHtml(m.memberId)}　・　コース：${escapeHtml(m.course||'-')}<br>
+        無料開始月：${escapeHtml(m.freeStartMonth||'-')}
+      </div>
+      <div class="fm-edit-row">
+        <input type="number" id="fm-months-${escapeAttr(m.memberId)}" value="${m.freeMonths}" min="0" max="12" placeholder="月数">
+        <input type="text" id="fm-start-${escapeAttr(m.memberId)}" value="${escapeAttr(m.freeStartMonth||'')}" placeholder="例: 2026年5月">
+        <button class="btn btn-blue btn-sm" onclick="updateFreeMonth('${escapeAttr(m.memberId)}','${escapeAttr(m.name)}')">💾 更新</button>
       </div>
     </div>`;
   }).join('');
 }
 
-function updateStats(list){
-  document.getElementById('stat-total').textContent = list.length;
-  document.getElementById('stat-active').textContent = list.filter(x=>{
-    const ex = x.expiry && new Date(x.expiry)<new Date();
-    const mx = x.limit>0 && x.used>=x.limit;
-    return x.active && !ex && !mx;
-  }).length;
-  document.getElementById('stat-used').textContent = list.reduce((s,x)=>s+Number(x.used||0), 0);
+function renderFMAll(){
+  const q=(document.getElementById('fm-search')||{}).value||'';
+  const list=FREE_MONTH_ALL.filter(m=>!q||(m.name||'').includes(q));
+  if(!list.length){
+    document.getElementById('fm-all-list').innerHTML='<p style="color:var(--text2);padding:20px;text-align:center">該当なし</p>';
+    return;
+  }
+  const showList=list.slice(0,30);
+  document.getElementById('fm-all-list').innerHTML=showList.map(m=>{
+    const hasFree=Number(m.freeMonths||0)>0;
+    return `<div class="mi" style="border-left-color:${hasFree?'var(--blue)':'var(--gray2)'}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <div>
+          <div class="mname">${escapeHtml(m.name)}</div>
+          <div class="mkana">${escapeHtml(m.course||'')}${hasFree?` ・ 🎁 ${m.freeMonths}ヶ月無料`:''}</div>
+        </div>
+      </div>
+      <div class="fm-edit-row">
+        <input type="number" id="fm-all-months-${escapeAttr(m.memberId)}" value="${m.freeMonths||0}" min="0" max="12" placeholder="月数">
+        <input type="text" id="fm-all-start-${escapeAttr(m.memberId)}" value="${escapeAttr(m.freeStartMonth||'')}" placeholder="例: 2026年5月">
+        <button class="btn btn-blue btn-sm" onclick="updateFreeMonthFromAll('${escapeAttr(m.memberId)}','${escapeAttr(m.name)}')">💾 保存</button>
+      </div>
+    </div>`;
+  }).join('')+(list.length>30?`<p style="color:var(--text2);padding:12px;text-align:center;font-size:11px">※検索で絞り込んでください（全${list.length}人中30人表示）</p>`:'');
 }
 
-function openEdit(x){
-  document.getElementById('e-row').value = x.row;
-  document.getElementById('e-code').value = x.code;
-  document.getElementById('e-type').value = x.type;
-  document.getElementById('e-amount').value = x.amount||0;
-  document.getElementById('e-expiry').value = x.expiry||'';
-  document.getElementById('e-limit').value = x.limit||0;
-  document.getElementById('e-used').value = x.used||0;
-  document.getElementById('e-memo').value = x.memo||'';
-  document.getElementById('e-active').checked = !!x.active;
-  document.getElementById('edit-modal').classList.add('show');
+async function updateFreeMonth(memberId,name){
+  const months=Number(document.getElementById(`fm-months-${memberId}`).value)||0;
+  const startMonth=document.getElementById(`fm-start-${memberId}`).value.trim();
+  if(!confirm(`${name}さんの無料月を更新しますか？\n無料月数：${months}ヶ月\n開始月：${startMonth||'未設定'}`))return;
+  try{
+    const res=await apiGas1({
+      action:'updateFreeMonthForMember_Nyukai',
+      memberId:memberId,
+      freeMonths:months,
+      freeStartMonth:startMonth
+    });
+    if(res.success){
+      toast(`${name}さんを更新しました`);
+      await loadFreeMonth();
+    }else{
+      toast(`エラー：${res.message||'不明'}`,true);
+    }
+  }catch(e){toast('通信エラー',true);}
 }
-function closeEdit(){document.getElementById('edit-modal').classList.remove('show')}
 
-function updateCoupon(){
-  const data = {
-    row: document.getElementById('e-row').value,
-    code: document.getElementById('e-code').value.trim().toUpperCase(),
-    type: document.getElementById('e-type').value,
-    amount: Number(document.getElementById('e-amount').value) || 0,
-    expiry: document.getElementById('e-expiry').value,
-    limit: Number(document.getElementById('e-limit').value) || 0,
-    used: Number(document.getElementById('e-used').value) || 0,
-    active: document.getElementById('e-active').checked,
-    memo: document.getElementById('e-memo').value.trim()
-  };
-  showLoader();
-  jsonp(GAS1_URL + '?action=updateCoupon_Nyukai&data=' + encodeURIComponent(JSON.stringify(data)), res=>{
-    hideLoader();
-    closeEdit();
-    if(res.success){alert('✅ 更新しました'); loadCoupons()}
-    else alert('❌ ' + (res.message||'失敗'));
+async function updateFreeMonthFromAll(memberId,name){
+  const months=Number(document.getElementById(`fm-all-months-${memberId}`).value)||0;
+  const startMonth=document.getElementById(`fm-all-start-${memberId}`).value.trim();
+  if(!confirm(`${name}さんの無料月を更新しますか？\n無料月数：${months}ヶ月\n開始月：${startMonth||'未設定'}`))return;
+  try{
+    const res=await apiGas1({
+      action:'updateFreeMonthForMember_Nyukai',
+      memberId:memberId,
+      freeMonths:months,
+      freeStartMonth:startMonth
+    });
+    if(res.success){
+      toast(`${name}さんを更新しました`);
+      await loadFreeMonth();
+    }else{
+      toast(`エラー：${res.message||'不明'}`,true);
+    }
+  }catch(e){toast('通信エラー',true);}
+}
+
+function saveS(){
+  const u=document.getElementById('gu').value.trim();
+  if(!u){toast('URLを入力してください',true);return;}
+  localStorage.setItem('gasUrl',u);toast('保存しました');
+}
+
+function saveR(){
+  const u=document.getElementById('ru').value.trim();
+  if(!u){toast('URLを入力してください',true);return;}
+  localStorage.setItem('gasReserveUrl',u);toast('予約GAS URLを保存しました');
+}
+
+function saveG1(){
+  const u=document.getElementById('gu1').value.trim();
+  if(!u){toast('URLを入力してください',true);return;}
+  localStorage.setItem('gas1Url',u);toast('GAS① URLを保存しました');
+}
+
+function mk(id,type,labels,data,colors,opts={}){
+  if(CH[id]){CH[id].destroy();delete CH[id];}
+  let datasets;
+  if(opts.multiDataset&&Array.isArray(data)&&data[0]&&typeof data[0]==='object'&&'label' in data[0]){
+    datasets=data;
+  } else {
+    const bgColors=opts.multiColor&&Array.isArray(colors)?colors:(Array.isArray(colors)?colors:(data.map?data.map(()=>colors):colors));
+    datasets=[{data,backgroundColor:bgColors,borderColor:opts.bdc||undefined,borderWidth:opts.bdc?2:0,borderRadius:type==='bar'?6:0}];
+  }
+  CH[id]=new Chart(document.getElementById(id),{
+    type,
+    data:{labels,datasets},
+    options:{
+      indexAxis:opts.indexAxis||undefined,
+      plugins:{legend:{display:!!opts.legend,position:'bottom',labels:{font:{size:11}}}},
+      responsive:true,maintainAspectRatio:false,cutout:opts.cutout||undefined,
+      scales:type==='bar'?{x:{grid:{display:false}},y:{beginAtZero:true,ticks:{font:{size:10}}}}:undefined
+    }
   });
 }
 
-function deleteCoupon(row, code){
-  if(!confirm(`クーポン「${code}」を削除しますか？\nこの操作は取り消せません`))return;
-  showLoader();
-  jsonp(GAS1_URL + '?action=deleteCoupon_Nyukai&row=' + row, res=>{
-    hideLoader();
-    if(res.success){alert('🗑️ 削除しました'); loadCoupons()}
-    else alert('❌ ' + (res.message||'失敗'));
-  });
+const sh=id=>{document.getElementById(id).style.display='';};
+const hd=id=>{document.getElementById(id).style.display='none';};
+const si=(id,html)=>{document.getElementById(id).innerHTML=html;};
+function toast(msg,err=false){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.style.background=err?'#e74c3c':'#1a1a2e';
+  el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2500);
 }
-
-function jsonp(url, cb){
-  const cbName = 'cb_'+Date.now()+'_'+Math.floor(Math.random()*10000);
-  window[cbName] = (data)=>{cb(data);delete window[cbName];document.body.removeChild(s)};
-  const s = document.createElement('script');
-  s.src = url + (url.includes('?')?'&':'?') + 'callback=' + cbName;
-  s.onerror = ()=>{cb({success:false,message:'通信エラー'});delete window[cbName]};
-  document.body.appendChild(s);
-}
-
-function showLoader(){document.getElementById('loader').classList.add('show')}
-function hideLoader(){document.getElementById('loader').classList.remove('show')}
 </script>
 </body>
 </html>
