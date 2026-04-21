@@ -14,17 +14,21 @@
 <link rel="icon" href="https://onebalanceyume-beep.github.io/onebalance-member/icons/logo-welcome.jpg">
 <style>
 :root{
-  --red:#DB444C; --blue:#5BB9CD; --gray:#727474;
+  --main:#DB444C; --main-dark:#c73841; --main-light:#fff6f0; --main-pale:#f3d9db;
+  --blue:#5BB9CD; --gray:#727474;
   --bg:#fffaf5; --card:#ffffff; --border:#f0e6dc;
   --text:#2b2b2b; --sub:#7a7a7a;
   --radius:14px;
 }
+body.kick{
+  --main:#5BB9CD; --main-dark:#4a9fb3; --main-light:#eaf7fa; --main-pale:#c5e5ed;
+}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;touch-action:manipulation}
 html,body{font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.6}
-body{min-height:100vh;padding-bottom:100px}
+body{min-height:100vh;padding-bottom:100px;transition:background .3s}
 .wrap{max-width:560px;margin:0 auto;padding:0 16px}
 
-header{background:linear-gradient(135deg,var(--red) 0%,#c73841 100%);color:#fff;padding:16px 16px;text-align:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+header{background:linear-gradient(135deg,var(--main) 0%,var(--main-dark) 100%);color:#fff;padding:16px 16px;text-align:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.08);transition:background .3s}
 header .logo-banner{background:#fff;border-radius:8px;padding:8px 14px;margin:0 auto 6px;display:inline-block;max-width:280px;width:90%}
 header .logo-banner img{width:100%;height:auto;max-height:60px;object-fit:contain;display:block}
 header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
@@ -32,65 +36,77 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
 .stepper{display:flex;justify-content:space-between;align-items:center;padding:20px 16px 8px;max-width:560px;margin:0 auto}
 .step{flex:1;text-align:center;position:relative}
 .step .circle{width:32px;height:32px;border-radius:50%;background:#e8ddd3;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;transition:all .3s}
-.step.active .circle{background:var(--red);box-shadow:0 4px 12px rgba(219,68,76,.4)}
-.step.done .circle{background:var(--blue)}
+.step.active .circle{background:var(--main);box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.step.done .circle{background:#a8d5de}
 .step .lbl{font-size:10px;color:var(--sub);margin-top:4px;display:block}
-.step.active .lbl{color:var(--red);font-weight:700}
+.step.active .lbl{color:var(--main);font-weight:700}
 .step:not(:last-child)::after{content:'';position:absolute;top:16px;right:-50%;width:100%;height:2px;background:#e8ddd3;z-index:-1}
-.step.done:not(:last-child)::after{background:var(--blue)}
+.step.done:not(:last-child)::after{background:#a8d5de}
 
 .card{background:var(--card);border-radius:var(--radius);padding:20px 16px;margin:12px 0;box-shadow:0 2px 10px rgba(0,0,0,.04);border:1px solid var(--border)}
-.card h2{font-size:16px;color:var(--red);margin-bottom:12px;padding-bottom:8px;border-bottom:2px dotted #f3d9db;font-weight:700}
-.card h2 .num{display:inline-block;background:var(--red);color:#fff;width:24px;height:24px;border-radius:50%;text-align:center;line-height:24px;font-size:12px;margin-right:8px}
+.card h2{font-size:16px;color:var(--main);margin-bottom:12px;padding-bottom:8px;border-bottom:2px dotted var(--main-pale);font-weight:700;transition:color .3s}
+.card h2 .num{display:inline-block;background:var(--main);color:#fff;width:24px;height:24px;border-radius:50%;text-align:center;line-height:24px;font-size:12px;margin-right:8px;transition:background .3s}
 
-.welcome{text-align:center;padding:24px 16px;background:linear-gradient(180deg,#fff 0%,#fff6f0 100%);border-radius:var(--radius);margin:12px 0;border:2px solid var(--red)}
-.welcome .welcome-logo{width:100px;height:100px;margin:0 auto 12px;border-radius:50%;border:3px solid var(--red);padding:4px;background:#fff;overflow:hidden}
+.welcome{text-align:center;padding:24px 16px;background:linear-gradient(180deg,#fff 0%,var(--main-light) 100%);border-radius:var(--radius);margin:12px 0;border:2px solid var(--main);transition:all .3s}
+.welcome .welcome-logo{width:100px;height:100px;margin:0 auto 12px;border-radius:50%;border:3px solid var(--main);padding:4px;background:#fff;overflow:hidden;transition:border-color .3s}
 .welcome .welcome-logo img{width:100%;height:100%;object-fit:cover;border-radius:50%}
-.welcome h2{font-size:22px;color:var(--red);font-weight:800;letter-spacing:.05em}
+.welcome h2{font-size:22px;color:var(--main);font-weight:800;letter-spacing:.05em;transition:color .3s}
 .welcome p{color:var(--sub);font-size:13px;margin-top:8px}
+
+.type-selector{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.type-card{padding:20px 10px;border:2.5px solid #f0e6dc;border-radius:14px;background:#fff;cursor:pointer;transition:all .2s;text-align:center}
+.type-card:active{transform:scale(.97)}
+.type-card.boxing.selected{border-color:#DB444C;background:linear-gradient(180deg,#fff 0%,#fff6f0 100%);box-shadow:0 6px 20px rgba(219,68,76,.25)}
+.type-card.kick.selected{border-color:#5BB9CD;background:linear-gradient(180deg,#fff 0%,#eaf7fa 100%);box-shadow:0 6px 20px rgba(91,185,205,.25)}
+.type-icon{width:54px;height:54px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center}
+.type-card.boxing .type-icon{background:#DB444C}
+.type-card.kick .type-icon{background:#5BB9CD}
+.type-name{font-size:14px;font-weight:700;line-height:1.3;color:var(--text)}
+.type-card.boxing.selected .type-name{color:#DB444C}
+.type-card.kick.selected .type-name{color:#5BB9CD}
+.type-sub{font-size:10px;color:var(--sub);margin-top:4px}
 
 .field{margin-bottom:14px}
 .field label{display:block;font-size:12px;font-weight:700;margin-bottom:6px;color:var(--gray)}
-.field label .req{color:var(--red);margin-left:3px}
+.field label .req{color:var(--main);margin-left:3px;transition:color .3s}
 .field input,.field select,.field textarea{width:100%;padding:12px;border:1.5px solid var(--border);border-radius:10px;font-size:16px;background:#fff;font-family:inherit;color:var(--text)}
-.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 3px rgba(219,68,76,.12)}
-.field .hint{font-size:11px;color:var(--sub);margin-top:4px}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--main);box-shadow:0 0 0 3px rgba(0,0,0,.08)}
 
-/* 3択ボタン（性別など） */
 .btn-group-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
 .btn-opt{padding:12px 4px;border:1.5px solid var(--border);border-radius:10px;background:#fff;cursor:pointer;transition:all .2s;text-align:center;font-size:13px;font-weight:700;color:var(--text)}
-.btn-opt.active{border-color:var(--red);background:#fff6f0;color:var(--red);border-width:2px}
+.btn-opt.active{border-color:var(--main);background:var(--main-light);color:var(--main);border-width:2px}
 
-/* 2列グリッド（きっかけ等） */
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .grid-1{display:grid;grid-template-columns:1fr;gap:6px}
 
-/* イメージ用のピル */
 .pills{display:flex;flex-wrap:wrap;gap:6px}
 .pill{padding:8px 14px;border:1.5px solid var(--border);border-radius:20px;background:#fff;font-size:12px;color:var(--text);cursor:pointer;transition:all .2s;font-weight:700}
-.pill.active{border-color:var(--red);background:#fff6f0;color:var(--red);border-width:2px}
+.pill.active{border-color:var(--main);background:var(--main-light);color:var(--main);border-width:2px}
 
 .terms-box{max-height:280px;overflow-y:auto;background:#faf6f1;padding:14px 12px;border-radius:10px;font-size:12px;line-height:1.8;margin-bottom:10px;border:1px solid var(--border);color:var(--text)}
-.terms-box .terms-cat{font-size:13px;font-weight:700;color:var(--red);margin:12px 0 8px;padding-bottom:4px;border-bottom:1px solid #f3d9db}
+.terms-box .terms-cat{font-size:13px;font-weight:700;color:var(--main);margin:12px 0 8px;padding-bottom:4px;border-bottom:1px solid var(--main-pale);transition:all .3s}
 .terms-box .terms-cat:first-child{margin-top:0}
 .terms-box p{margin-bottom:6px}
-.terms-box .strong{font-weight:700;color:var(--red)}
-.chk{display:flex;align-items:flex-start;gap:8px;cursor:pointer;padding:10px;background:#fff6f0;border-radius:10px;border:2px solid transparent}
-.chk input{width:20px;height:20px;accent-color:var(--red);margin-top:2px;flex-shrink:0}
+.terms-box .strong{font-weight:700;color:var(--main)}
+.chk{display:flex;align-items:flex-start;gap:8px;cursor:pointer;padding:10px;background:var(--main-light);border-radius:10px;border:2px solid transparent;transition:all .3s}
+.chk input{width:20px;height:20px;accent-color:var(--main);margin-top:2px;flex-shrink:0}
 .chk span{font-size:13px;font-weight:700;color:var(--text);flex:1}
-.chk.checked{background:#fff0f0;border-color:var(--red)}
+.chk.checked{border-color:var(--main)}
 
 .confirm-list{display:flex;flex-direction:column;gap:6px}
 .confirm-row{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px dotted #eadfd3;gap:8px;font-size:13px}
 .confirm-row:last-child{border-bottom:none}
 .confirm-row .lbl{color:var(--sub);font-weight:600;flex-shrink:0;min-width:84px}
 .confirm-row .val{font-weight:700;color:var(--text);text-align:right;word-break:break-all}
+.confirm-type-badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;color:#fff}
+.confirm-type-badge.boxing{background:#DB444C}
+.confirm-type-badge.kick{background:#5BB9CD}
 
 .btn-group{position:fixed;bottom:0;left:0;right:0;background:#fff;padding:12px 16px calc(12px + env(safe-area-inset-bottom));box-shadow:0 -4px 16px rgba(0,0,0,.08);display:flex;gap:8px;z-index:50}
 .btn-group-inner{max-width:560px;margin:0 auto;display:flex;gap:8px;width:100%}
 .btn{flex:1;padding:14px 16px;border:none;border-radius:12px;font-weight:800;font-size:15px;cursor:pointer;transition:all .2s;font-family:inherit}
 .btn:active{transform:scale(.97)}
-.btn-primary{background:linear-gradient(135deg,var(--red) 0%,#c73841 100%);color:#fff;box-shadow:0 4px 12px rgba(219,68,76,.3)}
+.btn-primary{background:linear-gradient(135deg,var(--main) 0%,var(--main-dark) 100%);color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.15)}
 .btn-primary:disabled{background:#ccc;box-shadow:none;color:#888}
 .btn-secondary{background:#fff;color:var(--gray);border:2px solid var(--border);max-width:120px}
 
@@ -100,15 +116,15 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
 
 .loader{display:none;position:fixed;inset:0;background:rgba(255,255,255,.95);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:16px}
 .loader.show{display:flex}
-.spinner{width:48px;height:48px;border:5px solid #f4ede5;border-top:5px solid var(--red);border-radius:50%;animation:spin .8s linear infinite}
+.spinner{width:48px;height:48px;border:5px solid #f4ede5;border-top:5px solid var(--main);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.loader p{font-weight:700;color:var(--red)}
+.loader p{font-weight:700;color:var(--main)}
 
 .complete{text-align:center;padding:40px 20px}
-.complete .icon{width:80px;height:80px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;color:#fff;font-size:40px;font-weight:700}
-.complete h2{font-size:22px;color:var(--red);margin-bottom:12px}
+.complete .icon{width:80px;height:80px;background:var(--main);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;color:#fff;font-size:40px;font-weight:700}
+.complete h2{font-size:22px;color:var(--main);margin-bottom:12px}
 .complete p{color:var(--text);font-size:14px;line-height:1.8;margin-bottom:12px}
-.complete .info-box{background:#fff6f0;border:2px dashed var(--red);border-radius:10px;padding:14px;margin:20px 0;color:var(--red);font-weight:700}
+.complete .info-box{background:var(--main-light);border:2px dashed var(--main);border-radius:10px;padding:14px;margin:20px 0;color:var(--main);font-weight:700}
 
 .other-input{margin-top:8px;display:none}
 .other-input.show{display:block}
@@ -118,14 +134,15 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
 
 <header>
   <div class="logo-banner"><img src="https://onebalanceyume-beep.github.io/onebalance-member/logo.jpg" alt="ONE-BALANCE BOXING GYM" onerror="this.style.display='none'"></div>
-  <p>30分・ボクシング体験受付フォーム</p>
+  <p>30分ボクシング&キックボクササイズ体験</p>
 </header>
 
 <div class="stepper">
-  <div class="step active" data-step="1"><span class="circle">1</span><span class="lbl">情報</span></div>
-  <div class="step" data-step="2"><span class="circle">2</span><span class="lbl">アンケート</span></div>
-  <div class="step" data-step="3"><span class="circle">3</span><span class="lbl">規約</span></div>
-  <div class="step" data-step="4"><span class="circle">4</span><span class="lbl">確認</span></div>
+  <div class="step active" data-step="0"><span class="circle">1</span><span class="lbl">メニュー</span></div>
+  <div class="step" data-step="1"><span class="circle">2</span><span class="lbl">情報</span></div>
+  <div class="step" data-step="2"><span class="circle">3</span><span class="lbl">アンケート</span></div>
+  <div class="step" data-step="3"><span class="circle">4</span><span class="lbl">規約</span></div>
+  <div class="step" data-step="4"><span class="circle">5</span><span class="lbl">確認</span></div>
 </div>
 
 <div class="wrap">
@@ -136,16 +153,36 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
   <p>本日はご来店ありがとうございます<br>ご記入をお願いします</p>
 </div>
 
-<!-- Step 1: お客様情報 -->
-<div class="step-panel active" id="panel1">
+<div class="step-panel active" id="panel0">
+  <div class="card">
+    <h2><span class="num">1</span>体験メニューをお選びください</h2>
+    <div class="type-selector">
+      <div class="type-card boxing" data-type="ボクシング体験">
+        <div class="type-icon">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="#fff"><path d="M12 2C9.79 2 8 3.79 8 6v3H6c-1.1 0-2 .9-2 2v9c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-9c0-1.1-.9-2-2-2h-2V6c0-2.21-1.79-4-4-4zm0 2c1.1 0 2 .9 2 2v3h-4V6c0-1.1.9-2 2-2z"/></svg>
+        </div>
+        <div class="type-name">ボクシング<br>体験</div>
+        <div class="type-sub">本格的に鍛えたい方</div>
+      </div>
+      <div class="type-card kick" data-type="キックボクササイズ体験">
+        <div class="type-icon">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="#fff"><path d="M13.49 5.48c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm-3.6 13.9l1-4.4 2.1 2v6h2v-7.5l-2.1-2 .6-3c1.3 1.5 3.3 2.5 5.5 2.5v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1l-5.2 2.2v4.7h2v-3.4l1.8-.7-1.6 8.1-4.9-1-.4 2 7 1.4z"/></svg>
+        </div>
+        <div class="type-name">キックボクササイズ<br>体験</div>
+        <div class="type-sub">楽しく動きたい方</div>
+      </div>
+    </div>
+    <p style="font-size:11px;color:var(--sub);margin-top:12px;text-align:center;line-height:1.6">※選択すると画面の色が変わります<br>どちらも30分間の体験となります</p>
+  </div>
+</div>
+
+<div class="step-panel" id="panel1">
   <div class="card">
     <h2><span class="num">1</span>お客様情報</h2>
-
     <div class="field">
       <label>お名前<span class="req">*</span></label>
       <input id="name" placeholder="山田 太郎">
     </div>
-
     <div class="field">
       <label>性別<span class="req">*</span></label>
       <div class="btn-group-3">
@@ -154,17 +191,14 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
         <div class="btn-opt" data-gender="どちらでもない">どちらでもない</div>
       </div>
     </div>
-
     <div class="field">
       <label>電話番号<span class="req">*</span></label>
       <input type="tel" id="tel" placeholder="09012345678" inputmode="numeric">
     </div>
-
     <div class="field">
       <label>住所<span class="req">*</span></label>
       <input id="address" placeholder="米子市車尾6丁目8-59">
     </div>
-
     <div class="field">
       <label>生年月日<span class="req">*</span></label>
       <input type="date" id="birthday">
@@ -172,7 +206,6 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
   </div>
 </div>
 
-<!-- Step 2: アンケート -->
 <div class="step-panel" id="panel2">
   <div class="card">
     <h2><span class="num">1</span>当ジムを知ったきっかけ</h2>
@@ -204,7 +237,7 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
   </div>
 
   <div class="card">
-    <h2><span class="num">3</span>今のボクシングのイメージ</h2>
+    <h2><span class="num">3</span>今のボクシング・キックボクササイズのイメージ</h2>
     <p style="font-size:11px;color:var(--sub);margin-bottom:10px">※複数選択できます</p>
     <div class="pills" id="image-list">
       <div class="pill" data-image="カッコいい">カッコいい</div>
@@ -219,7 +252,6 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
   </div>
 </div>
 
-<!-- Step 3: 規約 -->
 <div class="step-panel" id="panel3">
   <div class="card">
     <h2><span class="num">1</span>体験利用規約</h2>
@@ -252,7 +284,6 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
   </div>
 </div>
 
-<!-- Step 4: 確認 -->
 <div class="step-panel" id="panel4">
   <div class="card">
     <h2><span class="num">1</span>ご記入内容の確認</h2>
@@ -264,14 +295,13 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
   </p>
 </div>
 
-<!-- 完了画面 -->
 <div class="step-panel" id="panel-done">
   <div class="complete">
     <div class="icon">✓</div>
     <h2>受付完了！</h2>
     <p>ご記入ありがとうございました。<br>スタッフがご案内しますので<br>少々お待ちください。</p>
-    <div class="info-box">
-      30分間のボクシング体験<br>楽しんでいってください！
+    <div class="info-box" id="complete-msg">
+      30分間の体験<br>楽しんでいってください！
     </div>
     <p style="font-size:12px;color:var(--sub)">ONE-BALANCE BOXING GYM<br>TEL: 0859-49-5275</p>
   </div>
@@ -292,14 +322,8 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
 </div>
 
 <script>
-// ============================================
-// 設定：GAS URLをここに貼ってください
-// ============================================
 const GAS_URL = 'ここにGASのURLを貼る';
 
-// ============================================
-// キャッシュクリア（ホーム画面追加時の更新対策）
-// ============================================
 if('serviceWorker' in navigator){
   navigator.serviceWorker.getRegistrations().then(regs=>regs.forEach(r=>r.unregister()));
 }
@@ -307,7 +331,6 @@ if('caches' in window){
   caches.keys().then(keys=>keys.forEach(k=>caches.delete(k)));
 }
 
-// ダブルタップズーム防止
 let lastTouch = 0;
 document.addEventListener('touchend', e=>{
   const now = Date.now();
@@ -315,11 +338,9 @@ document.addEventListener('touchend', e=>{
   lastTouch = now;
 }, {passive:false});
 
-// ============================================
-// 状態管理
-// ============================================
 let state = {
-  currentStep: 1,
+  currentStep: 0,
+  taikenType: null,
   gender: null,
   kikkake: null,
   kikkakeOther: '',
@@ -327,10 +348,8 @@ let state = {
   images: []
 };
 
-// ============================================
-// 初期化
-// ============================================
 window.addEventListener('DOMContentLoaded', ()=>{
+  setupTypeCards();
   setupGenderBtns();
   setupKikkakeBtns();
   setupUndouBtns();
@@ -339,9 +358,22 @@ window.addEventListener('DOMContentLoaded', ()=>{
   updateUI();
 });
 
-// ============================================
-// 選択ボタンのセットアップ
-// ============================================
+function setupTypeCards(){
+  document.querySelectorAll('.type-card').forEach(card=>{
+    card.addEventListener('click',()=>{
+      document.querySelectorAll('.type-card').forEach(c=>c.classList.remove('selected'));
+      card.classList.add('selected');
+      state.taikenType = card.dataset.type;
+      if(card.classList.contains('kick')){
+        document.body.classList.add('kick');
+      }else{
+        document.body.classList.remove('kick');
+      }
+      updateUI();
+    });
+  });
+}
+
 function setupGenderBtns(){
   document.querySelectorAll('[data-gender]').forEach(btn=>{
     btn.addEventListener('click',()=>{
@@ -403,9 +435,6 @@ function setupTermsChk(){
   });
 }
 
-// ============================================
-// UI更新
-// ============================================
 function updateUI(){
   document.querySelectorAll('.step').forEach(s=>{
     const n = Number(s.dataset.step);
@@ -416,12 +445,12 @@ function updateUI(){
   document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('active'));
   if(state.currentStep<=4){
     document.getElementById(`panel${state.currentStep}`).classList.add('active');
-    document.getElementById('welcome').style.display = state.currentStep===1?'block':'none';
+    document.getElementById('welcome').style.display = state.currentStep===0?'block':'none';
   }
 
   const btnBack = document.getElementById('btn-back');
   const btnNext = document.getElementById('btn-next');
-  btnBack.style.display = state.currentStep===1?'none':'block';
+  btnBack.style.display = state.currentStep===0?'none':'block';
   btnNext.textContent = state.currentStep===4?'この内容で送信する':'次へすすむ';
   btnNext.disabled = !canProceed();
 
@@ -430,6 +459,8 @@ function updateUI(){
 
 function canProceed(){
   switch(state.currentStep){
+    case 0:
+      return !!state.taikenType;
     case 1:
       if(!document.getElementById('name').value.trim())return false;
       if(!state.gender)return false;
@@ -453,9 +484,6 @@ function canProceed(){
 document.addEventListener('input', ()=>{ if(state.currentStep===1||state.currentStep===2) updateUI(); });
 document.addEventListener('change', ()=>{ if(state.currentStep===1||state.currentStep===3) updateUI(); });
 
-// ============================================
-// 確認画面
-// ============================================
 function formatDateJP(s){
   if(!s)return'';
   const d=new Date(s);
@@ -465,7 +493,10 @@ function formatDateJP(s){
 function renderConfirm(){
   const list = document.getElementById('confirm-list');
   const kikkakeDisplay = state.kikkake==='その他' ? `その他：${state.kikkakeOther}` : state.kikkake;
+  const typeBadgeClass = state.taikenType==='ボクシング体験' ? 'boxing' : 'kick';
+  const typeBadge = `<span class="confirm-type-badge ${typeBadgeClass}">${state.taikenType}</span>`;
   const parts = [
+    ['体験種別', typeBadge],
     ['お名前', document.getElementById('name').value],
     ['性別', state.gender],
     ['電話番号', document.getElementById('tel').value],
@@ -473,14 +504,12 @@ function renderConfirm(){
     ['生年月日', formatDateJP(document.getElementById('birthday').value)],
     ['知ったきっかけ', kikkakeDisplay],
     ['運動経験', state.undou],
-    ['ボクシングのイメージ', state.images.join('・')]
+    ['イメージ', state.images.join('・')]
   ];
-  list.innerHTML = parts.map(([l,v])=>`<div class="confirm-row"><span class="lbl">${l}</span><span class="val">${v||'-'}</span></div>`).join('');
+  list.innerHTML = parts.map(p=>`<div class="confirm-row"><span class="lbl">${p[0]}</span><span class="val">${p[1]||'-'}</span></div>`).join('');
+  document.getElementById('complete-msg').innerHTML = `30分間の${state.taikenType}<br>楽しんでいってください！`;
 }
 
-// ============================================
-// ステップ移動
-// ============================================
 function nextStep(){
   if(!canProceed()){alert('必要な項目を入力してください');return}
   if(state.currentStep===4){submit();return}
@@ -489,15 +518,12 @@ function nextStep(){
   updateUI();
 }
 function prevStep(){
-  if(state.currentStep===1)return;
+  if(state.currentStep===0)return;
   state.currentStep--;
   window.scrollTo({top:0,behavior:'smooth'});
   updateUI();
 }
 
-// ============================================
-// JSONP送信
-// ============================================
 function jsonp(url, cb){
   const cbName = 'cb_'+Date.now()+'_'+Math.floor(Math.random()*10000);
   window[cbName] = function(data){
@@ -517,6 +543,7 @@ function submit(){
   const kikkakeFinal = state.kikkake==='その他' ? `その他：${state.kikkakeOther}` : state.kikkake;
 
   const payload = {
+    taikenType: state.taikenType,
     name: document.getElementById('name').value.trim(),
     gender: state.gender,
     tel: document.getElementById('tel').value.trim(),
