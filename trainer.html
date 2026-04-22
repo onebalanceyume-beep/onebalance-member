@@ -1256,14 +1256,57 @@ function procCSV(input){
   reader.readAsText(file,'Shift_JIS');
 }
 
+// 3段階マッチング：①完全一致 → ②並び替え一致 → ③前方3文字部分一致
+// 複数ヒット時はnullを返して「要確認」扱いにする（誤マッチ防止）
+function findMatchedMember(csvNormKana, members){
+  if(!csvNormKana)return null;
+
+  // 各会員の候補カナを事前計算
+  const memberCandidates=members.map(m=>{
+    const list=[
+      nk(m.kouzaName||''),
+      nk(m.kana||''),
+      nk(m.name||'')
+    ].filter(x=>x);
+    return {member:m,candidates:list};
+  });
+
+  // ① 完全一致
+  const exact=memberCandidates.filter(mc=>mc.candidates.some(c=>c===csvNormKana));
+  if(exact.length===1)return exact[0].member;
+  if(exact.length>1)return null; // 複数ヒットは誤マッチ防止でnull
+
+  // ② 並び替え一致（文字をソートして比較）
+  const sortedCsv=csvNormKana.split('').sort().join('');
+  const anagram=memberCandidates.filter(mc=>
+    mc.candidates.some(c=>c.length>=4&&c.split('').sort().join('')===sortedCsv)
+  );
+  if(anagram.length===1)return anagram[0].member;
+  if(anagram.length>1)return null;
+
+  // ③ 前方3文字以上の部分一致（CSVカナの先頭4文字と会員カナの先頭4文字が一致）
+  if(csvNormKana.length>=4){
+    const csvHead=csvNormKana.substring(0,4);
+    const prefix=memberCandidates.filter(mc=>
+      mc.candidates.some(c=>c.length>=4&&c.substring(0,4)===csvHead)
+    );
+    if(prefix.length===1)return prefix[0].member;
+    // ヒット0または複数の場合はnull
+  }
+
+  return null;
+}
+
 // CSV内の銀行名カナから銀行種別を判定
+// 山陰合同 / 鳥取 / その他 の3分類
+// 空欄の場合は「その他」（ゆうちょ等・他行フォーマットで銀行名が入らないケース）
 function detectBankFromKana(bankKana){
-  if(!bankKana)return '';
-  const k=String(bankKana).trim();
+  const k=String(bankKana||'').trim();
   // 山陰合同：「ｻﾝｲﾝ」または「ｺﾞｳﾄﾞｳ」を含む
   if(k.indexOf('ｻﾝｲﾝ')>=0||k.indexOf('ｺﾞｳﾄﾞｳ')>=0)return '山陰合同銀行';
-  // 鳥取銀行：「ﾄﾂﾄﾘ」または「ﾄｯﾄﾘ」を含む
-  if(k.indexOf('ﾄﾂﾄﾘ')>=0||k.indexOf('ﾄｯﾄﾘ')>=0)return '鳥取銀行';
+  // 鳥取銀行：「ﾄﾂﾄﾘ」または「ﾄｯﾄﾘ」を含む（JA系は除外）
+  if((k.indexOf('ﾄﾂﾄﾘ')>=0||k.indexOf('ﾄｯﾄﾘ')>=0)&&k.indexOf('ﾉｳｷﾖｳ')<0)return '鳥取銀行';
+  // それ以外（空欄含む）はすべて「その他」
   return 'その他';
 }
 
@@ -1283,14 +1326,7 @@ async function analyzeCSV(text){
     const rc=(cols[9]||'').trim();
     const norm=nk(nr);
 
-    const matched=members.find(m=>{
-      const candidates=[
-        nk(m.kouzaName||''),
-        nk(m.kana||''),
-        nk(m.name||'')
-      ].filter(x=>x);
-      return candidates.some(c=>c===norm);
-    });
+    const matched=findMatchedMember(norm,members);
 
     const ok=rc==='0';
     const detectedBank=detectBankFromKana(bankKana);
