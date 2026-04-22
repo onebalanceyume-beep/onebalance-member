@@ -1257,22 +1257,84 @@ function procCSV(input){
 }
 
 async function analyzeCSV(text){
-  const lines=text.split('\n').filter(l=>l.trim());
+  const lines=text.split(/\r?\n/).filter(l=>l.trim());
   const results=[];
   const members=AM.filter(m=>m.status!=='退会');
-  const updateQueue=[];
-  for(let i=1;i<lines.length;i++){
+  const matchedIds=[];
+
+  for(let i=0;i<lines.length;i++){
     const cols=lines[i].split(',');
     if(cols[0]!=='2')continue;
     const nr=(cols[7]||'').trim();
     const amount=parseInt(cols[8]||0,10);
     const rc=(cols[9]||'').trim();
     const norm=nk(nr);
-    const matched=members.find(m=>nk(m.kouzaName||m.kana||'')===norm);
+
+    const matched=members.find(m=>{
+      const candidates=[
+        nk(m.kouzaName||''),
+        nk(m.kana||''),
+        nk(m.name||'')
+      ].filter(x=>x);
+      return candidates.some(c=>c===norm);
+    });
+
     const ok=rc==='0';
-    results.push({name:matched?matched.name:nr,csvName:nr,amount,ok,matched:!!matched,member:matched});
-    if(matched&&ok)updateQueue.push(matched);
+    results.push({
+      name:matched?matched.name:nr,
+      csvName:nr,
+      amount,
+      ok,
+      matched:!!matched,
+      member:matched
+    });
+    if(matched&&ok)matchedIds.push(matched.id);
   }
+
+  const okCount=results.filter(r=>r.matched&&r.ok).length;
+  const ngCount=results.filter(r=>!r.ok).length;
+  const unkCount=results.filter(r=>!r.matched).length;
+
+  document.getElementById('cr').innerHTML=
+    `<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+      <span class="badge bg">✅ ${okCount}件 入金確認</span>
+      <span class="badge br">⚠️ ${ngCount}件 要確認</span>
+      <span class="badge bgr">❓ ${unkCount}件 不明</span>
+    </div>`+
+    results.map(r=>`<div class="cri ${r.matched?(r.ok?'cok':'cng'):'cun'}">
+      <div>
+        <div style="font-weight:700">${r.name}</div>
+        <div style="font-size:11px;color:var(--text2)">${r.csvName} ¥${r.amount.toLocaleString()}</div>
+      </div>
+      <div style="font-size:20px">${r.matched?(r.ok?'✅':'⚠️'):'❓'}</div>
+    </div>`).join('');
+
+  if(matchedIds.length>0&&confirm(`${SELECTED_MONTH}の入金確認 ${matchedIds.length}件を\nスプレッドシートに反映しますか？`)){
+    toast('反映中...');
+    try{
+      const res=await api({
+        action:'bulkUpdateFee',
+        ids:matchedIds.join(','),
+        month:SELECTED_MONTH,
+        status:'✅'
+      });
+      if(res.status==='ok'&&res.data.success){
+        matchedIds.forEach(id=>{
+          const m=AM.find(m=>m.id===id);
+          if(m)m[SELECTED_MONTH]='✅';
+        });
+        toast(`${res.data.updated}件をスプレッドシートに反映しました`);
+        renderFL();
+        renderFeeSummary();
+      }else{
+        toast('書き込み失敗：'+(res.data&&res.data.message||'不明'),true);
+      }
+    }catch(e){
+      toast('通信エラー：'+String(e.message||e),true);
+    }
+  }
+  document.getElementById('cf').value='';
+}
   const okCount=results.filter(r=>r.matched&&r.ok).length;
   const ngCount=results.filter(r=>!r.ok).length;
   const unkCount=results.filter(r=>!r.matched).length;
@@ -1312,7 +1374,19 @@ function nk(s){
   const h='ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜｦﾝｧｨｩｪｫｯｬｭｮｰｳﾞｶﾞｷﾞｸﾞｹﾞｺﾞｻﾞｼﾞｽﾞｾﾞｿﾞﾀﾞﾁﾞﾂﾞﾃﾞﾄﾞﾊﾞﾋﾞﾌﾞﾍﾞﾎﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟ';
   let r='';
   for(let i=0;i<s.length;i++){const idx=z.indexOf(s[i]);r+=idx>=0?h[idx]:s[i];}
-  return r.replace(/[\s　]/g,'');
+  return r
+    .replace(/[\s　]/g,'')
+    .replace(/ｬ/g,'ﾔ')
+    .replace(/ｭ/g,'ﾕ')
+    .replace(/ｮ/g,'ﾖ')
+    .replace(/ｧ/g,'ｱ')
+    .replace(/ｨ/g,'ｲ')
+    .replace(/ｩ/g,'ｳ')
+    .replace(/ｪ/g,'ｴ')
+    .replace(/ｫ/g,'ｵ')
+    .replace(/ｯ/g,'ﾂ')
+    .replace(/-/g,'ｰ')
+    .replace(/ｰ/g,'');
 }
 
 async function loadFreeMonth(){
