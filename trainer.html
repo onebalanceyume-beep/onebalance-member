@@ -1335,38 +1335,6 @@ async function analyzeCSV(text){
   }
   document.getElementById('cf').value='';
 }
-  const okCount=results.filter(r=>r.matched&&r.ok).length;
-  const ngCount=results.filter(r=>!r.ok).length;
-  const unkCount=results.filter(r=>!r.matched).length;
-  document.getElementById('cr').innerHTML=
-    `<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-      <span class="badge bg">✅ ${okCount}件 入金確認</span>
-      <span class="badge br">⚠️ ${ngCount}件 要確認</span>
-      <span class="badge bgr">❓ ${unkCount}件 不明</span>
-    </div>`+
-    results.map(r=>`<div class="cri ${r.matched?(r.ok?'cok':'cng'):'cun'}">
-      <div>
-        <div style="font-weight:700">${r.name}</div>
-        <div style="font-size:11px;color:var(--text2)">${r.csvName} ¥${r.amount.toLocaleString()}</div>
-      </div>
-      <div style="font-size:20px">${r.matched?(r.ok?'✅':'⚠️'):'❓'}</div>
-    </div>`).join('');
-  if(updateQueue.length>0&&confirm(`${SELECTED_MONTH}の入金確認 ${updateQueue.length}件を\nスプレッドシートに反映しますか？`)){
-    toast('反映中...');
-    let done=0;
-    for(const m of updateQueue){
-      try{
-        await api({action:'updateFee',id:m.id,month:SELECTED_MONTH,status:'✅'});
-        m[SELECTED_MONTH]='✅';
-        done++;
-      }catch(e){}
-    }
-    toast(`${done}件をスプレッドシートに反映しました`);
-    renderFL();
-    renderFeeSummary();
-  }
-  document.getElementById('cf').value='';
-}
 
 function nk(s){
   if(!s)return'';
