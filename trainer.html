@@ -398,7 +398,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
     <div class="card-title">アプリ情報</div>
     <div style="font-size:13px;color:var(--text2);line-height:2.2">
       <div>アプリ名：one-BALANCE トレーナー管理</div>
-      <div>バージョン：1.9.1（クーポンボタン削除）</div>
+      <div>バージョン：1.9.2（GAS URL自動修正）</div>
       <div>赤 #DB444C / 青 #5BB9CD</div>
     </div>
   </div>
@@ -486,9 +486,21 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
   });
 })();
 
-const DGAS='https://script.google.com/macros/s/AKfycbxNxYgejS-1NZvt33PuIkh-DIEtHS9-hTFyAxUjO_8a6E9MM9CPxxDV8KMhX189c8oyrg/exec';
+const DGAS='https://script.google.com/macros/s/AKfycbxrU7YC63kYJpPlYn29-C0G97J8pRG7U9LgcqrSisvo4aidOrZ_kqosYG_nlm9tuqFdNQ/exec';
 const DGAS_RESERVE='https://script.google.com/macros/s/AKfycbzWPH4cO-kPMGqbJqHEsYG1yefxa0FoKQOgDJeIeUHIe9alN1yrsDVHe6E7yFY1DFiY/exec';
 const DGAS1='https://script.google.com/macros/s/AKfycbxNxYgejS-1NZvt33PuIkh-DIEtHS9-hTFyAxUjO_8a6E9MM9CPxxDV8KMhX189c8oyrg/exec';
+
+// GAS URLバージョン管理（このバージョンが上がると古いlocalStorageを上書き）
+const GAS_URL_VERSION='v2';
+(function updateGasUrls(){
+  const savedVer=localStorage.getItem('gasUrlVersion');
+  if(savedVer!==GAS_URL_VERSION){
+    localStorage.setItem('gasUrl',DGAS);
+    localStorage.setItem('gasReserveUrl',DGAS_RESERVE);
+    localStorage.setItem('gas1Url',DGAS1);
+    localStorage.setItem('gasUrlVersion',GAS_URL_VERSION);
+  }
+})();
 
 const GR=[
   {n:'ホワイト前', b:'#f5f5f5', c:'#666',    d:'入会直後の初期状態'},
