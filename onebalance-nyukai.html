@@ -443,7 +443,19 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
     </div>
     <div class="staff-modal-sub">※この画面はスタッフ専用です</div>
 
-    <!-- クーポン1: 月会費1ヶ月無料 -->
+    <!-- クーポン1: 入会金0円キャンペーン -->
+    <div class="staff-coupon-item" data-staff-id="entry0">
+      <div class="staff-coupon-info">
+        <div class="staff-coupon-label">入会金 0円キャンペーン</div>
+        <div class="staff-coupon-desc">入会金が完全無料に</div>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" data-staff-toggle="entry0" onchange="onStaffToggle('entry0', this.checked)">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <!-- クーポン2: 月会費1ヶ月無料 -->
     <div class="staff-coupon-item" data-staff-id="m1">
       <div class="staff-coupon-info">
         <div class="staff-coupon-label">月会費 1ヶ月無料</div>
@@ -455,7 +467,7 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
       </label>
     </div>
 
-    <!-- クーポン2: 月会費2ヶ月無料 -->
+    <!-- クーポン3: 月会費2ヶ月無料 -->
     <div class="staff-coupon-item" data-staff-id="m2">
       <div class="staff-coupon-info">
         <div class="staff-coupon-label">月会費 2ヶ月無料</div>
@@ -467,23 +479,23 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
       </label>
     </div>
 
-    <!-- クーポン3: 体験料金1100円割引 -->
-    <div class="staff-coupon-item" data-staff-id="entry1100">
+    <!-- クーポン4: 体験料金1100円無料 -->
+    <div class="staff-coupon-item" data-staff-id="taiken1100">
       <div class="staff-coupon-info">
-        <div class="staff-coupon-label">入会金 1,100円割引</div>
-        <div class="staff-coupon-desc">その場で即時適用</div>
+        <div class="staff-coupon-label">体験料金 1,100円無料</div>
+        <div class="staff-coupon-desc">体験後3日以内入会特典・合計から割引</div>
       </div>
       <label class="toggle">
-        <input type="checkbox" data-staff-toggle="entry1100" onchange="onStaffToggle('entry1100', this.checked)">
+        <input type="checkbox" data-staff-toggle="taiken1100" onchange="onStaffToggle('taiken1100', this.checked)">
         <span class="toggle-slider"></span>
       </label>
     </div>
 
-    <!-- クーポン4: 自由入力 -->
+    <!-- クーポン5: 自由入力 -->
     <div class="staff-coupon-item" data-staff-id="custom">
       <div class="staff-coupon-info">
         <div class="staff-coupon-label">自由割引（金額指定）</div>
-        <div class="staff-coupon-desc">入会金から好きな金額を割引</div>
+        <div class="staff-coupon-desc">合計から好きな金額を割引</div>
       </div>
       <label class="toggle">
         <input type="checkbox" data-staff-toggle="custom" onchange="onStaffToggle('custom', this.checked)">
@@ -690,16 +702,18 @@ function applyStaffDiscount(){
     return;
   }
 
-  if(activeId === 'm1'){
-    state.staffDiscount = {id:'m1', label:'月会費1ヶ月無料', entryOff:0, freeMonths:1, customAmount:0};
+  if(activeId === 'entry0'){
+    state.staffDiscount = {id:'entry0', label:'入会金0円キャンペーン', entryOff:99999, freeMonths:0, customAmount:0, totalOff:0};
+  }else if(activeId === 'm1'){
+    state.staffDiscount = {id:'m1', label:'月会費1ヶ月無料', entryOff:0, freeMonths:1, customAmount:0, totalOff:0};
   }else if(activeId === 'm2'){
-    state.staffDiscount = {id:'m2', label:'月会費2ヶ月無料', entryOff:0, freeMonths:2, customAmount:0};
-  }else if(activeId === 'entry1100'){
-    state.staffDiscount = {id:'entry1100', label:'入会金1,100円割引', entryOff:1100, freeMonths:0, customAmount:0};
+    state.staffDiscount = {id:'m2', label:'月会費2ヶ月無料', entryOff:0, freeMonths:2, customAmount:0, totalOff:0};
+  }else if(activeId === 'taiken1100'){
+    state.staffDiscount = {id:'taiken1100', label:'体験料金1,100円無料', entryOff:0, freeMonths:0, customAmount:0, totalOff:1100};
   }else if(activeId === 'custom'){
     const amt = Number(document.getElementById('staff-custom-amount').value) || 0;
     if(amt <= 0){alert('割引金額を入力してください');return}
-    state.staffDiscount = {id:'custom', label:`自由割引 ¥${amt.toLocaleString()}`, entryOff:amt, freeMonths:0, customAmount:amt};
+    state.staffDiscount = {id:'custom', label:`自由割引 ¥${amt.toLocaleString()}`, entryOff:0, freeMonths:0, customAmount:amt, totalOff:amt};
   }
   updateStaffBadge();
   closeStaffModal();
@@ -936,9 +950,14 @@ function calcFees(){
   }
 
   // 🔒 スタッフ割引の計算（既存クーポンに上乗せ）
+  let staffTotalOff = 0;  // 合計から引く割引（体験1100円・自由割引）
   if(state.staffDiscount){
     const sd = state.staffDiscount;
-    if(sd.entryOff > 0){
+    if(sd.id === 'entry0'){
+      // 入会金を完全0円に
+      staffEntryDiscount = entry;
+      entry = 0;
+    }else if(sd.entryOff > 0){
       // 入会金から割引（即時）
       staffEntryDiscount = Math.min(sd.entryOff, entry);
       entry = Math.max(0, entry - sd.entryOff);
@@ -952,9 +971,14 @@ function calcFees(){
         freeStartMonth = `${startDate3.getFullYear()}年${startDate3.getMonth()+1}月`;
       }
     }
+    if(sd.totalOff > 0){
+      // 合計から割引（体験1100円・自由割引）
+      staffTotalOff = sd.totalOff;
+    }
   }
 
-  const total = Math.max(0, entry + firstMonth);
+  const totalBeforeOff = Math.max(0, entry + firstMonth);
+  const total = Math.max(0, totalBeforeOff - staffTotalOff);
   const totalFreeMonths = freeMonths + staffFreeMonths;
   const totalFreeAmount = state.course ? (state.course.fee * totalFreeMonths) : 0;
 
@@ -963,7 +987,8 @@ function calcFees(){
     freeMonths: totalFreeMonths, freeStartMonth,
     freeAmount: totalFreeAmount,
     staffEntryDiscount,
-    staffFreeMonths
+    staffFreeMonths,
+    staffTotalOff
   };
 }
 
@@ -1048,6 +1073,10 @@ function renderConfirm(){
     document.getElementById('summary-staff-discount-row').style.display='flex';
     document.getElementById('summary-staff-label').textContent = '🎟 ' + state.staffDiscount.label;
     document.getElementById('summary-staff-discount').textContent = '-¥'+f.staffEntryDiscount.toLocaleString();
+  }else if(state.staffDiscount && f.staffTotalOff > 0){
+    document.getElementById('summary-staff-discount-row').style.display='flex';
+    document.getElementById('summary-staff-label').textContent = '🎟 ' + state.staffDiscount.label;
+    document.getElementById('summary-staff-discount').textContent = '-¥'+f.staffTotalOff.toLocaleString();
   }else if(state.staffDiscount && f.staffFreeMonths > 0){
     document.getElementById('summary-staff-discount-row').style.display='flex';
     document.getElementById('summary-staff-label').textContent = '🎟 ' + state.staffDiscount.label;
@@ -1110,7 +1139,7 @@ function submit(){
     // スタッフ割引がある場合、既存couponCodeに追記
     const staffLabel = `[STAFF]${state.staffDiscount.label}`;
     couponCode = couponCode ? (couponCode + '+' + staffLabel) : staffLabel;
-    discountAmount += (f.staffEntryDiscount || 0);
+    discountAmount += (f.staffEntryDiscount || 0) + (f.staffTotalOff || 0);
   }
 
   const payload = {
