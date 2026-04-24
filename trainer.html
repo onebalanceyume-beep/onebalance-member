@@ -24,9 +24,6 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 .logo span{color:rgba(255,255,255,0.8);font-size:11px;display:block;font-weight:400;letter-spacing:2px;}
 .hdate{font-size:12px;opacity:.9;text-align:right;}
 .hdate .big{font-size:16px;font-weight:700;}
-.header-actions{display:flex;gap:8px;padding:0 16px 8px;flex-wrap:wrap;}
-.coupon-link-btn{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;background:rgba(255,255,255,.2);color:#fff;border:1.5px solid rgba(255,255,255,.4);border-radius:20px;font-size:11px;font-weight:700;text-decoration:none;cursor:pointer;transition:all .2s;}
-.coupon-link-btn:hover{background:rgba(255,255,255,.3);}
 .tabs{background:var(--blue);display:flex;overflow-x:auto;scrollbar-width:none;}
 .tabs::-webkit-scrollbar{display:none;}
 .tab-btn{flex:none;padding:11px 16px;color:rgba(255,255,255,0.7);font-size:12px;font-weight:600;border:none;background:none;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s;letter-spacing:.5px;}
@@ -188,9 +185,6 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
   <div class="header-inner">
     <div class="logo">one-BALANCE<span>BOXING GYM TRAINER</span></div>
     <div class="hdate"><div class="big" id="dd"></div><div id="dt"></div></div>
-  </div>
-  <div class="header-actions">
-    <a href="onebalance-coupon-admin.html" class="coupon-link-btn">🎟️ クーポン管理</a>
   </div>
   <div class="tabs">
     <button class="tab-btn active" onclick="sw('dashboard',this)">📊 ダッシュボード</button>
@@ -395,7 +389,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
     <button class="btn btn-red btn-full" onclick="saveR()">保存する</button>
   </div>
   <div class="card">
-    <div class="card-title">GAS設定（クーポン・無料月管理）</div>
+    <div class="card-title">GAS設定（無料月管理）</div>
     <div style="font-size:13px;font-weight:700;margin-bottom:6px">GAS① URL（会員マスタ側）</div>
     <input type="text" class="si" id="gu1" placeholder="https://script.google.com/macros/s/...">
     <button class="btn btn-red btn-full" onclick="saveG1()">保存する</button>
@@ -404,7 +398,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
     <div class="card-title">アプリ情報</div>
     <div style="font-size:13px;color:var(--text2);line-height:2.2">
       <div>アプリ名：one-BALANCE トレーナー管理</div>
-      <div>バージョン：1.9.0（M列自動入力対応）</div>
+      <div>バージョン：1.9.1（クーポンボタン削除）</div>
       <div>赤 #DB444C / 青 #5BB9CD</div>
     </div>
   </div>
@@ -1256,12 +1250,8 @@ function procCSV(input){
   reader.readAsText(file,'Shift_JIS');
 }
 
-// 3段階マッチング：①完全一致 → ②並び替え一致 → ③前方3文字部分一致
-// 複数ヒット時はnullを返して「要確認」扱いにする（誤マッチ防止）
 function findMatchedMember(csvNormKana, members){
   if(!csvNormKana)return null;
-
-  // 各会員の候補カナを事前計算
   const memberCandidates=members.map(m=>{
     const list=[
       nk(m.kouzaName||''),
@@ -1270,43 +1260,29 @@ function findMatchedMember(csvNormKana, members){
     ].filter(x=>x);
     return {member:m,candidates:list};
   });
-
-  // ① 完全一致
   const exact=memberCandidates.filter(mc=>mc.candidates.some(c=>c===csvNormKana));
   if(exact.length===1)return exact[0].member;
-  if(exact.length>1)return null; // 複数ヒットは誤マッチ防止でnull
-
-  // ② 並び替え一致（文字をソートして比較）
+  if(exact.length>1)return null;
   const sortedCsv=csvNormKana.split('').sort().join('');
   const anagram=memberCandidates.filter(mc=>
     mc.candidates.some(c=>c.length>=4&&c.split('').sort().join('')===sortedCsv)
   );
   if(anagram.length===1)return anagram[0].member;
   if(anagram.length>1)return null;
-
-  // ③ 前方3文字以上の部分一致（CSVカナの先頭4文字と会員カナの先頭4文字が一致）
   if(csvNormKana.length>=4){
     const csvHead=csvNormKana.substring(0,4);
     const prefix=memberCandidates.filter(mc=>
       mc.candidates.some(c=>c.length>=4&&c.substring(0,4)===csvHead)
     );
     if(prefix.length===1)return prefix[0].member;
-    // ヒット0または複数の場合はnull
   }
-
   return null;
 }
 
-// CSV内の銀行名カナから銀行種別を判定
-// 山陰合同 / 鳥取 / その他 の3分類
-// 空欄の場合は「その他」（ゆうちょ等・他行フォーマットで銀行名が入らないケース）
 function detectBankFromKana(bankKana){
   const k=String(bankKana||'').trim();
-  // 山陰合同：「ｻﾝｲﾝ」または「ｺﾞｳﾄﾞｳ」を含む
   if(k.indexOf('ｻﾝｲﾝ')>=0||k.indexOf('ｺﾞｳﾄﾞｳ')>=0)return '山陰合同銀行';
-  // 鳥取銀行：「ﾄﾂﾄﾘ」または「ﾄｯﾄﾘ」を含む（JA系は除外）
   if((k.indexOf('ﾄﾂﾄﾘ')>=0||k.indexOf('ﾄｯﾄﾘ')>=0)&&k.indexOf('ﾉｳｷﾖｳ')<0)return '鳥取銀行';
-  // それ以外（空欄含む）はすべて「その他」
   return 'その他';
 }
 
@@ -1315,7 +1291,7 @@ async function analyzeCSV(text){
   const results=[];
   const members=AM.filter(m=>m.status!=='退会');
   const matchedIds=[];
-  const bankMap={}; // memberId => 銀行名
+  const bankMap={};
 
   for(let i=0;i<lines.length;i++){
     const cols=lines[i].split(',');
@@ -1342,7 +1318,6 @@ async function analyzeCSV(text){
     });
     if(matched&&ok){
       matchedIds.push(matched.id);
-      // M列が空欄の会員のみ、銀行判定結果をセット
       if(detectedBank&&!matched.bank){
         bankMap[matched.id]=detectedBank;
       }
