@@ -17,9 +17,14 @@ body{min-height:100vh;padding-bottom:100px}
 .wrap{max-width:560px;margin:0 auto;padding:0 16px}
 
 header{background:linear-gradient(135deg,var(--red) 0%,#c73841 100%);color:#fff;padding:16px 16px;text-align:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.08)}
-header .logo-banner{background:#fff;border-radius:8px;padding:8px 14px;margin:0 auto 6px;display:inline-block;max-width:280px;width:90%}
+header .logo-banner{background:#fff;border-radius:8px;padding:8px 14px;margin:0 auto 6px;display:inline-block;max-width:280px;width:90%;position:relative}
 header .logo-banner img{width:100%;height:auto;max-height:60px;object-fit:contain;display:block}
 header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
+
+/* 🔒 隠しクーポン長押しゾーン（透明・右端） */
+.secret-trigger{position:absolute;top:0;right:0;width:30%;height:100%;cursor:pointer;z-index:5;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+.secret-trigger.holding::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(219,68,76,.08));animation:holdPulse 1s ease-out forwards}
+@keyframes holdPulse{0%{opacity:0}100%{opacity:1}}
 
 .stepper{display:flex;justify-content:space-between;align-items:center;padding:20px 16px 8px;max-width:560px;margin:0 auto}
 .step{flex:1;text-align:center;position:relative}
@@ -51,7 +56,6 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
 .plan-group-title.light{background:#fdecee;color:var(--red)}
 .plan-group-title.spar{background:#f0f0f0;color:var(--gray)}
 
-/* 改行問題修正：縦並びレイアウト */
 .plan{border:2px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:all .2s;background:#fff}
 .plan:active{transform:scale(.98)}
 .plan.selected{border-color:var(--red);background:#fff6f0;box-shadow:0 4px 12px rgba(219,68,76,.15)}
@@ -108,7 +112,6 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
 .chk span{font-size:13px;font-weight:700;color:var(--text);flex:1}
 .chk.checked{background:#fff0f0;border-color:var(--red)}
 
-/* クーポン（変更なし） */
 .coupon-link{text-align:center;padding:8px;color:#dcdcdc;font-size:10px;cursor:pointer;margin-top:8px;letter-spacing:.3em}
 .coupon-link:hover{color:var(--sub)}
 .coupon-box{display:none;margin-top:8px;padding:12px;background:#f0f9fb;border-radius:10px;border:1.5px dashed var(--blue)}
@@ -162,12 +165,64 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
 
 .err-inline{color:var(--red);font-size:11px;margin-top:4px;font-weight:700;display:none}
 .err-inline.show{display:block}
+
+/* ============================================ */
+/* 🔒 スタッフ限定・隠しクーポンモーダル         */
+/* ============================================ */
+.staff-modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:300;align-items:flex-end;justify-content:center;padding:0;animation:fadeBg .3s}
+.staff-modal-bg.show{display:flex}
+@keyframes fadeBg{from{opacity:0}to{opacity:1}}
+.staff-modal{background:#fff;width:100%;max-width:560px;border-radius:20px 20px 0 0;padding:24px 20px 32px;box-shadow:0 -10px 40px rgba(0,0,0,.2);animation:slideUp .35s cubic-bezier(.34,1.3,.64,1)}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.staff-modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.staff-modal-title{font-size:17px;font-weight:800;color:var(--red)}
+.staff-modal-title .lock{display:inline-block;margin-right:6px;font-size:15px}
+.staff-modal-close{width:32px;height:32px;border-radius:50%;background:#f4ede5;border:none;font-size:18px;color:var(--gray);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.staff-modal-sub{font-size:11px;color:var(--sub);margin-bottom:18px;letter-spacing:.05em}
+
+.staff-coupon-item{display:flex;justify-content:space-between;align-items:center;padding:14px 14px;background:#fafafa;border-radius:12px;margin-bottom:10px;border:1.5px solid transparent;transition:all .2s}
+.staff-coupon-item.active{background:#fff6f0;border-color:var(--red);box-shadow:0 4px 12px rgba(219,68,76,.1)}
+.staff-coupon-info{flex:1;min-width:0}
+.staff-coupon-label{font-weight:700;font-size:14px;color:var(--text);line-height:1.3}
+.staff-coupon-desc{font-size:11px;color:var(--sub);margin-top:2px}
+.staff-coupon-item.active .staff-coupon-desc{color:var(--red);font-weight:700}
+
+/* トグルスイッチ */
+.toggle{position:relative;width:52px;height:28px;flex-shrink:0;cursor:pointer;margin-left:12px}
+.toggle input{display:none}
+.toggle-slider{position:absolute;inset:0;background:#d0d0d0;border-radius:28px;transition:background .3s}
+.toggle-slider::before{content:'';position:absolute;left:3px;top:3px;width:22px;height:22px;background:#fff;border-radius:50%;transition:left .3s cubic-bezier(.34,1.3,.64,1);box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.toggle input:checked + .toggle-slider{background:var(--red)}
+.toggle input:checked + .toggle-slider::before{left:27px}
+
+/* 自由入力 */
+.staff-custom-input{display:none;margin-top:8px;padding:12px;background:#fff;border:1.5px solid var(--red);border-radius:10px}
+.staff-custom-input.show{display:block}
+.staff-custom-input label{font-size:11px;color:var(--gray);font-weight:700;display:block;margin-bottom:6px}
+.staff-custom-input .input-row{display:flex;align-items:center;gap:8px}
+.staff-custom-input input{flex:1;padding:10px;border:1.5px solid var(--border);border-radius:8px;font-size:16px;font-weight:700;text-align:right;color:var(--red);font-family:inherit}
+.staff-custom-input input:focus{outline:none;border-color:var(--red)}
+.staff-custom-input .yen{font-weight:800;color:var(--red);font-size:14px}
+
+.staff-modal-footer{display:flex;gap:8px;margin-top:20px}
+.staff-btn-clear{flex:1;padding:13px;background:#f4ede5;color:var(--gray);border:none;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit}
+.staff-btn-apply{flex:2;padding:13px;background:linear-gradient(135deg,var(--red) 0%,#c73841 100%);color:#fff;border:none;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer;box-shadow:0 4px 12px rgba(219,68,76,.3);font-family:inherit}
+.staff-btn-apply:active{transform:scale(.97)}
+
+/* 適用バッジ（メイン画面用） */
+.staff-applied-badge{display:none;margin:8px 0;padding:10px 14px;background:linear-gradient(135deg,#2a9f42 0%,#1f7a32 100%);color:#fff;border-radius:10px;font-size:12px;font-weight:700;text-align:center;box-shadow:0 4px 10px rgba(42,159,66,.3);animation:fadeIn .3s}
+.staff-applied-badge.show{display:block}
+.staff-applied-badge .tap{font-size:10px;opacity:.9;margin-top:2px;font-weight:500}
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo-banner"><img src="https://onebalanceyume-beep.github.io/onebalance-member/logo.jpg" alt="ONE-BALANCE BOXING GYM" onerror="this.style.display='none'"></div>
+  <div class="logo-banner">
+    <img src="https://onebalanceyume-beep.github.io/onebalance-member/logo.jpg" alt="ONE-BALANCE BOXING GYM" onerror="this.style.display='none'">
+    <!-- 🔒 見えない長押しゾーン（ロゴ右端30%） -->
+    <div class="secret-trigger" id="secret-trigger" aria-hidden="true"></div>
+  </div>
   <p>入会申込フォーム</p>
 </header>
 
@@ -179,6 +234,12 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
 </div>
 
 <div class="wrap">
+
+<!-- 🔒 スタッフ割引適用中バッジ -->
+<div class="staff-applied-badge" id="staff-badge" onclick="openStaffModal()">
+  <div id="staff-badge-text">-</div>
+  <div class="tap">タップして変更</div>
+</div>
 
 <div class="welcome" id="welcome">
   <div class="welcome-logo"><img src="https://onebalanceyume-beep.github.io/onebalance-member/icons/logo-welcome.jpg" alt="ロゴ" onerror="this.style.display='none'"></div>
@@ -342,6 +403,7 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
     <div class="price-row"><span>入会金</span><span class="amt" id="summary-entry">¥8,800</span></div>
     <div class="price-row"><span>初月日割り月会費</span><span class="amt" id="summary-first">¥0</span></div>
     <div class="price-row discount" id="summary-discount-row" style="display:none"><span>クーポン割引</span><span class="amt" id="summary-discount">-¥0</span></div>
+    <div class="price-row discount" id="summary-staff-discount-row" style="display:none"><span id="summary-staff-label">スタッフ割引</span><span class="amt" id="summary-staff-discount">-¥0</span></div>
     <div class="price-row total"><span>初回お支払い合計</span><span class="amt" id="summary-total">¥8,800</span></div>
   </div>
 
@@ -370,6 +432,78 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
   </div>
 </div>
 
+</div>
+
+<!-- 🔒 スタッフ割引モーダル -->
+<div class="staff-modal-bg" id="staff-modal-bg" onclick="if(event.target===this)closeStaffModal()">
+  <div class="staff-modal">
+    <div class="staff-modal-header">
+      <div class="staff-modal-title"><span class="lock">🔒</span>スタッフ割引</div>
+      <button class="staff-modal-close" onclick="closeStaffModal()">✕</button>
+    </div>
+    <div class="staff-modal-sub">※この画面はスタッフ専用です</div>
+
+    <!-- クーポン1: 月会費1ヶ月無料 -->
+    <div class="staff-coupon-item" data-staff-id="m1">
+      <div class="staff-coupon-info">
+        <div class="staff-coupon-label">月会費 1ヶ月無料</div>
+        <div class="staff-coupon-desc">翌月から1ヶ月分が無料</div>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" data-staff-toggle="m1" onchange="onStaffToggle('m1', this.checked)">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <!-- クーポン2: 月会費2ヶ月無料 -->
+    <div class="staff-coupon-item" data-staff-id="m2">
+      <div class="staff-coupon-info">
+        <div class="staff-coupon-label">月会費 2ヶ月無料</div>
+        <div class="staff-coupon-desc">翌月から2ヶ月分が無料</div>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" data-staff-toggle="m2" onchange="onStaffToggle('m2', this.checked)">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <!-- クーポン3: 体験料金1100円割引 -->
+    <div class="staff-coupon-item" data-staff-id="entry1100">
+      <div class="staff-coupon-info">
+        <div class="staff-coupon-label">入会金 1,100円割引</div>
+        <div class="staff-coupon-desc">その場で即時適用</div>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" data-staff-toggle="entry1100" onchange="onStaffToggle('entry1100', this.checked)">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <!-- クーポン4: 自由入力 -->
+    <div class="staff-coupon-item" data-staff-id="custom">
+      <div class="staff-coupon-info">
+        <div class="staff-coupon-label">自由割引（金額指定）</div>
+        <div class="staff-coupon-desc">入会金から好きな金額を割引</div>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" data-staff-toggle="custom" onchange="onStaffToggle('custom', this.checked)">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <div class="staff-custom-input" id="staff-custom-input">
+      <label>割引金額（円）</label>
+      <div class="input-row">
+        <input type="number" id="staff-custom-amount" placeholder="0" inputmode="numeric" min="0">
+        <span class="yen">円</span>
+      </div>
+    </div>
+
+    <div class="staff-modal-footer">
+      <button class="staff-btn-clear" onclick="clearStaffDiscount()">解除</button>
+      <button class="staff-btn-apply" onclick="applyStaffDiscount()">適用する</button>
+    </div>
+  </div>
 </div>
 
 <div class="btn-group" id="btn-group">
@@ -431,7 +565,9 @@ let state = {
   joinDateType: 'today',
   people: 1,
   coupon: null,
-  memberId: null
+  memberId: null,
+  // 🔒 スタッフ割引
+  staffDiscount: null   // {id, label, entryOff, freeMonths, customAmount}
 };
 
 window.addEventListener('DOMContentLoaded', ()=>{
@@ -442,6 +578,7 @@ window.addEventListener('DOMContentLoaded', ()=>{
   setupPeople();
   setupBirthday();
   setupTermsChk();
+  setupSecretTrigger(); // 🔒 追加
   updateUI();
 });
 
@@ -452,6 +589,150 @@ function formatDate(d){
 function formatDateJP(s){
   if(!s)return'';const d=new Date(s);return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;
 }
+
+/* ============================================ */
+/* 🔒 スタッフ割引 機能                          */
+/* ============================================ */
+function setupSecretTrigger(){
+  const trigger = document.getElementById('secret-trigger');
+  let holdTimer = null;
+  let isHolding = false;
+
+  const start = (e)=>{
+    isHolding = true;
+    trigger.classList.add('holding');
+    holdTimer = setTimeout(()=>{
+      if(isHolding){
+        if(navigator.vibrate) navigator.vibrate(50); // 振動フィードバック
+        openStaffModal();
+      }
+    }, 1000);
+  };
+  const cancel = ()=>{
+    isHolding = false;
+    trigger.classList.remove('holding');
+    if(holdTimer){clearTimeout(holdTimer); holdTimer=null;}
+  };
+
+  trigger.addEventListener('touchstart', start, {passive:true});
+  trigger.addEventListener('touchend', cancel);
+  trigger.addEventListener('touchcancel', cancel);
+  trigger.addEventListener('touchmove', cancel);
+  trigger.addEventListener('mousedown', start);
+  trigger.addEventListener('mouseup', cancel);
+  trigger.addEventListener('mouseleave', cancel);
+}
+
+function openStaffModal(){
+  // 現在の状態をモーダルに反映
+  document.querySelectorAll('[data-staff-toggle]').forEach(el=>{
+    el.checked = false;
+    el.closest('.staff-coupon-item').classList.remove('active');
+  });
+  document.getElementById('staff-custom-input').classList.remove('show');
+  document.getElementById('staff-custom-amount').value = '';
+
+  if(state.staffDiscount){
+    const el = document.querySelector(`[data-staff-toggle="${state.staffDiscount.id}"]`);
+    if(el){
+      el.checked = true;
+      el.closest('.staff-coupon-item').classList.add('active');
+      if(state.staffDiscount.id === 'custom'){
+        document.getElementById('staff-custom-input').classList.add('show');
+        document.getElementById('staff-custom-amount').value = state.staffDiscount.customAmount || '';
+      }
+    }
+  }
+
+  document.getElementById('staff-modal-bg').classList.add('show');
+}
+
+function closeStaffModal(){
+  document.getElementById('staff-modal-bg').classList.remove('show');
+}
+
+function onStaffToggle(id, checked){
+  // 他のトグルを全部OFFにする（排他制御）
+  document.querySelectorAll('[data-staff-toggle]').forEach(el=>{
+    if(el.dataset.staffToggle !== id){
+      el.checked = false;
+      el.closest('.staff-coupon-item').classList.remove('active');
+    }
+  });
+  const item = document.querySelector(`[data-staff-id="${id}"]`);
+  if(checked){
+    item.classList.add('active');
+    if(id === 'custom'){
+      document.getElementById('staff-custom-input').classList.add('show');
+    }else{
+      document.getElementById('staff-custom-input').classList.remove('show');
+    }
+  }else{
+    item.classList.remove('active');
+    if(id === 'custom'){
+      document.getElementById('staff-custom-input').classList.remove('show');
+    }
+  }
+}
+
+function applyStaffDiscount(){
+  // どのトグルが入ってるかチェック
+  let activeId = null;
+  document.querySelectorAll('[data-staff-toggle]').forEach(el=>{
+    if(el.checked) activeId = el.dataset.staffToggle;
+  });
+
+  if(!activeId){
+    state.staffDiscount = null;
+    updateStaffBadge();
+    closeStaffModal();
+    updateUI();
+    return;
+  }
+
+  if(activeId === 'm1'){
+    state.staffDiscount = {id:'m1', label:'月会費1ヶ月無料', entryOff:0, freeMonths:1, customAmount:0};
+  }else if(activeId === 'm2'){
+    state.staffDiscount = {id:'m2', label:'月会費2ヶ月無料', entryOff:0, freeMonths:2, customAmount:0};
+  }else if(activeId === 'entry1100'){
+    state.staffDiscount = {id:'entry1100', label:'入会金1,100円割引', entryOff:1100, freeMonths:0, customAmount:0};
+  }else if(activeId === 'custom'){
+    const amt = Number(document.getElementById('staff-custom-amount').value) || 0;
+    if(amt <= 0){alert('割引金額を入力してください');return}
+    state.staffDiscount = {id:'custom', label:`自由割引 ¥${amt.toLocaleString()}`, entryOff:amt, freeMonths:0, customAmount:amt};
+  }
+  updateStaffBadge();
+  closeStaffModal();
+  updateUI();
+}
+
+function clearStaffDiscount(){
+  state.staffDiscount = null;
+  document.querySelectorAll('[data-staff-toggle]').forEach(el=>{
+    el.checked = false;
+    el.closest('.staff-coupon-item').classList.remove('active');
+  });
+  document.getElementById('staff-custom-input').classList.remove('show');
+  document.getElementById('staff-custom-amount').value = '';
+  updateStaffBadge();
+  closeStaffModal();
+  updateUI();
+}
+
+function updateStaffBadge(){
+  const badge = document.getElementById('staff-badge');
+  const txt = document.getElementById('staff-badge-text');
+  if(state.staffDiscount){
+    badge.classList.add('show');
+    txt.textContent = '🎟 ' + state.staffDiscount.label + ' 適用中';
+  }else{
+    badge.classList.remove('show');
+  }
+}
+
+/* ============================================ */
+/* 既存機能（手を加えていない）                   */
+/* ============================================ */
 
 function renderPlans(gender){
   const list = document.getElementById('plan-list');
@@ -606,6 +887,8 @@ function calcFees(){
   let entry = entryMap[state.people];
   let firstMonth = 0;
   let discount = 0;
+  let staffEntryDiscount = 0;  // 🔒 スタッフ入会金割引
+  let staffFreeMonths = 0;     // 🔒 スタッフ月会費無料
 
   if(state.course){
     const monthly = state.course.fee;
@@ -652,8 +935,36 @@ function calcFees(){
     }
   }
 
+  // 🔒 スタッフ割引の計算（既存クーポンに上乗せ）
+  if(state.staffDiscount){
+    const sd = state.staffDiscount;
+    if(sd.entryOff > 0){
+      // 入会金から割引（即時）
+      staffEntryDiscount = Math.min(sd.entryOff, entry);
+      entry = Math.max(0, entry - sd.entryOff);
+    }
+    if(sd.freeMonths > 0){
+      // 翌月から月会費無料
+      staffFreeMonths = sd.freeMonths;
+      if(!freeStartMonth){
+        const jd3 = new Date(state.joinDate);
+        const startDate3 = new Date(jd3.getFullYear(), jd3.getMonth()+1, 1);
+        freeStartMonth = `${startDate3.getFullYear()}年${startDate3.getMonth()+1}月`;
+      }
+    }
+  }
+
   const total = Math.max(0, entry + firstMonth);
-  return {entry, firstMonth, discount, total, freeMonths, freeStartMonth};
+  const totalFreeMonths = freeMonths + staffFreeMonths;
+  const totalFreeAmount = state.course ? (state.course.fee * totalFreeMonths) : 0;
+
+  return {
+    entry, firstMonth, discount, total,
+    freeMonths: totalFreeMonths, freeStartMonth,
+    freeAmount: totalFreeAmount,
+    staffEntryDiscount,
+    staffFreeMonths
+  };
 }
 
 function updateUI(){
@@ -731,11 +1042,24 @@ function renderConfirm(){
   }else{
     document.getElementById('summary-discount-row').style.display='none';
   }
+
+  // 🔒 スタッフ割引行
+  if(state.staffDiscount && f.staffEntryDiscount > 0){
+    document.getElementById('summary-staff-discount-row').style.display='flex';
+    document.getElementById('summary-staff-label').textContent = '🎟 ' + state.staffDiscount.label;
+    document.getElementById('summary-staff-discount').textContent = '-¥'+f.staffEntryDiscount.toLocaleString();
+  }else if(state.staffDiscount && f.staffFreeMonths > 0){
+    document.getElementById('summary-staff-discount-row').style.display='flex';
+    document.getElementById('summary-staff-label').textContent = '🎟 ' + state.staffDiscount.label;
+    document.getElementById('summary-staff-discount').textContent = '翌月〜';
+  }else{
+    document.getElementById('summary-staff-discount-row').style.display='none';
+  }
   
   const banner = document.getElementById('free-months-banner');
   if(f.freeMonths > 0){
     banner.style.display = 'block';
-    document.getElementById('free-months-text').textContent = `${f.freeMonths}ヶ月分の月会費が無料！（約¥${f.discount.toLocaleString()}相当）`;
+    document.getElementById('free-months-text').textContent = `${f.freeMonths}ヶ月分の月会費が無料！（約¥${f.freeAmount.toLocaleString()}相当）`;
     document.getElementById('free-months-start').textContent = f.freeStartMonth;
   }else{
     banner.style.display = 'none';
@@ -779,6 +1103,16 @@ function submit(){
   const m = today.getMonth() - b.getMonth();
   if(m<0 || (m===0 && today.getDate()<b.getDate())) age--;
 
+  // 🔒 スタッフ割引情報を含める
+  let couponCode = state.coupon?state.coupon.code:'';
+  let discountAmount = f.discount;
+  if(state.staffDiscount){
+    // スタッフ割引がある場合、既存couponCodeに追記
+    const staffLabel = `[STAFF]${state.staffDiscount.label}`;
+    couponCode = couponCode ? (couponCode + '+' + staffLabel) : staffLabel;
+    discountAmount += (f.staffEntryDiscount || 0);
+  }
+
   const payload = {
     name: document.getElementById('name').value.trim(),
     kana: document.getElementById('kana').value.trim(),
@@ -797,8 +1131,8 @@ function submit(){
     emergencyRel: document.getElementById('emergency-rel').value,
     peopleCount: state.people,
     weekly1Day: state.weeklyDays.join(''),
-    couponCode: state.coupon?state.coupon.code:'',
-    discountAmount: f.discount,
+    couponCode: couponCode,
+    discountAmount: discountAmount,
     entryFee: f.entry,
     firstMonthFee: f.firstMonth,
     firstMonthTotal: f.total,
