@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ONE-BALANCE 入会">
+<link rel="apple-touch-icon" href="https://onebalanceyume-beep.github.io/onebalance-member/images/logo.jpg">
+<link rel="icon" href="https://onebalanceyume-beep.github.io/onebalance-member/images/logo.jpg">
+<title>入会予約 | ONE-BALANCE BOXING GYM</title>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red:#C8102E; --red-l:#FADADD; --red-p:#FFF5F6;
+  --green:#2E8B57; --green-l:#C8E6C9; --green-p:#EEFBF2;
+  --yellow:#F0B429; --yl-l:#FFF3C4; --yl-p:#FFFBEF;
+  --orange:#E8601C; --cream:#FAF6EE; --white:#FFFFFF;
+  --g100:#F5F4F0; --g200:#E8E4DC; --g400:#B0A898; --g600:#7A6E60; --g900:#2A2018;
+  --r:20px; --font:'M PLUS Rounded 1c',sans-serif;
+}
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+html { -webkit-text-size-adjust:100%; }
+body { font-family:var(--font); background:var(--cream); color:var(--g900); min-height:100vh; overflow-x:hidden; }
+header { background:var(--white); box-shadow:0 2px 10px rgba(0,0,0,0.08); padding:0 16px; position:sticky; top:0; z-index:200; }
+.hd { max-width:480px; margin:0 auto; height:60px; display:flex; align-items:center; justify-content:space-between; }
+.hd-img { height:46px; width:auto; object-fit:contain; }
+.hd-tag { font-size:11px; font-weight:800; color:var(--green); border:2px solid var(--green); padding:4px 12px; border-radius:20px; background:var(--green-p); white-space:nowrap; }
+.hero { position:relative; overflow:hidden; height:220px; }
+.hero-img { width:100%; height:220px; object-fit:cover; object-position:center 40%; display:block; filter:brightness(1.4) contrast(1.05); }
+.hero-ov { position:absolute; inset:0; display:flex; align-items:flex-end; padding:18px 20px; }
+.hero-catch { font-size:clamp(22px,6vw,32px); font-weight:900; color:#fff; line-height:1.4; letter-spacing:2px; text-shadow:0 2px 4px rgba(0,0,0,0.9), 0 4px 16px rgba(0,0,0,0.8); }
+.step-bar { background:var(--white); padding:12px 16px; border-bottom:2px solid var(--g100); }
+.step-in { max-width:480px; margin:0 auto; display:flex; align-items:center; }
+.si { flex:1; display:flex; flex-direction:column; align-items:center; position:relative; }
+.si:not(:last-child)::after { content:''; position:absolute; top:13px; left:55%; width:90%; height:2px; background:var(--g200); }
+.si.done:not(:last-child)::after { background:var(--green); }
+.sn { width:26px; height:26px; border-radius:50%; background:var(--g200); color:var(--g400); font-size:11px; font-weight:900; display:flex; align-items:center; justify-content:center; position:relative; z-index:1; }
+.si.active .sn { background:linear-gradient(135deg,#2E8B57,#5BA77A); color:white; box-shadow:0 0 0 3px var(--green-l); }
+.si.done .sn { background:var(--green); color:white; }
+.sl { font-size:9px; font-weight:800; color:var(--g400); margin-top:4px; white-space:nowrap; }
+.si.active .sl { color:var(--green); }
+.si.done .sl { color:var(--g600); }
+main { max-width:480px; margin:0 auto; padding:18px 14px 100px; }
+.sec { font-size:10px; font-weight:900; letter-spacing:2px; color:var(--g400); text-transform:uppercase; margin-bottom:12px; display:flex; align-items:center; gap:6px; }
+.sec::after { content:''; flex:1; height:1.5px; background:var(--g200); }
+.cal-card { background:var(--white); border-radius:var(--r); border:1.5px solid var(--g200); padding:16px; box-shadow:0 3px 10px rgba(0,0,0,0.05); margin-bottom:10px; }
+.cal-nav { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+.cal-nav button { width:34px; height:34px; border-radius:50%; border:2px solid var(--g200); background:var(--white); color:var(--g600); font-size:18px; font-family:var(--font); font-weight:900; display:flex; align-items:center; justify-content:center; cursor:pointer; touch-action:manipulation; }
+.cal-m { font-size:16px; font-weight:900; }
+.cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
+.cdow { text-align:center; font-size:9px; font-weight:800; color:var(--g400); padding:3px 0 7px; }
+.cdow:first-child { color:var(--red); }
+.cday { aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; border-radius:50%; cursor:pointer; touch-action:manipulation; }
+.cday.past,.cday.closed { color:var(--g200); cursor:not-allowed; pointer-events:none; }
+.cday.sunday { color:#D44; }
+.cday.avail:hover,.cday.avail:active { background:var(--green-l); }
+.cday.sel { background:linear-gradient(135deg,#2E8B57,#5BA77A); color:white; font-weight:900; }
+.gcal-txt { font-size:11px; text-align:center; padding:6px 0 4px; font-weight:700; }
+.gcal-txt.ok { color:#059669; }
+.gcal-txt.err { color:var(--red); }
+.gcal-txt.loading { color:var(--g400); }
+.slots-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:7px; margin-bottom:14px; }
+.slot { padding:13px 4px; border-radius:12px; border:2px solid var(--g200); background:var(--white); font-size:14px; font-weight:900; text-align:center; cursor:pointer; font-family:var(--font); touch-action:manipulation; }
+.slot.busy { color:var(--g200); background:var(--g100); cursor:not-allowed; text-decoration:line-through; pointer-events:none; }
+.slot.sel { background:linear-gradient(135deg,#2E8B57,#5BA77A); border-color:transparent; color:white; }
+.form-card { background:var(--white); border-radius:var(--r); border:1.5px solid var(--g200); padding:18px 16px; box-shadow:0 3px 10px rgba(0,0,0,0.05); margin-bottom:14px; }
+.fg { margin-bottom:16px; }
+.fg:last-child { margin-bottom:0; }
+.flbl { font-size:11px; font-weight:800; color:var(--g600); margin-bottom:7px; display:flex; align-items:center; gap:6px; }
+.freq { font-size:9px; font-weight:900; color:var(--red); background:var(--red-l); padding:1px 6px; border-radius:5px; }
+.finput { width:100%; background:var(--cream); border:2px solid var(--g200); border-radius:11px; padding:13px 14px; color:var(--g900); font-family:var(--font); font-size:15px; outline:none; -webkit-appearance:none; }
+.finput:focus { background:var(--white); border-color:var(--green); }
+.pax-row { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:6px; }
+.pax-btn { min-width:54px; padding:10px 6px; border-radius:11px; border:2px solid var(--g200); background:var(--cream); color:var(--g600); font-family:var(--font); font-size:14px; font-weight:900; cursor:pointer; text-align:center; touch-action:manipulation; }
+.pax-btn.sel { background:linear-gradient(135deg,#2E8B57,#5BA77A); border-color:transparent; color:white; }
+.pax-note { font-size:10px; color:var(--g400); font-weight:600; line-height:1.5; }
+.conf-card { background:var(--white); border-radius:var(--r); overflow:hidden; box-shadow:0 3px 10px rgba(0,0,0,0.05); margin-bottom:14px; border:1.5px solid var(--g200); }
+.conf-hdr { background:linear-gradient(135deg,#2E8B57,#5BA77A,#8FBC8F); padding:13px 18px; color:white; font-size:15px; font-weight:900; }
+.conf-row { display:flex; padding:11px 18px; border-bottom:1px solid var(--g100); gap:12px; }
+.conf-row:last-child { border-bottom:none; }
+.ck { font-size:10px; font-weight:800; color:var(--g400); width:64px; flex-shrink:0; padding-top:2px; }
+.cv { font-size:13px; color:var(--g900); font-weight:600; flex:1; line-height:1.5; }
+.btnp { width:100%; padding:16px; border-radius:16px; border:none; font-family:var(--font); font-size:15px; font-weight:900; cursor:pointer; margin-bottom:10px; display:block; background:linear-gradient(135deg,#2E8B57,#5BA77A,#8FBC8F); color:white; box-shadow:0 5px 16px rgba(46,139,87,0.28); touch-action:manipulation; }
+.btnp:disabled { background:var(--g200); color:var(--g400); cursor:not-allowed; box-shadow:none; }
+.btnb { width:100%; padding:12px; border-radius:16px; border:2px solid var(--g200); background:var(--white); color:var(--g600); font-family:var(--font); font-size:13px; font-weight:800; cursor:pointer; display:block; touch-action:manipulation; }
+.notice { background:var(--yl-p); border-radius:12px; padding:11px 13px; font-size:11px; color:var(--g600); line-height:1.7; margin-bottom:14px; font-weight:600; border-left:4px solid var(--yellow); }
+.notice.green { background:var(--green-p); border-left-color:var(--green); }
+.join-info { background:var(--white); border-radius:var(--r); border:1.5px solid var(--g200); padding:16px; box-shadow:0 3px 10px rgba(0,0,0,0.05); margin-bottom:14px; }
+.join-info h4 { font-size:13px; font-weight:900; color:var(--green); margin-bottom:10px; display:flex; align-items:center; gap:6px; padding-bottom:8px; border-bottom:1.5px dashed var(--g200); }
+.join-info ul { list-style:none; padding:0; margin:0 0 12px 0; }
+.join-info ul li { font-size:12px; color:var(--g600); line-height:1.8; font-weight:600; padding-left:18px; position:relative; margin-bottom:4px; }
+.join-info ul li::before { content:'✓'; position:absolute; left:0; color:var(--green); font-weight:900; }
+.join-info .sub { font-size:11px; color:var(--g400); margin-left:4px; }
+.rules-box { background:var(--red-p); border-radius:12px; padding:14px 16px; margin-bottom:14px; border-left:4px solid var(--red); }
+.rules-box h4 { font-size:12px; font-weight:900; color:var(--red); margin-bottom:10px; }
+.rules-box ol { padding-left:20px; }
+.rules-box ol li { font-size:11px; color:var(--g900); line-height:1.8; font-weight:600; margin-bottom:8px; }
+.agree-box { background:var(--white); border:2px solid var(--g200); border-radius:12px; padding:14px; margin-bottom:14px; display:flex; align-items:flex-start; gap:10px; cursor:pointer; }
+.agree-box.on { border-color:var(--green); background:var(--green-p); }
+.agree-box input { width:22px; height:22px; flex-shrink:0; margin-top:2px; accent-color:var(--green); cursor:pointer; }
+.agree-box label { font-size:12px; font-weight:700; color:var(--g900); line-height:1.6; cursor:pointer; }
+.suc-wrap { text-align:center; padding:40px 16px; }
+.suc-icon { font-size:68px; margin-bottom:18px; display:block; }
+.suc-ttl { font-size:22px; font-weight:900; color:var(--g900); margin-bottom:10px; }
+.suc-txt { font-size:13px; color:var(--g600); line-height:1.9; margin-bottom:28px; font-weight:500; }
+.lov { position:fixed; inset:0; background:rgba(255,255,255,0.88); display:flex; align-items:center; justify-content:center; z-index:999; opacity:0; pointer-events:none; transition:opacity 0.3s; }
+.lov.on { opacity:1; pointer-events:all; }
+.spin { width:46px; height:46px; border:4px solid var(--g200); border-top-color:var(--green); border-radius:50%; animation:sp 0.7s linear infinite; }
+@keyframes sp { to { transform:rotate(360deg); } }
+.panel { display:none; }
+.panel.on { display:block; }
+.mt18 { margin-top:18px; }
+</style>
+</head>
+<body>
+<header><div class="hd"><img class="hd-img" src="https://onebalanceyume-beep.github.io/onebalance-member/images/logo.jpg" alt="ONE-BALANCE"><div class="hd-tag">入会予約</div></div></header>
+<div class="hero"><img class="hero-img" src="https://onebalanceyume-beep.github.io/onebalance-member/images/hero.png" alt="ジム"><div class="hero-ov"><div class="hero-catch">知らなかった<br>じぶんに<br>あいに行こう</div></div></div>
+<div class="step-bar"><div class="step-in">
+<div class="si active" id="sd1"><div class="sn">1</div><div class="sl">日程</div></div>
+<div class="si" id="sd2"><div class="sn">2</div><div class="sl">お客様情報</div></div>
+<div class="si" id="sd3"><div class="sn">3</div><div class="sl">確認</div></div>
+</div></div>
+<main>
+
+<div class="panel on" id="p1">
+<p class="sec">日付を選んでね</p>
+<div class="cal-card">
+<div class="cal-nav">
+<button onclick="prevM()">&#8249;</button>
+<div class="cal-m" id="cal-lbl"></div>
+<button onclick="nextM()">&#8250;</button>
+</div>
+<div class="cal-grid" id="cal-grid">
+<div class="cdow">日</div><div class="cdow">月</div><div class="cdow">火</div><div class="cdow">水</div><div class="cdow">木</div><div class="cdow">金</div><div class="cdow">土</div>
+</div>
+</div>
+<div class="gcal-txt" id="gcal-txt"></div>
+<div id="slots-sec" style="display:none">
+<p class="sec mt18">時間を選んでね</p>
+<div class="slots-grid" id="slots-grid"></div>
+</div>
+<div style="margin-top:20px;">
+<button class="btnp" id="btn1" onclick="go(2)" disabled>次へ　→　お客様情報</button>
+<a class="btnb" href="https://onebalanceyume-beep.github.io/onebalance-member/onebalance-v9.html" style="text-decoration:none;text-align:center;">← 体験予約ページに戻る</a>
+</div>
+</div>
+
+<div class="panel" id="p2">
+<p class="sec">お客様情報</p>
+
+<div class="join-info">
+<h4>🥊 入会手続きについて</h4>
+<p style="font-size:12px;color:var(--g600);line-height:1.7;font-weight:600;margin-bottom:10px;">
+入会手続き後、そのまま運動できます！<br>
+最初の運動は60分〜90分程度になります。
+</p>
+
+<h4 style="margin-top:12px;">👕 持ってくるもの</h4>
+<ul>
+<li>軍手<span class="sub">※ジム内で100円販売あり</span></li>
+<li>タオル<span class="sub">※ジム内で販売あり</span></li>
+<li>上靴（裏が綺麗な靴）</li>
+<li>日割り計算分のお金</li>
+</ul>
+
+<h4>💰 お支払いについて</h4>
+<p style="font-size:12px;color:var(--g600);line-height:1.7;font-weight:600;margin-bottom:8px;">
+選んだコース・入会日によって最初にお支払いいただく金額は変わります。<br>
+月会費は毎月10日締めのため、<strong style="color:var(--green)">日割り計算でご請求いたしますのでご安心ください。</strong>
+</p>
+<p style="font-size:11px;color:var(--g400);line-height:1.6;font-weight:600;">
+支払い方法：現金・PayPay・J-coin（ジムでのお支払い）
+</p>
+</div>
+
+<div class="form-card">
+<div class="fg">
+<div class="flbl">参加人数 <span class="freq">必須</span></div>
+<div class="pax-row">
+<button class="pax-btn sel" onclick="pickPax(this)">1名</button>
+<button class="pax-btn" onclick="pickPax(this)">2名</button>
+<button class="pax-btn" onclick="pickPax(this)">3名</button>
+<button class="pax-btn" onclick="pickPax(this)">4名</button>
+<button class="pax-btn" onclick="pickPax(this)">5名</button>
+</div>
+<div class="pax-note">代表者の方がご入力ください。2名以上でも代表者情報のみでOK！</div>
+</div>
+<div class="fg">
+<div class="flbl">代表者のお名前 <span class="freq">必須</span></div>
+<input class="finput" id="fn" type="text" placeholder="長澤 まさみ" oninput="chk()">
+</div>
+<div class="fg">
+<div class="flbl">電話番号 <span class="freq">必須</span></div>
+<input class="finput" id="ftel" type="tel" placeholder="090-0000-0000" oninput="chk()">
+</div>
+<div class="fg">
+<div class="flbl">メールアドレス <span class="freq">必須</span></div>
+<input class="finput" id="fmail" type="email" placeholder="example@gmail.com" oninput="chk()">
+</div>
+<div class="fg">
+<div class="flbl">住所 <span class="freq">必須</span></div>
+<input class="finput" id="fadr" type="text" placeholder="鳥取県米子市〇〇町0-0" oninput="chk()">
+</div>
+</div>
+
+<div class="rules-box">
+<h4>📋 入会前の事前確認事項</h4>
+<ol>
+<li>ケガをされた場合は自己責任となります。ジムでは応急処置までの対応となります。</li>
+<li>筋トレ器具は自由にご使用いただけます。使用方法のみスタッフが指導いたします。万が一器具を破損された場合は弁償をお願いしております。</li>
+<li>【週1コース】の曜日設定は、前月までのお申し出で変更可能です。</li>
+<li>最終受付は閉店30分前です。一度もご利用がなくても、退会されない限り会費が発生します。</li>
+<li>定休日以外にもGW・お盆・年末年始はお休みとなります。事前に告知いたしますのでご了承ください。</li>
+<li>月会費は毎月10日に引落しとなります（土日祝は前後する場合あり）。10日に引落しができなかった場合、次回引落し時に手数料¥200が発生いたします。</li>
+<li>ご退会の際は一律¥3,300の事務手数料がかかります。コース変更は¥1,650、休会は月々¥2,200となります。</li>
+<li>盗難・紛失については責任を負いかねます。会費未払いの場合は法的手段をとる場合がございます。反社会的勢力に該当する方のご入会はお断りしております。</li>
+</ol>
+</div>
+<div class="notice green">
+😊 <strong>安心してお越しください</strong><br>
+当日、入会手続きの際にスタッフから改めて詳しくご説明いたします。ご不明点はその場で遠慮なくお聞きください。ご納得いただいた上でご入会いただけます。
+</div>
+<label class="agree-box" id="agree-box">
+<input type="checkbox" id="agree-chk" onchange="toggleAgree()">
+<span>上記「入会前の事前確認事項」を確認し、内容に同意します。</span>
+</label>
+
+<div class="notice">🔒 入力情報は予約管理のみに使用します。</div>
+<button class="btnp" id="btn2" onclick="go(3)" disabled>次へ　→　内容確認</button>
+<button class="btnb" onclick="go(1)">← 戻る</button>
+</div>
+
+<div class="panel" id="p3">
+<p class="sec">予約内容の確認</p>
+<div class="conf-card">
+<div class="conf-hdr">🥊 入会予約</div>
+<div class="conf-row"><div class="ck">日時</div><div class="cv" id="cv-d"></div></div>
+<div class="conf-row"><div class="ck">参加人数</div><div class="cv" id="cv-pax"></div></div>
+<div class="conf-row"><div class="ck">代表者名</div><div class="cv" id="cv-n"></div></div>
+<div class="conf-row"><div class="ck">電話番号</div><div class="cv" id="cv-t"></div></div>
+<div class="conf-row"><div class="ck">メール</div><div class="cv" id="cv-e"></div></div>
+<div class="conf-row"><div class="ck">住所</div><div class="cv" id="cv-a"></div></div>
+</div>
+<div class="notice">📩 確定後、ご入力のメールアドレスに確認メールをお送りします。<br>メールにはキャンセルURLも記載されています。</div>
+<button class="btnp" onclick="doSub()">🎉 この内容で予約を確定する</button>
+<button class="btnb" onclick="go(2)">← 戻る</button>
+</div>
+
+<div class="panel" id="p4">
+<div class="suc-wrap">
+<span class="suc-icon">🎉</span>
+<div class="suc-ttl">ご予約完了！</div>
+<div class="suc-txt">確認メールをお送りしました✉️<br>当日のご来館をお待ちしております😊</div>
+<div style="background:#EEFBF2;border:2px solid #C8E6C9;border-radius:14px;padding:14px 16px;margin:0 auto 20px;max-width:320px;">
+<div style="font-size:10px;font-weight:800;color:#B0A898;letter-spacing:1px;margin-bottom:4px;">予約ID</div>
+<div id="suc-id" style="font-size:20px;font-weight:900;color:#2E8B57;letter-spacing:2px;font-family:monospace;">--------</div>
+<div style="font-size:10px;color:#7A6E60;margin-top:6px;line-height:1.6;">※キャンセル時に必要です<br>※確認メールにもキャンセルURLを記載しています</div>
+</div>
+<div style="font-size:12px;color:#7A6E60;margin-bottom:24px;line-height:1.8;"><strong>ONE-BALANCE BOXING GYM</strong><br>鳥取県米子市車尾6丁目8-59<br>TEL：0859-49-5275</div>
+<button class="btnp" onclick="location.href='https://www.one-balance.jp'">ホームページへ戻る</button>
+<button class="btnb" onclick="location.reload()">最初に戻る</button>
+</div>
+</div>
+</main>
+<div class="lov" id="lov"><div class="spin"></div></div>
+<script>
+var GAS = "https://script.google.com/macros/s/AKfycbzWPH4cO-kPMGqbJqHEsYG1yefxa0FoKQOgDJeIeUHIe9alN1yrsDVHe6E7yFY1DFiY/exec";
+var DOW = ["日","月","火","水","木","金","土"];
+var selDate = null;
+var selTime = null;
+var selStart = null;
+var selEnd = null;
+var pax = 1;
+var agreed = false;
+var cY, cM;
+
+function init() {
+  var n = new Date();
+  cY = n.getFullYear();
+  cM = n.getMonth();
+  renderCal();
+}
+
+function go(n) {
+  var panels = document.querySelectorAll(".panel");
+  for (var i = 0; i < panels.length; i++) panels[i].classList.remove("on");
+  document.getElementById("p" + n).classList.add("on");
+  for (var i = 1; i <= 3; i++) {
+    var el = document.getElementById("sd" + i);
+    el.classList.remove("active","done");
+    if (i < n) el.classList.add("done");
+    if (i === n) el.classList.add("active");
+  }
+  if (n === 3) fillConf();
+  window.scrollTo(0, 0);
+}
+
+function toggleAgree() {
+  agreed = document.getElementById("agree-chk").checked;
+  var box = document.getElementById("agree-box");
+  if (agreed) box.classList.add("on"); else box.classList.remove("on");
+  chk();
+}
+
+function prevM() { cM--; if (cM < 0) { cM = 11; cY--; } renderCal(); }
+function nextM() { cM++; if (cM > 11) { cM = 0; cY++; } renderCal(); }
+
+function p2(n) { return n < 10 ? "0" + n : "" + n; }
+function fmt(d) { return d.getFullYear() + "-" + p2(d.getMonth()+1) + "-" + p2(d.getDate()); }
+
+function renderCal() {
+  document.getElementById("cal-lbl").textContent = cY + "年" + (cM+1) + "月";
+  var grid = document.getElementById("cal-grid");
+  var old = grid.querySelectorAll(".cday");
+  for (var i = 0; i < old.length; i++) old[i].remove();
+  var today = new Date(); today.setHours(0,0,0,0);
+  var first = new Date(cY, cM, 1);
+  var last = new Date(cY, cM+1, 0).getDate();
+  var hols = getHols(cY);
+  for (var i = 0; i < first.getDay(); i++) {
+    var e = document.createElement("div"); e.className = "cday"; grid.appendChild(e);
+  }
+  for (var d = 1; d <= last; d++) {
+    var dt = new Date(cY, cM, d);
+    var ds = fmt(dt);
+    var dow = dt.getDay();
+    var el = document.createElement("div");
+    el.className = "cday";
+    el.textContent = d;
+    if (dow === 0) el.classList.add("sunday");
+    if (dt <= today) {
+      el.classList.add("past");
+    } else if (dow === 0 || hols.indexOf(ds) >= 0) {
+      el.classList.add("closed");
+    } else {
+      el.classList.add("avail");
+      if (selDate === ds) el.classList.add("sel");
+      (function(dateStr) {
+        el.addEventListener("click", function() { pickDate(dateStr); });
+      })(ds);
+    }
+    grid.appendChild(el);
+  }
+}
+
+function pickDate(ds) {
+  selDate = ds;
+  selTime = null; selStart = null; selEnd = null;
+  renderCal();
+  document.getElementById("btn1").disabled = true;
+  fetchSlots();
+}
+
+function fetchSlots() {
+  if (!selDate) return;
+  var sec = document.getElementById("slots-sec");
+  var grid = document.getElementById("slots-grid");
+  var txt = document.getElementById("gcal-txt");
+  grid.innerHTML = "";
+  sec.style.display = "block";
+  txt.className = "gcal-txt loading";
+  txt.textContent = "⌛ 空き状況を確認中...";
+  var cb = "cb" + Date.now();
+  window[cb] = function(res) {
+    delete window[cb];
+    if (res.error) {
+      txt.className = "gcal-txt err";
+      txt.textContent = "⚠️ " + res.error;
+      return;
+    }
+    txt.className = "gcal-txt ok";
+    txt.textContent = "✅ 空き状況を取得しました";
+    if (!res.slots || res.slots.length === 0) {
+      grid.innerHTML = "<p style='color:var(--g400);font-size:12px;padding:8px 0;'>この日は空きがありません</p>";
+      return;
+    }
+    for (var i = 0; i < res.slots.length; i++) {
+      (function(slot) {
+        var btn = document.createElement("button");
+        btn.className = "slot";
+        btn.textContent = slot.label;
+        btn.addEventListener("click", function() {
+          selTime = slot.label;
+          selStart = slot.start;
+          selEnd = slot.end;
+          var all = document.querySelectorAll(".slot");
+          for (var j = 0; j < all.length; j++) all[j].classList.remove("sel");
+          btn.classList.add("sel");
+          document.getElementById("btn1").disabled = false;
+        });
+        grid.appendChild(btn);
+      })(res.slots[i]);
+    }
+  };
+  var sc = document.createElement("script");
+  sc.onerror = function() {
+    txt.className = "gcal-txt err";
+    txt.textContent = "⚠️ 取得に失敗しました。再度お試しください。";
+  };
+  sc.src = GAS + "?action=getJoinSlots&date=" + selDate + "&callback=" + cb;
+  document.head.appendChild(sc);
+}
+
+function pickPax(btn) {
+  pax = parseInt(btn.textContent);
+  var btns = document.querySelectorAll(".pax-btn");
+  for (var i = 0; i < btns.length; i++) btns[i].classList.remove("sel");
+  btn.classList.add("sel");
+}
+
+function chk() {
+  var formOk = document.getElementById("fn").value.trim() &&
+               document.getElementById("ftel").value.trim() &&
+               document.getElementById("fmail").value.trim() &&
+               document.getElementById("fadr").value.trim();
+  document.getElementById("btn2").disabled = !(formOk && agreed);
+}
+
+function fillConf() {
+  var dObj = new Date(selDate + "T00:00:00");
+  var dtStr = (dObj.getMonth()+1) + "月" + dObj.getDate() + "日（" + DOW[dObj.getDay()] + "）　" + selTime + "〜";
+  document.getElementById("cv-d").textContent = dtStr;
+  document.getElementById("cv-pax").textContent = pax + "名";
+  document.getElementById("cv-n").textContent = document.getElementById("fn").value;
+  document.getElementById("cv-t").textContent = document.getElementById("ftel").value;
+  document.getElementById("cv-e").textContent = document.getElementById("fmail").value;
+  document.getElementById("cv-a").textContent = document.getElementById("fadr").value;
+}
+
+function doSub() {
+  document.getElementById("lov").classList.add("on");
+  var cb = "cb" + Date.now();
+  window[cb] = function(res) {
+    delete window[cb];
+    document.getElementById("lov").classList.remove("on");
+    if (res.ok) {
+      var panels = document.querySelectorAll(".panel");
+      for (var i = 0; i < panels.length; i++) panels[i].classList.remove("on");
+      document.getElementById("p4").classList.add("on");
+      if (res.reservationId) {
+        var idEl = document.getElementById("suc-id");
+        if (idEl) idEl.textContent = res.reservationId;
+      }
+      window.scrollTo(0, 0);
+    } else {
+      alert(res.error || "送信に失敗しました。お電話にてご連絡ください。");
+    }
+  };
+  var sc = document.createElement("script");
+  sc.src = GAS + "?action=saveJoin"
+    + "&date=" + encodeURIComponent(selDate)
+    + "&time=" + encodeURIComponent(selTime)
+    + "&start=" + encodeURIComponent(selStart || "")
+    + "&end=" + encodeURIComponent(selEnd || "")
+    + "&pax=" + encodeURIComponent(pax)
+    + "&name=" + encodeURIComponent(document.getElementById("fn").value)
+    + "&phone=" + encodeURIComponent(document.getElementById("ftel").value)
+    + "&email=" + encodeURIComponent(document.getElementById("fmail").value)
+    + "&address=" + encodeURIComponent(document.getElementById("fadr").value)
+    + "&agreed=1"
+    + "&callback=" + cb;
+  document.head.appendChild(sc);
+}
+
+function getHols(y) {
+  return [
+    y+"-01-01", y+"-02-11", y+"-02-23", y+"-04-29",
+    y+"-05-03", y+"-05-04", y+"-05-05", y+"-08-11",
+    y+"-09-23", y+"-11-03", y+"-11-23"
+  ];
+}
+
+init();
+</script>
+</body>
+</html>
