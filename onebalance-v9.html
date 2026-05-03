@@ -72,6 +72,8 @@ main { max-width:480px; margin:0 auto; padding:18px 14px 100px; }
 .cday { aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; border-radius:50%; cursor:pointer; touch-action:manipulation; }
 .cday.past,.cday.closed { color:var(--g200); cursor:not-allowed; pointer-events:none; }
 .cday.sunday { color:#D44; }
+.cday.holiday { color:#D44; background:#FFF0F0; }
+.cday.holiday.past { color:var(--g200); background:transparent; }
 .cday.avail:hover,.cday.avail:active { background:var(--yl-l); }
 .cday.sel { background:linear-gradient(135deg,#C8102E,#E8601C); color:white; font-weight:900; }
 .gcal-txt { font-size:11px; text-align:center; padding:6px 0 4px; font-weight:700; }
@@ -140,7 +142,7 @@ main { max-width:480px; margin:0 auto; padding:18px 14px 100px; }
 <div class="mc tour" id="mc-tour" onclick="pickMenu('tour')">
 <div class="mc-head"><img class="mc-ico" src="https://onebalanceyume-beep.github.io/onebalance-member/images/visit.png"><div style="flex:1"><div class="mc-nm">ジム見学</div><div class="mc-badges"><span class="bdg">⏱ 所要時間30分</span></div></div><div class="mc-chk" id="chk-tour"></div></div>
 <div class="mc-body">まずは気軽に来てみてください♪ ジムの雰囲気・設備・スタッフをご確認いただけます。見学だけでも大歓迎！</div>
-</div><!-- 入会予約ボタン（別ページへ誘導） -->
+</div>
 <a href="join.html" style="text-decoration:none;display:block;">
 <div class="mc" style="background:linear-gradient(135deg,#EEFBF2,#FFFFFF);border-color:#2E8B57;border-width:2.5px;">
 <div class="mc-head">
@@ -157,12 +159,11 @@ main { max-width:480px; margin:0 auto; padding:18px 14px 100px; }
 <div class="mc-body">入会手続き後、そのまま運動できます！最初の運動は60分〜90分程度。専用ページへ移動します。</div>
 </div>
 </a>
-<!-- /入会予約ボタン -->
 </div>
 <button class="btnp" onclick="go(2)">次へ　→　日程を選ぶ</button>
 </div>
 <div class="panel" id="p2">
-<p class="sec">日付を選んでね</p>
+<p class="sec">日付を選んでね <span style="font-weight:600;color:var(--g400);font-size:9px;letter-spacing:0;">※日曜・祝日は定休日</span></p>
 <div class="cal-card">
 <div class="cal-nav">
 <button onclick="prevM()">&#8249;</button>
@@ -263,10 +264,24 @@ var selEnd = null;
 var pax = 1;
 var cY, cM;
 
+// 祝日データ（holidays-jp APIから取得）
+var holidays = {};
+
+function loadHolidays() {
+  fetch('https://holidays-jp.github.io/api/v1/date.json')
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      holidays = d;
+      renderCal();
+    })
+    .catch(function() {});
+}
+
 function init() {
   var n = new Date();
   cY = n.getFullYear();
   cM = n.getMonth();
+  loadHolidays();
   renderCal();
 }
 
@@ -311,7 +326,6 @@ function renderCal() {
   var today = new Date(); today.setHours(0,0,0,0);
   var first = new Date(cY, cM, 1);
   var last = new Date(cY, cM+1, 0).getDate();
-  var hols = getHols(cY);
   for (var i = 0; i < first.getDay(); i++) {
     var e = document.createElement("div"); e.className = "cday"; grid.appendChild(e);
   }
@@ -322,11 +336,14 @@ function renderCal() {
     var el = document.createElement("div");
     el.className = "cday";
     el.textContent = d;
+    var isHoliday = !!holidays[ds];
     if (dow === 0) el.classList.add("sunday");
+    if (isHoliday) el.classList.add("holiday");
     if (dt < today) {
       el.classList.add("past");
-    } else if (dow === 0 || hols.indexOf(ds) >= 0) {
+    } else if (dow === 0 || isHoliday) {
       el.classList.add("closed");
+      if (isHoliday) el.title = holidays[ds];
     } else {
       el.classList.add("avail");
       if (fmt(today) === ds) el.classList.add("today");
@@ -458,14 +475,6 @@ function doSub() {
     + "&address=" + encodeURIComponent(document.getElementById("fadr").value)
     + "&callback=" + cb;
   document.head.appendChild(sc);
-}
-
-function getHols(y) {
-  return [
-    y+"-01-01", y+"-02-11", y+"-02-23", y+"-04-29",
-    y+"-05-03", y+"-05-04", y+"-05-05", y+"-08-11",
-    y+"-09-23", y+"-11-03", y+"-11-23"
-  ];
 }
 
 init();
