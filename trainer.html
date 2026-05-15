@@ -145,7 +145,6 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 .grade-bar-fill{height:100%;border-radius:6px;transition:width .6s ease;}
 .month-sel{padding:10px 12px;border:2px solid var(--blue);border-radius:8px;font-size:14px;font-weight:700;outline:none;font-family:inherit;background:white;color:var(--blue-dark);}
 .fee-month-summary{font-size:12px;color:var(--text2);margin-top:8px;font-weight:600;line-height:1.8;}
-
 .r-filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
 .rf-btn{padding:7px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:2px solid transparent;background:#f0f0f0;color:#555;transition:all .15s;font-family:inherit;}
 .rf-btn.active{border-color:var(--red);background:var(--red-light);color:var(--red);box-shadow:0 0 0 2px rgba(219,68,76,.2);}
@@ -165,7 +164,6 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 .r-btn-call{padding:8px 14px;background:white;color:var(--blue-dark);border:2px solid var(--blue);border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;text-decoration:none;text-align:center;}
 .r-status-badge{font-size:10px;padding:3px 10px;border-radius:20px;font-weight:700;white-space:nowrap;}
 .r-empty{padding:40px 20px;text-align:center;color:var(--text2);font-size:13px;}
-
 .fm-card{background:white;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:14px;border-left:4px solid var(--blue);margin-bottom:8px;}
 .fm-row-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px;}
 .fm-name{font-size:15px;font-weight:800;}
@@ -176,7 +174,11 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 .fm-edit-row input:focus{border-color:var(--blue);}
 .fm-edit-row input[type="number"]{width:70px;}
 .fm-edit-row input[type="text"]{flex:1;min-width:120px;}
-
+/* 曜日ボタン */
+.day-btn{width:40px;height:40px;border-radius:8px;border:2px solid var(--gray2);background:white;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;}
+.day-btn.sel{background:var(--blue);color:white;border-color:var(--blue);}
+.day-btn:hover:not(.sel){border-color:var(--blue);color:var(--blue);}
+.days-badge{display:inline-block;background:var(--blue-light);color:var(--blue-dark);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;margin-left:4px;}
 @media(min-width:600px){.sgrid{grid-template-columns:repeat(4,1fr);}.ggrid{grid-template-columns:repeat(4,1fr);}.badge-award{grid-template-columns:repeat(4,1fr);}}
 </style>
 </head>
@@ -210,21 +212,9 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
     <div class="card">
       <div class="card-title">💴 今月の会費状況</div>
       <div class="fee-summary">
-        <div class="fee-sum-card">
-          <div class="fee-sum-label">見込み総額</div>
-          <div class="fee-sum-val total" id="fee-total">-</div>
-          <div style="font-size:10px;color:var(--text2);margin-top:2px">円</div>
-        </div>
-        <div class="fee-sum-card">
-          <div class="fee-sum-label">✅ 入金済み</div>
-          <div class="fee-sum-val paid" id="fee-paid">-</div>
-          <div style="font-size:10px;color:var(--text2);margin-top:2px">円</div>
-        </div>
-        <div class="fee-sum-card">
-          <div class="fee-sum-label">❌ 未入金</div>
-          <div class="fee-sum-val unpaid" id="fee-unpaid">-</div>
-          <div style="font-size:10px;color:var(--text2);margin-top:2px">円</div>
-        </div>
+        <div class="fee-sum-card"><div class="fee-sum-label">見込み総額</div><div class="fee-sum-val total" id="fee-total">-</div><div style="font-size:10px;color:var(--text2);margin-top:2px">円</div></div>
+        <div class="fee-sum-card"><div class="fee-sum-label">✅ 入金済み</div><div class="fee-sum-val paid" id="fee-paid">-</div><div style="font-size:10px;color:var(--text2);margin-top:2px">円</div></div>
+        <div class="fee-sum-card"><div class="fee-sum-label">❌ 未入金</div><div class="fee-sum-val unpaid" id="fee-unpaid">-</div><div style="font-size:10px;color:var(--text2);margin-top:2px">円</div></div>
       </div>
     </div>
     <div class="card">
@@ -237,10 +227,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
         </div>
       </div>
     </div>
-    <div class="card">
-      <div class="card-title">年代別人数</div>
-      <div class="cw"><canvas id="agec"></canvas></div>
-    </div>
+    <div class="card"><div class="card-title">年代別人数</div><div class="cw"><canvas id="agec"></canvas></div></div>
     <div class="card"><div class="card-title">コース別人数</div><div class="cw"><canvas id="cc"></canvas></div></div>
   </div>
 </div>
@@ -309,10 +296,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 <div class="tab-content" id="tab-freemonth">
   <div class="card">
     <div class="card-title">🎁 無料月適用中の会員</div>
-    <p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">
-      クーポンで月会費無料になっている会員の一覧です。<br>
-      新規入会時は自動で記入されます。必要に応じて手動で編集できます。
-    </p>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">クーポンで月会費無料になっている会員の一覧です。<br>新規入会時は自動で記入されます。必要に応じて手動で編集できます。</p>
     <div class="ib">
       <button class="btn btn-red" onclick="loadFreeMonth()">🔄 更新</button>
       <span id="fm-count" style="font-size:12px;color:var(--text2)"></span>
@@ -322,9 +306,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
   </div>
   <div class="card">
     <div class="card-title">➕ 手動で無料月を設定</div>
-    <p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">
-      会員マスタから会員を選んで、無料月数を手動で設定できます。
-    </p>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">会員マスタから会員を選んで、無料月数を手動で設定できます。</p>
     <div style="margin-bottom:12px">
       <input type="text" id="fm-search" class="si" placeholder="会員名で検索..." oninput="renderFMAll()" style="margin-bottom:8px">
     </div>
@@ -349,18 +331,9 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
       <div class="sc green"><div class="slabel">年間成約率</div><div class="sval" id="st-conv-y">-<span>%</span></div></div>
       <div class="sc red2"><div class="slabel">累計体験数</div><div class="sval" id="st-trial-total">-<span>人</span></div></div>
     </div>
-    <div class="card">
-      <div class="card-title">月別 体験数・入会数（過去12ヶ月）</div>
-      <div class="cw"><canvas id="monthly-chart"></canvas></div>
-    </div>
-    <div class="card">
-      <div class="card-title">体験者 年代別（累計）</div>
-      <div class="cw"><canvas id="trial-age-chart"></canvas></div>
-    </div>
-    <div class="card">
-      <div class="card-title">在籍会員 年代別</div>
-      <div class="cw"><canvas id="member-age-chart"></canvas></div>
-    </div>
+    <div class="card"><div class="card-title">月別 体験数・入会数（過去12ヶ月）</div><div class="cw"><canvas id="monthly-chart"></canvas></div></div>
+    <div class="card"><div class="card-title">体験者 年代別（累計）</div><div class="cw"><canvas id="trial-age-chart"></canvas></div></div>
+    <div class="card"><div class="card-title">在籍会員 年代別</div><div class="cw"><canvas id="member-age-chart"></canvas></div></div>
     <div class="card">
       <div class="card-title">体験者 知ったキッカケ</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:center">
@@ -368,10 +341,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
         <div id="source-legend" style="font-size:12px;line-height:2.2"></div>
       </div>
     </div>
-    <div class="card">
-      <div class="card-title">グレード別 在籍人数</div>
-      <div id="grade-bars" style="display:flex;flex-direction:column;gap:12px;margin-top:4px"></div>
-    </div>
+    <div class="card"><div class="card-title">グレード別 在籍人数</div><div id="grade-bars" style="display:flex;flex-direction:column;gap:12px;margin-top:4px"></div></div>
   </div>
 </div>
 
@@ -398,7 +368,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
     <div class="card-title">アプリ情報</div>
     <div style="font-size:13px;color:var(--text2);line-height:2.2">
       <div>アプリ名：one-BALANCE トレーナー管理</div>
-      <div>バージョン：1.9.2（GAS URL自動修正）</div>
+      <div>バージョン：2.0.0（曜日1・曜日2対応）</div>
       <div>赤 #DB444C / 青 #5BB9CD</div>
     </div>
   </div>
@@ -406,6 +376,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 
 </div>
 
+<!-- 会員詳細モーダル -->
 <div class="modal-overlay" id="mm" onclick="clm(event)">
   <div class="modal">
     <div class="mh"><div class="mt" id="mn">-</div><button class="mx" onclick="clmd()">×</button></div>
@@ -418,6 +389,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
       <div class="ir"><span class="il">月会費</span><span class="iv" id="mfee">-</span></div>
       <div class="ir"><span class="il">入会日</span><span class="iv" id="mj">-</span></div>
       <div class="ir"><span class="il">状態</span><span class="iv" id="mst2">-</span></div>
+      <div class="ir" id="days-info" style="display:none"><span class="il">通う曜日</span><span class="iv" id="mdays">-</span></div>
       <div class="ir"><span class="il">口座名義人</span><span class="iv" id="mkouza">-</span></div>
       <div class="ir" style="align-items:center">
         <span class="il">名義変更</span>
@@ -427,6 +399,36 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
         </div>
       </div>
       <div class="ir"><span class="il">会員URL</span><a id="mu" href="#" target="_blank" style="font-size:11px;color:var(--blue);word-break:break-all">-</a></div>
+    </div>
+    <!-- 週1曜日設定セクション（週1コースのみ表示） -->
+    <div class="ms" id="days-section" style="display:none">
+      <div class="mst">週1曜日設定</div>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:10px">週1コースの方の通う曜日を設定します（2つ選択）</p>
+      <div style="margin-bottom:10px">
+        <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px">曜日1</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap" id="day1-btns">
+          <button class="day-btn" data-day="月" onclick="selDay(1,'月')">月</button>
+          <button class="day-btn" data-day="火" onclick="selDay(1,'火')">火</button>
+          <button class="day-btn" data-day="水" onclick="selDay(1,'水')">水</button>
+          <button class="day-btn" data-day="木" onclick="selDay(1,'木')">木</button>
+          <button class="day-btn" data-day="金" onclick="selDay(1,'金')">金</button>
+          <button class="day-btn" data-day="土" onclick="selDay(1,'土')">土</button>
+          <button class="day-btn" data-day="日" onclick="selDay(1,'日')">日</button>
+        </div>
+      </div>
+      <div style="margin-bottom:12px">
+        <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px">曜日2</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap" id="day2-btns">
+          <button class="day-btn" data-day="月" onclick="selDay(2,'月')">月</button>
+          <button class="day-btn" data-day="火" onclick="selDay(2,'火')">火</button>
+          <button class="day-btn" data-day="水" onclick="selDay(2,'水')">水</button>
+          <button class="day-btn" data-day="木" onclick="selDay(2,'木')">木</button>
+          <button class="day-btn" data-day="金" onclick="selDay(2,'金')">金</button>
+          <button class="day-btn" data-day="土" onclick="selDay(2,'土')">土</button>
+          <button class="day-btn" data-day="日" onclick="selDay(2,'日')">日</button>
+        </div>
+      </div>
+      <button class="btn btn-blue btn-sm" onclick="saveDays()">💾 曜日を保存する</button>
     </div>
     <div class="ms">
       <div class="mst">コース変更</div>
@@ -466,16 +468,12 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 <script>
 (function cacheControl(){
   if('serviceWorker' in navigator){
-    navigator.serviceWorker.getRegistrations().then(regs=>{
-      regs.forEach(r=>r.unregister());
-    }).catch(()=>{});
+    navigator.serviceWorker.getRegistrations().then(regs=>{regs.forEach(r=>r.unregister());}).catch(()=>{});
   }
   if('caches' in window){
     caches.keys().then(keys=>{keys.forEach(k=>caches.delete(k));}).catch(()=>{});
   }
-  window.addEventListener('pageshow',(e)=>{
-    if(e.persisted)window.location.reload();
-  });
+  window.addEventListener('pageshow',(e)=>{if(e.persisted)window.location.reload();});
   let lastHidden=null;
   document.addEventListener('visibilitychange',()=>{
     if(document.hidden){lastHidden=Date.now();}
@@ -486,12 +484,11 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
   });
 })();
 
-const DGAS='https://script.google.com/macros/s/AKfycbxrU7YC63kYJpPlYn29-C0G97J8pRG7U9LgcqrSisvo4aidOrZ_kqosYG_nlm9tuqFdNQ/exec';
+const DGAS='https://script.google.com/macros/s/AKfycby4Gx66lkS_Dy9kZw8h9OIOCKKtO96FZT4UHXPR2QlWynMOQthRuCIgCpV_8myVwor1JQ/exec';
 const DGAS_RESERVE='https://script.google.com/macros/s/AKfycbzWPH4cO-kPMGqbJqHEsYG1yefxa0FoKQOgDJeIeUHIe9alN1yrsDVHe6E7yFY1DFiY/exec';
 const DGAS1='https://script.google.com/macros/s/AKfycbxNxYgejS-1NZvt33PuIkh-DIEtHS9-hTFyAxUjO_8a6E9MM9CPxxDV8KMhX189c8oyrg/exec';
 
-// GAS URLバージョン管理（このバージョンが上がると古いlocalStorageを上書き）
-const GAS_URL_VERSION='v2';
+const GAS_URL_VERSION='v3';
 (function updateGasUrls(){
   const savedVer=localStorage.getItem('gasUrlVersion');
   if(savedVer!==GAS_URL_VERSION){
@@ -503,35 +500,35 @@ const GAS_URL_VERSION='v2';
 })();
 
 const GR=[
-  {n:'ホワイト前', b:'#f5f5f5', c:'#666',    d:'入会直後の初期状態'},
-  {n:'ホワイト',   b:'#ecf0f1', c:'#7f8c8d', d:'基本カリキュラム75%以上合格'},
-  {n:'グリーン',   b:'#eafaf1', c:'#27ae60', d:'守る基礎技術ができる'},
-  {n:'ブルー',     b:'#e8f4fd', c:'#2980b9', d:'マスボクシングができる'},
-  {n:'オレンジ',   b:'#fff3e0', c:'#e67e22', d:'当てマスボクシングができる'},
-  {n:'レッド',     b:'#fdecea', c:'#e74c3c', d:'スパーリングができる'},
-  {n:'ゴールド',   b:'#fef9e7', c:'#d4a017', d:'ボクシングを理解してスパーリング'}
+  {n:'ホワイト前',b:'#f5f5f5',c:'#666',d:'入会直後の初期状態'},
+  {n:'ホワイト',b:'#ecf0f1',c:'#7f8c8d',d:'基本カリキュラム75%以上合格'},
+  {n:'グリーン',b:'#eafaf1',c:'#27ae60',d:'守る基礎技術ができる'},
+  {n:'ブルー',b:'#e8f4fd',c:'#2980b9',d:'マスボクシングができる'},
+  {n:'オレンジ',b:'#fff3e0',c:'#e67e22',d:'当てマスボクシングができる'},
+  {n:'レッド',b:'#fdecea',c:'#e74c3c',d:'スパーリングができる'},
+  {n:'ゴールド',b:'#fef9e7',c:'#d4a017',d:'ボクシングを理解してスパーリング'}
 ];
 
 const COURSES=[
-  {n:'いつでもスパーリングボクシング（男性）', f:7810},
-  {n:'いつでもライトボクシング（男性）',       f:7260},
-  {n:'いつでもキックエクササイズ（男性）',     f:7260},
-  {n:'いつでもライトボクシング（女性）',       f:6380},
-  {n:'いつでもキックエクササイズ（女性）',     f:6380},
-  {n:'週１スパーリングボクシング',             f:4950},
-  {n:'週１ライトボクシング',                   f:4620},
-  {n:'週１キックエクササイズ',                 f:4620},
-  {n:'週１ライト',                             f:3850},
-  {n:'いつでもライト（男性）',                 f:6380},
-  {n:'いつでもスパーリングボクシング（女性）', f:6930},
-  {n:'いつでもライト（女性）',                 f:5500},
+  {n:'いつでもスパーリングボクシング（男性）',f:7810},
+  {n:'いつでもライトボクシング（男性）',f:7260},
+  {n:'いつでもキックエクササイズ（男性）',f:7260},
+  {n:'いつでもライトボクシング（女性）',f:6380},
+  {n:'いつでもキックエクササイズ（女性）',f:6380},
+  {n:'週１スパーリングボクシング',f:4950},
+  {n:'週１ライトボクシング',f:4620},
+  {n:'週１キックエクササイズ',f:4620},
+  {n:'週１ライト',f:3850},
+  {n:'いつでもライト（男性）',f:6380},
+  {n:'いつでもスパーリングボクシング（女性）',f:6930},
+  {n:'いつでもライト（女性）',f:5500},
 ];
 
 const BADGES_DEF=[
-  {key:'defense', name:'ディフェンスマイスター', stars:'⭐', color:'#DB444C', bg:'#fff0f0'},
-  {key:'step',    name:'ステップマイスター',     stars:'⭐', color:'#5BB9CD', bg:'#e8f7fa'},
-  {key:'counter', name:'カウンターマイスター',   stars:'⭐', color:'#E8621A', bg:'#fff3ec'},
-  {key:'basic',   name:'ベーシックマイスター',   stars:'🌟🌟', color:'#F39C12', bg:'#fffbf0'},
+  {key:'defense',name:'ディフェンスマイスター',stars:'⭐',color:'#DB444C',bg:'#fff0f0'},
+  {key:'step',name:'ステップマイスター',stars:'⭐',color:'#5BB9CD',bg:'#e8f7fa'},
+  {key:'counter',name:'カウンターマイスター',stars:'⭐',color:'#E8621A',bg:'#fff3ec'},
+  {key:'basic',name:'ベーシックマイスター',stars:'🌟🌟',color:'#F39C12',bg:'#fffbf0'},
 ];
 
 const CURRICULUM_ITEMS=[
@@ -556,6 +553,7 @@ let AM=[],FM=[],CP=1,CM=null,SD=null,GF='';
 let SELECTED_MONTH='';
 let AR=[],RF='upcoming';
 let FREE_MONTH_APPLIED=[],FREE_MONTH_ALL=[];
+let SEL_DAY1='',SEL_DAY2='';
 const PG=20,CH={};
 const gurl=()=>localStorage.getItem('gasUrl')||DGAS;
 const rurl=()=>localStorage.getItem('gasReserveUrl')||DGAS_RESERVE;
@@ -621,29 +619,14 @@ async function api(p){
 function apiReserve(params){
   return new Promise((resolve,reject)=>{
     const cbName='cb_'+Date.now()+'_'+Math.floor(Math.random()*10000);
-    const timeoutId=setTimeout(()=>{
-      delete window[cbName];
-      if(script.parentNode)script.parentNode.removeChild(script);
-      reject(new Error('timeout'));
-    },30000);
-    window[cbName]=(data)=>{
-      clearTimeout(timeoutId);
-      delete window[cbName];
-      if(script.parentNode)script.parentNode.removeChild(script);
-      resolve(data);
-    };
+    const timeoutId=setTimeout(()=>{delete window[cbName];if(script.parentNode)script.parentNode.removeChild(script);reject(new Error('timeout'));},30000);
+    window[cbName]=(data)=>{clearTimeout(timeoutId);delete window[cbName];if(script.parentNode)script.parentNode.removeChild(script);resolve(data);};
     const u=new URL(rurl());
     Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v));
-    u.searchParams.set('callback',cbName);
-    u.searchParams.set('_t',Date.now());
+    u.searchParams.set('callback',cbName);u.searchParams.set('_t',Date.now());
     const script=document.createElement('script');
     script.src=u.toString();
-    script.onerror=()=>{
-      clearTimeout(timeoutId);
-      delete window[cbName];
-      if(script.parentNode)script.parentNode.removeChild(script);
-      reject(new Error('network error'));
-    };
+    script.onerror=()=>{clearTimeout(timeoutId);delete window[cbName];if(script.parentNode)script.parentNode.removeChild(script);reject(new Error('network error'));};
     document.body.appendChild(script);
   });
 }
@@ -651,29 +634,14 @@ function apiReserve(params){
 function apiGas1(params){
   return new Promise((resolve,reject)=>{
     const cbName='cb_'+Date.now()+'_'+Math.floor(Math.random()*10000);
-    const timeoutId=setTimeout(()=>{
-      delete window[cbName];
-      if(script.parentNode)script.parentNode.removeChild(script);
-      reject(new Error('timeout'));
-    },30000);
-    window[cbName]=(data)=>{
-      clearTimeout(timeoutId);
-      delete window[cbName];
-      if(script.parentNode)script.parentNode.removeChild(script);
-      resolve(data);
-    };
+    const timeoutId=setTimeout(()=>{delete window[cbName];if(script.parentNode)script.parentNode.removeChild(script);reject(new Error('timeout'));},30000);
+    window[cbName]=(data)=>{clearTimeout(timeoutId);delete window[cbName];if(script.parentNode)script.parentNode.removeChild(script);resolve(data);};
     const u=new URL(g1url());
     Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v));
-    u.searchParams.set('callback',cbName);
-    u.searchParams.set('_t',Date.now());
+    u.searchParams.set('callback',cbName);u.searchParams.set('_t',Date.now());
     const script=document.createElement('script');
     script.src=u.toString();
-    script.onerror=()=>{
-      clearTimeout(timeoutId);
-      delete window[cbName];
-      if(script.parentNode)script.parentNode.removeChild(script);
-      reject(new Error('network error'));
-    };
+    script.onerror=()=>{clearTimeout(timeoutId);delete window[cbName];if(script.parentNode)script.parentNode.removeChild(script);reject(new Error('network error'));};
     document.body.appendChild(script);
   });
 }
@@ -706,16 +674,12 @@ function renderFeeSummary(){
 
 function renderD(d){
   const t=d.trial||{};
-  si('s1',`${d.total}<span>人</span>`);
-  si('s2',`${d.newThisMonth}<span>人</span>`);
-  si('s3',`${t.trialThisMonth||0}<span>人</span>`);
-  si('s4',`${t.convMonth||0}<span>%</span>`);
-  si('sm',`${d.male}人`);
-  si('sf',`${d.female}人`);
+  si('s1',`${d.total}<span>人</span>`);si('s2',`${d.newThisMonth}<span>人</span>`);
+  si('s3',`${t.trialThisMonth||0}<span>人</span>`);si('s4',`${t.convMonth||0}<span>%</span>`);
+  si('sm',`${d.male}人`);si('sf',`${d.female}人`);
   mk('gc','doughnut',['男性','女性'],[d.male,d.female],['#5BB9CD','#DB444C'],{cutout:'70%'});
   const ageLabels=['10代','20代','30代','40代','50代','60代以上'];
-  mk('agec','bar',ageLabels,ageLabels.map(k=>(d.ageCounts||{})[k]||0),
-    ['#5BB9CD','#DB444C','#27ae60','#F39C12','#E8621A','#9b59b6'],{noLegend:true,multiColor:true});
+  mk('agec','bar',ageLabels,ageLabels.map(k=>(d.ageCounts||{})[k]||0),['#5BB9CD','#DB444C','#27ae60','#F39C12','#E8621A','#9b59b6'],{noLegend:true,multiColor:true});
   const cl=Object.keys(d.courseCounts||{}).map(k=>k.replace('いつでも','').replace('週１','週1 '));
   mk('cc','bar',cl,Object.values(d.courseCounts||{}),'#DB444C',{indexAxis:'y',noLegend:true});
 }
@@ -732,16 +696,11 @@ async function loadSt(){
 
 function renderSt(d){
   const t=d.trial||{};
-  si('st-trial-m',`${t.trialThisMonth||0}<span>人</span>`);
-  si('st-join-m',`${t.joinedThisMonth||0}<span>人</span>`);
-  si('st-conv-m',`${t.convMonth||0}<span>%</span>`);
-  si('st-total',`${d.total||0}<span>人</span>`);
-  si('st-trial-y',`${t.trialYear||0}<span>人</span>`);
-  si('st-join-y',`${t.joinedYear||0}<span>人</span>`);
-  si('st-conv-y',`${t.convYear||0}<span>%</span>`);
-  si('st-trial-total',`${t.trialTotal||0}<span>人</span>`);
-  const mTrial=t.monthlyTrial||{};
-  const mJoined=t.monthlyJoined||{};
+  si('st-trial-m',`${t.trialThisMonth||0}<span>人</span>`);si('st-join-m',`${t.joinedThisMonth||0}<span>人</span>`);
+  si('st-conv-m',`${t.convMonth||0}<span>%</span>`);si('st-total',`${d.total||0}<span>人</span>`);
+  si('st-trial-y',`${t.trialYear||0}<span>人</span>`);si('st-join-y',`${t.joinedYear||0}<span>人</span>`);
+  si('st-conv-y',`${t.convYear||0}<span>%</span>`);si('st-trial-total',`${t.trialTotal||0}<span>人</span>`);
+  const mTrial=t.monthlyTrial||{};const mJoined=t.monthlyJoined||{};
   const mLabels=Object.keys(mTrial).map(k=>k.replace('年','/').replace('月',''));
   mk('monthly-chart','bar',mLabels,[
     {label:'体験数',data:Object.values(mTrial),backgroundColor:'rgba(91,185,205,0.8)',borderRadius:4,borderSkipped:false},
@@ -751,31 +710,20 @@ function renderSt(d){
   const ageColors=['#5BB9CD','#DB444C','#27ae60','#f39c12','#9b59b6','#e67e22'];
   mk('trial-age-chart','bar',ageLabels,ageLabels.map(k=>(t.trialAge||{})[k]||0),ageColors,{noLegend:true,multiColor:true});
   mk('member-age-chart','bar',ageLabels,ageLabels.map(k=>(d.ageCounts||{})[k]||0),ageColors,{noLegend:true,multiColor:true});
-  const src=t.trialSource||{};
-  const srcLabels=Object.keys(src);
-  const srcData=Object.values(src);
+  const src=t.trialSource||{};const srcLabels=Object.keys(src);const srcData=Object.values(src);
   const srcColors=['#DB444C','#5BB9CD','#27ae60','#f39c12','#9b59b6','#e67e22','#1abc9c'];
   if(srcLabels.length>0){
     mk('source-chart','doughnut',srcLabels,srcData,srcColors,{cutout:'60%'});
     const total=srcData.reduce((a,b)=>a+b,0)||1;
     document.getElementById('source-legend').innerHTML=srcLabels.map((l,i)=>
-      `<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
-        <span style="width:10px;height:10px;border-radius:50%;background:${srcColors[i]||'#ccc'};display:inline-block;flex-shrink:0"></span>
-        <span>${l}：${srcData[i]}人（${Math.round(srcData[i]/total*100)}%）</span>
-      </div>`
+      `<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><span style="width:10px;height:10px;border-radius:50%;background:${srcColors[i]||'#ccc'};display:inline-block;flex-shrink:0"></span><span>${l}：${srcData[i]}人（${Math.round(srcData[i]/total*100)}%）</span></div>`
     ).join('');
   }
   const gradeOrder=['ホワイト前','ホワイト','グリーン','ブルー','オレンジ','レッド','ゴールド'];
-  const gc=d.gradeCounts||{};
-  const maxG=Math.max(...gradeOrder.map(g=>gc[g]||0),1);
+  const gc=d.gradeCounts||{};const maxG=Math.max(...gradeOrder.map(g=>gc[g]||0),1);
   document.getElementById('grade-bars').innerHTML=gradeOrder.map(g=>{
-    const cnt=gc[g]||0;
-    const pct=Math.round(cnt/maxG*100);
-    const col=GRADE_COLORS[g]||'#ccc';
-    return `<div class="grade-bar-wrap">
-      <div class="grade-bar-label"><span style="color:${col};font-weight:800">${g}</span><span style="color:var(--text2)">${cnt}人</span></div>
-      <div class="grade-bar-bg"><div class="grade-bar-fill" style="background:${col};width:${pct}%"></div></div>
-    </div>`;
+    const cnt=gc[g]||0;const pct=Math.round(cnt/maxG*100);const col=GRADE_COLORS[g]||'#ccc';
+    return `<div class="grade-bar-wrap"><div class="grade-bar-label"><span style="color:${col};font-weight:800">${g}</span><span style="color:var(--text2)">${cnt}人</span></div><div class="grade-bar-bg"><div class="grade-bar-fill" style="background:${col};width:${pct}%"></div></div></div>`;
   }).join('');
 }
 
@@ -819,6 +767,10 @@ async function changeCourse(){
     document.getElementById('mco').textContent=c.n;
     document.getElementById('mfee').textContent=`¥${c.f.toLocaleString()}`;
     document.getElementById('course-fee-preview').textContent=`✅ 変更済：¥${c.f.toLocaleString()}/月`;
+    // コース変更後に曜日セクション表示を更新
+    const isWeekly=(c.n||'').includes('週');
+    document.getElementById('days-section').style.display=isWeekly?'':'none';
+    document.getElementById('days-info').style.display=isWeekly?'':'none';
     toast(`コースを「${c.n}」に変更しました`);
     renderML();
   }catch(e){toast('エラー',true);}
@@ -860,9 +812,11 @@ function renderML(){
     const sb=`<span class="badge ${stColor}">${m.status}</span>`;
     const cb=m.course?`<span class="badge br">${m.course.substring(0,16)}</span>`:'';
     const gb=m.grade?`<span class="badge bo">${m.grade}</span>`:'';
+    const isWeekly=(m.course||'').includes('週');
+    const db=isWeekly&&(m.day1||m.day2)?`<span class="days-badge">${m.day1||'?'}・${m.day2||'?'}</span>`:'';
     return `<div class="mi ${sc}" onclick="opM('${m.id}')">
       <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div><div class="mname">${m.name}</div><div class="mkana">${m.kana||''}</div></div>
+        <div><div class="mname">${m.name}${db}</div><div class="mkana">${m.kana||''}</div></div>
         ${sb}
       </div>
       <div class="minfo">${cb}${gb}</div>
@@ -892,6 +846,21 @@ function opM(id){
   ua.href=m.url||'#';ua.textContent=m.url||'-';
   document.getElementById('course-select').value='';
   document.getElementById('course-fee-preview').textContent=`現在：¥${Number(m.fee||0).toLocaleString()}/月`;
+
+  // 週1コースの場合のみ曜日セクション・曜日表示を出す
+  const isWeekly=(m.course||'').includes('週');
+  document.getElementById('days-section').style.display=isWeekly?'':'none';
+  const daysInfo=document.getElementById('days-info');
+  if(isWeekly){
+    daysInfo.style.display='';
+    const d1=m.day1||'未設定';
+    const d2=m.day2||'未設定';
+    document.getElementById('mdays').textContent=`${d1}曜日・${d2}曜日`;
+    initDayBtns(m.day1||'',m.day2||'');
+  }else{
+    daysInfo.style.display='none';
+  }
+
   document.getElementById('gg').innerHTML=GR.map(g=>`
     <button class="gbtn ${m.grade===g.n?'sel':''}" style="background:${g.b};color:${g.c}" onclick="selG('${g.n}')">
       <div style="font-weight:700;">${g.n}</div>
@@ -910,12 +879,52 @@ function opM(id){
     const st=prog[c.id]||'未着手';
     const cls=st==='合格'?'done':st==='挑戦中'?'trying':'';
     const scls=st==='合格'?'cs-done':st==='挑戦中'?'cs-try':'cs-none';
-    return `<div class="cur-item ${cls}">
-      <span class="cur-name">${c.name}</span>
-      <span class="cur-status ${scls}">${st}</span>
-    </div>`;
+    return `<div class="cur-item ${cls}"><span class="cur-name">${c.name}</span><span class="cur-status ${scls}">${st}</span></div>`;
   }).join('');
   document.getElementById('mm').classList.add('open');
+}
+
+// 曜日ボタン初期化
+function initDayBtns(day1,day2){
+  SEL_DAY1=day1||'';
+  SEL_DAY2=day2||'';
+  document.querySelectorAll('#day1-btns .day-btn').forEach(b=>{
+    b.classList.toggle('sel',b.dataset.day===SEL_DAY1);
+  });
+  document.querySelectorAll('#day2-btns .day-btn').forEach(b=>{
+    b.classList.toggle('sel',b.dataset.day===SEL_DAY2);
+  });
+}
+
+// 曜日ボタン選択
+function selDay(num,day){
+  if(num===1){
+    SEL_DAY1=SEL_DAY1===day?'':day;
+    document.querySelectorAll('#day1-btns .day-btn').forEach(b=>{
+      b.classList.toggle('sel',b.dataset.day===SEL_DAY1);
+    });
+  }else{
+    SEL_DAY2=SEL_DAY2===day?'':day;
+    document.querySelectorAll('#day2-btns .day-btn').forEach(b=>{
+      b.classList.toggle('sel',b.dataset.day===SEL_DAY2);
+    });
+  }
+}
+
+// 曜日保存
+async function saveDays(){
+  if(!CM)return;
+  if(!SEL_DAY1&&!SEL_DAY2){toast('曜日を選択してください',true);return;}
+  if(!confirm(`${CM.name}さんの曜日を\n曜日1：${SEL_DAY1||'未設定'}\n曜日2：${SEL_DAY2||'未設定'}\nに変更しますか？`))return;
+  try{
+    await api({action:'updateDays',id:CM.id,day1:SEL_DAY1,day2:SEL_DAY2});
+    CM.day1=SEL_DAY1;CM.day2=SEL_DAY2;
+    const m=AM.find(m=>m.id===CM.id);
+    if(m){m.day1=SEL_DAY1;m.day2=SEL_DAY2;}
+    document.getElementById('mdays').textContent=`${SEL_DAY1||'未設定'}曜日・${SEL_DAY2||'未設定'}曜日`;
+    toast(`曜日を保存しました（${SEL_DAY1||'-'}・${SEL_DAY2||'-'}）`);
+    renderML();
+  }catch(e){toast('エラー',true);}
 }
 
 function clm(e){if(e.target===document.getElementById('mm'))clmd();}
@@ -939,8 +948,7 @@ async function selG(grade){
 async function toggleBadge(key,name){
   if(!CM)return;
   const badges=CM.badges||{};
-  const current=!!badges[key];
-  const next=!current;
+  const current=!!badges[key];const next=!current;
   if(next&&!confirm(`${CM.name}さんに「${name}」を付与しますか？`))return;
   if(!next&&!confirm(`${CM.name}さんの「${name}」を取り消しますか？`))return;
   try{
@@ -1013,13 +1021,11 @@ async function importM(){
 }
 
 async function loadR(){
-  sh('rl2');
-  document.getElementById('rl').innerHTML='';
+  sh('rl2');document.getElementById('rl').innerHTML='';
   try{
     const d=await apiReserve({action:'getReservations'});
     if(!d.ok)throw new Error(d.error||'読み込み失敗');
-    AR=d.data||[];
-    renderR();
+    AR=d.data||[];renderR();
   }catch(e){
     document.getElementById('rl').innerHTML=`<div class="r-empty" style="color:#e74c3c">読み込み失敗。設定の予約GAS URLを確認してください。<br>${String(e.message||e)}</div>`;
   }
@@ -1029,26 +1035,21 @@ async function loadR(){
 function setRF(f,btn){
   RF=f;
   document.querySelectorAll('.rf-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  renderR();
+  btn.classList.add('active');renderR();
 }
 
 function parseReserveDate(str){
-  if(!str)return null;
-  if(str instanceof Date)return str;
+  if(!str)return null;if(str instanceof Date)return str;
   const s=String(str);
   let m=s.match(/(\d{4})年(\d{1,2})月(\d{1,2})日\s*(\d{1,2}):(\d{2})/);
   if(m)return new Date(+m[1],+m[2]-1,+m[3],+m[4],+m[5]);
   m=s.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
   if(m)return new Date(+m[1],+m[2]-1,+m[3]);
-  const d=new Date(s);
-  if(!isNaN(d.getTime()))return d;
-  return null;
+  const d=new Date(s);if(!isNaN(d.getTime()))return d;return null;
 }
 
 function fmtReserveDate(str){
-  const d=parseReserveDate(str);
-  if(!d)return str||'-';
+  const d=parseReserveDate(str);if(!d)return str||'-';
   const wd=['日','月','火','水','木','金','土'][d.getDay()];
   const hasTime=/\d{1,2}:\d{2}/.test(String(str));
   const base=`${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日(${wd})`;
@@ -1059,156 +1060,59 @@ function renderR(){
   const now=new Date();
   const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
   const tomorrow=new Date(today.getTime()+86400000);
-
-  let list=AR.map(r=>{
-    const d=parseReserveDate(r.reserveDate);
-    return {...r,_date:d};
-  });
-
+  let list=AR.map(r=>({...r,_date:parseReserveDate(r.reserveDate)}));
   const isCancelled=(r)=>String(r.status||'').indexOf('キャンセル')>=0;
-
   let filtered;
-  if(RF==='upcoming'){
-    filtered=list.filter(r=>!isCancelled(r)&&r._date&&r._date>=today);
-    filtered.sort((a,b)=>a._date-b._date);
-  }else if(RF==='today'){
-    filtered=list.filter(r=>!isCancelled(r)&&r._date&&r._date>=today&&r._date<tomorrow);
-    filtered.sort((a,b)=>a._date-b._date);
-  }else if(RF==='past'){
-    filtered=list.filter(r=>!isCancelled(r)&&r._date&&r._date<today);
-    filtered.sort((a,b)=>b._date-a._date);
-  }else if(RF==='cancelled'){
-    filtered=list.filter(r=>isCancelled(r));
-    filtered.sort((a,b)=>(b._date||0)-(a._date||0));
-  }else{
-    filtered=list.slice();
-    filtered.sort((a,b)=>(b._date||0)-(a._date||0));
-  }
-
+  if(RF==='upcoming'){filtered=list.filter(r=>!isCancelled(r)&&r._date&&r._date>=today);filtered.sort((a,b)=>a._date-b._date);}
+  else if(RF==='today'){filtered=list.filter(r=>!isCancelled(r)&&r._date&&r._date>=today&&r._date<tomorrow);filtered.sort((a,b)=>a._date-b._date);}
+  else if(RF==='past'){filtered=list.filter(r=>!isCancelled(r)&&r._date&&r._date<today);filtered.sort((a,b)=>b._date-a._date);}
+  else if(RF==='cancelled'){filtered=list.filter(r=>isCancelled(r));filtered.sort((a,b)=>(b._date||0)-(a._date||0));}
+  else{filtered=list.slice();filtered.sort((a,b)=>(b._date||0)-(a._date||0));}
   document.getElementById('rc').textContent=`${filtered.length}件`;
-
   if(!filtered.length){
-    const msgMap={
-      upcoming:'今後の予約はありません',
-      today:'本日の予約はありません',
-      past:'過去の予約はありません',
-      cancelled:'キャンセル済みの予約はありません',
-      all:'予約データがありません'
-    };
-    document.getElementById('rl').innerHTML=`<div class="r-empty">${msgMap[RF]||'データなし'}</div>`;
-    return;
+    const msgMap={upcoming:'今後の予約はありません',today:'本日の予約はありません',past:'過去の予約はありません',cancelled:'キャンセル済みの予約はありません',all:'予約データがありません'};
+    document.getElementById('rl').innerHTML=`<div class="r-empty">${msgMap[RF]||'データなし'}</div>`;return;
   }
-
   document.getElementById('rl').innerHTML=filtered.map(r=>{
-    const d=r._date;
-    const cancelled=isCancelled(r);
-    const past=d&&d<today;
-    const isToday=d&&d>=today&&d<tomorrow;
-    let cls='r-card';
-    if(cancelled)cls+=' cancelled';
-    else if(isToday)cls+=' today';
-    else if(past)cls+=' past';
-
+    const d=r._date;const cancelled=isCancelled(r);const past=d&&d<today;const isToday=d&&d>=today&&d<tomorrow;
+    let cls='r-card';if(cancelled)cls+=' cancelled';else if(isToday)cls+=' today';else if(past)cls+=' past';
     const dateStr=fmtReserveDate(r.reserveDate);
     const gender=r.gender?`<span>👤 ${escapeHtml(r.gender)}</span>`:'';
-    const age=r.age?`<span>🎂 ${escapeHtml(r.age)}</span>`:'';
-    const kikkake=r.kikkake?`<span>📢 ${escapeHtml(r.kikkake)}</span>`:'';
-    const undou=r.undou?`<span>💪 ${escapeHtml(r.undou).substring(0,20)}</span>`:'';
     const phone=r.phone?`<span>📞 ${escapeHtml(r.phone)}</span>`:'';
     const email=r.email?`<span style="word-break:break-all">✉️ ${escapeHtml(r.email)}</span>`:'';
-    const addr=r.address?`<span>🏠 ${escapeHtml(r.address).substring(0,24)}</span>`:'';
-
     let statusBadge='';
-    if(cancelled){
-      statusBadge='<span class="r-status-badge bgr">キャンセル済み</span>';
-    }else if(isToday){
-      statusBadge='<span class="r-status-badge bb">📍 本日</span>';
-    }else if(past){
-      statusBadge='<span class="r-status-badge bgr">終了</span>';
-    }else{
-      statusBadge='<span class="r-status-badge bg">予約中</span>';
-    }
-
+    if(cancelled)statusBadge='<span class="r-status-badge bgr">キャンセル済み</span>';
+    else if(isToday)statusBadge='<span class="r-status-badge bb">📍 本日</span>';
+    else if(past)statusBadge='<span class="r-status-badge bgr">終了</span>';
+    else statusBadge='<span class="r-status-badge bg">予約中</span>';
     const cancelBtn=(!cancelled&&!past)?`<button class="r-btn-cancel" onclick="cancelReserve('${escapeAttr(r.reservationId)}','${escapeAttr(r.name)}','${escapeAttr(dateStr)}')">❌ キャンセル＋お詫びメール送信</button>`:'';
     const callBtn=r.phone?`<a class="r-btn-call" href="tel:${escapeAttr(r.phone)}">📞 電話する</a>`:'';
     const btnRow=(cancelBtn||callBtn)?`<div class="r-btn-row">${cancelBtn}${callBtn}</div>`:'';
-
-    const cancelledAtRow=cancelled&&r.cancelledAt?`<div style="font-size:10px;color:var(--text2);margin-top:4px">キャンセル日時：${escapeHtml(r.cancelledAt)}</div>`:'';
-    const idRow=`<div style="font-size:10px;color:var(--text2);margin-top:4px">予約ID：${escapeHtml(r.reservationId||'-')}</div>`;
-
-    return `<div class="${cls}">
-      <div class="r-row">
-        <div style="flex:1">
-          <div class="r-name">${escapeHtml(r.name||'-')} 様</div>
-          <div class="r-date ${past?'past':''}">🗓 ${escapeHtml(dateStr)}</div>
-        </div>
-        ${statusBadge}
-      </div>
-      <div class="r-info-row">${gender}${age}${phone}${email}${addr}${kikkake}${undou}</div>
-      ${idRow}
-      ${cancelledAtRow}
-      ${btnRow}
-    </div>`;
+    return `<div class="${cls}"><div class="r-row"><div style="flex:1"><div class="r-name">${escapeHtml(r.name||'-')} 様</div><div class="r-date ${past?'past':''}">🗓 ${escapeHtml(dateStr)}</div></div>${statusBadge}</div><div class="r-info-row">${gender}${phone}${email}</div><div style="font-size:10px;color:var(--text2);margin-top:4px">予約ID：${escapeHtml(r.reservationId||'-')}</div>${btnRow}</div>`;
   }).join('');
 }
 
 async function cancelReserve(reservationId,name,dateStr){
   if(!reservationId){toast('予約IDが見つかりません',true);return;}
-
-  const confirm1=confirm(
-    `【予約キャンセルの確認】\n\n`+
-    `お客様：${name} 様\n`+
-    `予約日時：${dateStr}\n`+
-    `予約ID：${reservationId}\n\n`+
-    `この予約をキャンセルしますか？\n`+
-    `※Googleカレンダーからも自動削除されます。`
-  );
+  const confirm1=confirm(`【予約キャンセルの確認】\n\nお客様：${name} 様\n予約日時：${dateStr}\n予約ID：${reservationId}\n\nこの予約をキャンセルしますか？\n※Googleカレンダーからも自動削除されます。`);
   if(!confirm1)return;
-
-  const reason=prompt(
-    `キャンセル理由を入力してください（任意）\n\n`+
-    `※お詫びメールに記載されます。\n`+
-    `※空欄のままでもOK（理由は記載されません）\n\n`+
-    `例：トレーナー急病のため / 設備メンテナンスのため`,
-    ''
-  );
+  const reason=prompt(`キャンセル理由を入力してください（任意）\n※お詫びメールに記載されます。\n※空欄のままでもOK`,'');
   if(reason===null)return;
-
-  const confirm2=confirm(
-    `【最終確認】\n\n`+
-    `${name} 様に以下を実行します：\n\n`+
-    `✓ Googleカレンダーから削除\n`+
-    `✓ 予約シートを「キャンセル済み」に更新\n`+
-    `✓ お客様へお詫びメール自動送信\n\n`+
-    (reason?`キャンセル理由：${reason}\n\n`:'')+
-    `実行してよろしいですか？`
-  );
+  const confirm2=confirm(`【最終確認】\n\n${name} 様に以下を実行します：\n\n✓ Googleカレンダーから削除\n✓ 予約シートを「キャンセル済み」に更新\n✓ お客様へお詫びメール自動送信\n\n実行してよろしいですか？`);
   if(!confirm2)return;
-
   toast('キャンセル処理中...');
   try{
     const params={action:'cancelByTrainer',id:reservationId};
     if(reason)params.reason=reason;
     const d=await apiReserve(params);
-    if(!d.ok){
-      toast(d.error||'キャンセル失敗',true);
-      return;
-    }
+    if(!d.ok){toast(d.error||'キャンセル失敗',true);return;}
     toast(`${name}様のキャンセル＋お詫びメール送信完了`);
     await loadR();
-  }catch(e){
-    toast('通信エラー：'+String(e.message||e),true);
-  }
+  }catch(e){toast('通信エラー：'+String(e.message||e),true);}
 }
 
-function escapeHtml(s){
-  if(s==null)return'';
-  return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-function escapeAttr(s){
-  if(s==null)return'';
-  return String(s).replace(/[\\'"]/g,'\\$&').replace(/</g,'&lt;');
-}
+function escapeHtml(s){if(s==null)return'';return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function escapeAttr(s){if(s==null)return'';return String(s).replace(/[\\'"]/g,'\\$&').replace(/</g,'&lt;');}
 
 function renderFL(){
   const q=(document.getElementById('fs')||{}).value||'';
@@ -1222,24 +1126,10 @@ function renderFL(){
   const el=document.getElementById('fee-month-summary');
   if(el)el.innerHTML=`✅ 入金済 ${paidCount}人 ¥${paid.toLocaleString()}　／　❌ 未入金 ${unpaidCount}人 ¥${unpaid.toLocaleString()}`;
   document.getElementById('fl').innerHTML=list.map(m=>{
-    const fs=m[month]||'';
-    const isPaid=fs==='✅';
-    const isWarn=fs==='⚠️';
-    let badge=isPaid
-      ?'<span class="fb fp">✅ 入金済</span>'
-      :isWarn
-      ?'<span class="fb fu">⚠️ 要確認</span>'
-      :`<button class="fb fe" onclick="manF('${m.id}')">タップで確認済</button>`;
+    const fs=m[month]||'';const isPaid=fs==='✅';const isWarn=fs==='⚠️';
+    let badge=isPaid?'<span class="fb fp">✅ 入金済</span>':isWarn?'<span class="fb fu">⚠️ 要確認</span>':`<button class="fb fe" onclick="manF('${m.id}')">タップで確認済</button>`;
     const bc=isPaid?'#27ae60':isWarn?'#e67e22':'var(--red)';
-    return `<div class="mi" style="border-left-color:${bc}">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div>
-          <div class="mname">${m.name}</div>
-          <div class="mkana">¥${Number(m.fee||0).toLocaleString()}/月${m.kouzaName?' ・ '+m.kouzaName:''}</div>
-        </div>
-        ${badge}
-      </div>
-    </div>`;
+    return `<div class="mi" style="border-left-color:${bc}"><div style="display:flex;justify-content:space-between;align-items:center"><div><div class="mname">${m.name}</div><div class="mkana">¥${Number(m.fee||0).toLocaleString()}/月${m.kouzaName?' ・ '+m.kouzaName:''}</div></div>${badge}</div></div>`;
   }).join('')||'<p style="color:var(--text2);padding:20px;text-align:center">データなし</p>';
 }
 
@@ -1248,10 +1138,7 @@ async function manF(id){
   if(!m||!confirm(`${m.name}さんの${SELECTED_MONTH}を入金済みにしますか？`))return;
   try{
     await api({action:'updateFee',id,month:SELECTED_MONTH,status:'✅'});
-    m[SELECTED_MONTH]='✅';
-    renderFL();
-    renderFeeSummary();
-    toast('入金済みにしました');
+    m[SELECTED_MONTH]='✅';renderFL();renderFeeSummary();toast('入金済みにしました');
   }catch(e){toast('エラー',true);}
 }
 
@@ -1262,30 +1149,20 @@ function procCSV(input){
   reader.readAsText(file,'Shift_JIS');
 }
 
-function findMatchedMember(csvNormKana, members){
+function findMatchedMember(csvNormKana,members){
   if(!csvNormKana)return null;
   const memberCandidates=members.map(m=>{
-    const list=[
-      nk(m.kouzaName||''),
-      nk(m.kana||''),
-      nk(m.name||'')
-    ].filter(x=>x);
-    return {member:m,candidates:list};
+    const list=[nk(m.kouzaName||''),nk(m.kana||''),nk(m.name||'')].filter(x=>x);
+    return{member:m,candidates:list};
   });
   const exact=memberCandidates.filter(mc=>mc.candidates.some(c=>c===csvNormKana));
-  if(exact.length===1)return exact[0].member;
-  if(exact.length>1)return null;
+  if(exact.length===1)return exact[0].member;if(exact.length>1)return null;
   const sortedCsv=csvNormKana.split('').sort().join('');
-  const anagram=memberCandidates.filter(mc=>
-    mc.candidates.some(c=>c.length>=4&&c.split('').sort().join('')===sortedCsv)
-  );
-  if(anagram.length===1)return anagram[0].member;
-  if(anagram.length>1)return null;
+  const anagram=memberCandidates.filter(mc=>mc.candidates.some(c=>c.length>=4&&c.split('').sort().join('')===sortedCsv));
+  if(anagram.length===1)return anagram[0].member;if(anagram.length>1)return null;
   if(csvNormKana.length>=4){
     const csvHead=csvNormKana.substring(0,4);
-    const prefix=memberCandidates.filter(mc=>
-      mc.candidates.some(c=>c.length>=4&&c.substring(0,4)===csvHead)
-    );
+    const prefix=memberCandidates.filter(mc=>mc.candidates.some(c=>c.length>=4&&c.substring(0,4)===csvHead));
     if(prefix.length===1)return prefix[0].member;
   }
   return null;
@@ -1293,108 +1170,47 @@ function findMatchedMember(csvNormKana, members){
 
 function detectBankFromKana(bankKana){
   const k=String(bankKana||'').trim();
-  if(k.indexOf('ｻﾝｲﾝ')>=0||k.indexOf('ｺﾞｳﾄﾞｳ')>=0)return '山陰合同銀行';
-  if((k.indexOf('ﾄﾂﾄﾘ')>=0||k.indexOf('ﾄｯﾄﾘ')>=0)&&k.indexOf('ﾉｳｷﾖｳ')<0)return '鳥取銀行';
-  return 'その他';
+  if(k.indexOf('ｻﾝｲﾝ')>=0||k.indexOf('ｺﾞｳﾄﾞｳ')>=0)return'山陰合同銀行';
+  if((k.indexOf('ﾄﾂﾄﾘ')>=0||k.indexOf('ﾄｯﾄﾘ')>=0)&&k.indexOf('ﾉｳｷﾖｳ')<0)return'鳥取銀行';
+  return'その他';
 }
 
 async function analyzeCSV(text){
   const lines=text.split(/\r?\n/).filter(l=>l.trim());
-  const results=[];
-  const members=AM.filter(m=>m.status!=='退会');
-  const matchedIds=[];
-  const bankMap={};
-
+  const results=[];const members=AM.filter(m=>m.status!=='退会');
+  const matchedIds=[];const bankMap={};
   for(let i=0;i<lines.length;i++){
-    const cols=lines[i].split(',');
-    if(cols[0]!=='2')continue;
-    const bankKana=(cols[5]||'').trim();
-    const nr=(cols[7]||'').trim();
-    const amount=parseInt(cols[8]||0,10);
-    const rc=(cols[9]||'').trim();
-    const norm=nk(nr);
-
-    const matched=findMatchedMember(norm,members);
-
-    const ok=rc==='0';
-    const detectedBank=detectBankFromKana(bankKana);
-    results.push({
-      name:matched?matched.name:nr,
-      csvName:nr,
-      amount,
-      ok,
-      matched:!!matched,
-      member:matched,
-      bankKana,
-      detectedBank
-    });
-    if(matched&&ok){
-      matchedIds.push(matched.id);
-      if(detectedBank&&!matched.bank){
-        bankMap[matched.id]=detectedBank;
-      }
-    }
+    const cols=lines[i].split(',');if(cols[0]!=='2')continue;
+    const bankKana=(cols[5]||'').trim();const nr=(cols[7]||'').trim();
+    const amount=parseInt(cols[8]||0,10);const rc=(cols[9]||'').trim();
+    const norm=nk(nr);const matched=findMatchedMember(norm,members);
+    const ok=rc==='0';const detectedBank=detectBankFromKana(bankKana);
+    results.push({name:matched?matched.name:nr,csvName:nr,amount,ok,matched:!!matched,member:matched,bankKana,detectedBank});
+    if(matched&&ok){matchedIds.push(matched.id);if(detectedBank&&!matched.bank)bankMap[matched.id]=detectedBank;}
   }
-
   const okCount=results.filter(r=>r.matched&&r.ok).length;
   const ngCount=results.filter(r=>!r.ok).length;
   const unkCount=results.filter(r=>!r.matched).length;
   const bankCount=Object.keys(bankMap).length;
-
   const bankBadge=bankCount>0?`<span class="badge bb">🏦 銀行名 ${bankCount}件 自動入力予定</span>`:'';
-
   document.getElementById('cr').innerHTML=
-    `<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-      <span class="badge bg">✅ ${okCount}件 入金確認</span>
-      <span class="badge br">⚠️ ${ngCount}件 要確認</span>
-      <span class="badge bgr">❓ ${unkCount}件 不明</span>
-      ${bankBadge}
-    </div>`+
+    `<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap"><span class="badge bg">✅ ${okCount}件 入金確認</span><span class="badge br">⚠️ ${ngCount}件 要確認</span><span class="badge bgr">❓ ${unkCount}件 不明</span>${bankBadge}</div>`+
     results.map(r=>{
       const bankInfo=r.matched&&r.ok&&r.detectedBank?`<div style="font-size:10px;color:var(--blue-dark);margin-top:2px">🏦 ${r.bankKana} → ${r.detectedBank}${r.member&&r.member.bank?'（既存あり：スキップ）':'（M列入力予定）'}</div>`:'';
-      return `<div class="cri ${r.matched?(r.ok?'cok':'cng'):'cun'}">
-        <div>
-          <div style="font-weight:700">${escapeHtml(r.name)}</div>
-          <div style="font-size:11px;color:var(--text2)">${escapeHtml(r.csvName)} ¥${r.amount.toLocaleString()}</div>
-          ${bankInfo}
-        </div>
-        <div style="font-size:20px">${r.matched?(r.ok?'✅':'⚠️'):'❓'}</div>
-      </div>`;
+      return `<div class="cri ${r.matched?(r.ok?'cok':'cng'):'cun'}"><div><div style="font-weight:700">${escapeHtml(r.name)}</div><div style="font-size:11px;color:var(--text2)">${escapeHtml(r.csvName)} ¥${r.amount.toLocaleString()}</div>${bankInfo}</div><div style="font-size:20px">${r.matched?(r.ok?'✅':'⚠️'):'❓'}</div></div>`;
     }).join('');
-
   if(matchedIds.length>0){
-    const confirmMsg=bankCount>0
-      ? `${SELECTED_MONTH}の入金確認 ${matchedIds.length}件を\nスプレッドシートに反映しますか？\n\n🏦 口座登録銀行（M列）も ${bankCount}件 自動入力されます。`
-      : `${SELECTED_MONTH}の入金確認 ${matchedIds.length}件を\nスプレッドシートに反映しますか？`;
-
+    const confirmMsg=bankCount>0?`${SELECTED_MONTH}の入金確認 ${matchedIds.length}件を\nスプレッドシートに反映しますか？\n\n🏦 口座登録銀行（M列）も ${bankCount}件 自動入力されます。`:`${SELECTED_MONTH}の入金確認 ${matchedIds.length}件を\nスプレッドシートに反映しますか？`;
     if(confirm(confirmMsg)){
       toast('反映中...');
       try{
-        const res=await api({
-          action:'bulkUpdateFeeWithBank',
-          ids:matchedIds.join(','),
-          month:SELECTED_MONTH,
-          status:'✅',
-          bankData:JSON.stringify(bankMap)
-        });
+        const res=await api({action:'bulkUpdateFeeWithBank',ids:matchedIds.join(','),month:SELECTED_MONTH,status:'✅',bankData:JSON.stringify(bankMap)});
         if(res.status==='ok'&&res.data&&res.data.success){
-          matchedIds.forEach(id=>{
-            const m=AM.find(m=>m.id===id);
-            if(m){
-              m[SELECTED_MONTH]='✅';
-              if(bankMap[id]&&!m.bank)m.bank=bankMap[id];
-            }
-          });
+          matchedIds.forEach(id=>{const m=AM.find(m=>m.id===id);if(m){m[SELECTED_MONTH]='✅';if(bankMap[id]&&!m.bank)m.bank=bankMap[id];}});
           const bankMsg=res.data.bankUpdated>0?`（銀行名${res.data.bankUpdated}件入力）`:'';
-          toast(`${res.data.updated}件をスプレッドシートに反映${bankMsg}`);
-          renderFL();
-          renderFeeSummary();
-        }else{
-          toast('書き込み失敗：'+((res.data&&res.data.message)||'不明'),true);
-        }
-      }catch(e){
-        toast('通信エラー：'+String(e.message||e),true);
-      }
+          toast(`${res.data.updated}件をスプレッドシートに反映${bankMsg}`);renderFL();renderFeeSummary();
+        }else{toast('書き込み失敗：'+((res.data&&res.data.message)||'不明'),true);}
+      }catch(e){toast('通信エラー：'+String(e.message||e),true);}
     }
   }
   document.getElementById('cf').value='';
@@ -1402,50 +1218,19 @@ async function analyzeCSV(text){
 
 function nk(s){
   if(!s)return'';
-  const kataMap={
-    'ア':'ｱ','イ':'ｲ','ウ':'ｳ','エ':'ｴ','オ':'ｵ',
-    'カ':'ｶ','キ':'ｷ','ク':'ｸ','ケ':'ｹ','コ':'ｺ',
-    'サ':'ｻ','シ':'ｼ','ス':'ｽ','セ':'ｾ','ソ':'ｿ',
-    'タ':'ﾀ','チ':'ﾁ','ツ':'ﾂ','テ':'ﾃ','ト':'ﾄ',
-    'ナ':'ﾅ','ニ':'ﾆ','ヌ':'ﾇ','ネ':'ﾈ','ノ':'ﾉ',
-    'ハ':'ﾊ','ヒ':'ﾋ','フ':'ﾌ','ヘ':'ﾍ','ホ':'ﾎ',
-    'マ':'ﾏ','ミ':'ﾐ','ム':'ﾑ','メ':'ﾒ','モ':'ﾓ',
-    'ヤ':'ﾔ','ユ':'ﾕ','ヨ':'ﾖ',
-    'ラ':'ﾗ','リ':'ﾘ','ル':'ﾙ','レ':'ﾚ','ロ':'ﾛ',
-    'ワ':'ﾜ','ヲ':'ｦ','ン':'ﾝ',
-    'ァ':'ｧ','ィ':'ｲ','ゥ':'ｳ','ェ':'ｴ','ォ':'ｵ',
-    'ッ':'ﾂ','ャ':'ﾔ','ュ':'ﾕ','ョ':'ﾖ',
-    'ガ':'ｶﾞ','ギ':'ｷﾞ','グ':'ｸﾞ','ゲ':'ｹﾞ','ゴ':'ｺﾞ',
-    'ザ':'ｻﾞ','ジ':'ｼﾞ','ズ':'ｽﾞ','ゼ':'ｾﾞ','ゾ':'ｿﾞ',
-    'ダ':'ﾀﾞ','ヂ':'ﾁﾞ','ヅ':'ﾂﾞ','デ':'ﾃﾞ','ド':'ﾄﾞ',
-    'バ':'ﾊﾞ','ビ':'ﾋﾞ','ブ':'ﾌﾞ','ベ':'ﾍﾞ','ボ':'ﾎﾞ',
-    'パ':'ﾊﾟ','ピ':'ﾋﾟ','プ':'ﾌﾟ','ペ':'ﾍﾟ','ポ':'ﾎﾟ',
-    'ヴ':'ｳﾞ','ー':'','　':'',' ':'','-':''
-  };
-  let out='';
-  for(const c of s){
-    out+=kataMap[c]!==undefined?kataMap[c]:c;
-  }
-  return out
-    .replace(/[\s　]/g,'')
-    .replace(/ｬ/g,'ﾔ').replace(/ｭ/g,'ﾕ').replace(/ｮ/g,'ﾖ')
-    .replace(/ｧ/g,'ｱ').replace(/ｨ/g,'ｲ').replace(/ｩ/g,'ｳ').replace(/ｪ/g,'ｴ').replace(/ｫ/g,'ｵ')
-    .replace(/ｯ/g,'ﾂ')
-    .replace(/-/g,'').replace(/ｰ/g,'');
+  const kataMap={'ア':'ｱ','イ':'ｲ','ウ':'ｳ','エ':'ｴ','オ':'ｵ','カ':'ｶ','キ':'ｷ','ク':'ｸ','ケ':'ｹ','コ':'ｺ','サ':'ｻ','シ':'ｼ','ス':'ｽ','セ':'ｾ','ソ':'ｿ','タ':'ﾀ','チ':'ﾁ','ツ':'ﾂ','テ':'ﾃ','ト':'ﾄ','ナ':'ﾅ','ニ':'ﾆ','ヌ':'ﾇ','ネ':'ﾈ','ノ':'ﾉ','ハ':'ﾊ','ヒ':'ﾋ','フ':'ﾌ','ヘ':'ﾍ','ホ':'ﾎ','マ':'ﾏ','ミ':'ﾐ','ム':'ﾑ','メ':'ﾒ','モ':'ﾓ','ヤ':'ﾔ','ユ':'ﾕ','ヨ':'ﾖ','ラ':'ﾗ','リ':'ﾘ','ル':'ﾙ','レ':'ﾚ','ロ':'ﾛ','ワ':'ﾜ','ヲ':'ｦ','ン':'ﾝ','ァ':'ｧ','ィ':'ｲ','ゥ':'ｳ','ェ':'ｴ','ォ':'ｵ','ッ':'ﾂ','ャ':'ﾔ','ュ':'ﾕ','ョ':'ﾖ','ガ':'ｶﾞ','ギ':'ｷﾞ','グ':'ｸﾞ','ゲ':'ｹﾞ','ゴ':'ｺﾞ','ザ':'ｻﾞ','ジ':'ｼﾞ','ズ':'ｽﾞ','ゼ':'ｾﾞ','ゾ':'ｿﾞ','ダ':'ﾀﾞ','ヂ':'ﾁﾞ','ヅ':'ﾂﾞ','デ':'ﾃﾞ','ド':'ﾄﾞ','バ':'ﾊﾞ','ビ':'ﾋﾞ','ブ':'ﾌﾞ','ベ':'ﾍﾞ','ボ':'ﾎﾞ','パ':'ﾊﾟ','ピ':'ﾋﾟ','プ':'ﾌﾟ','ペ':'ﾍﾟ','ポ':'ﾎﾟ','ヴ':'ｳﾞ','ー':'','　':'','　':'',' ':'',' ':'','-':''};
+  let out='';for(const c of s){out+=kataMap[c]!==undefined?kataMap[c]:c;}
+  return out.replace(/[\s　]/g,'').replace(/ｬ/g,'ﾔ').replace(/ｭ/g,'ﾕ').replace(/ｮ/g,'ﾖ').replace(/ｧ/g,'ｱ').replace(/ｨ/g,'ｲ').replace(/ｩ/g,'ｳ').replace(/ｪ/g,'ｴ').replace(/ｫ/g,'ｵ').replace(/ｯ/g,'ﾂ').replace(/-/g,'').replace(/ｰ/g,'');
 }
 
-
 async function loadFreeMonth(){
-  sh('fm-loading');
-  document.getElementById('fm-list').innerHTML='';
-  document.getElementById('fm-all-list').innerHTML='';
+  sh('fm-loading');document.getElementById('fm-list').innerHTML='';document.getElementById('fm-all-list').innerHTML='';
   try{
     const applied=await apiGas1({action:'getFreeMonthMembers_Nyukai'});
     const all=await apiGas1({action:'getAllMembersForFreeMonth_Nyukai'});
     FREE_MONTH_APPLIED=Array.isArray(applied)?applied:[];
     FREE_MONTH_ALL=Array.isArray(all)?all:[];
-    renderFreeMonth();
-    renderFMAll();
+    renderFreeMonth();renderFMAll();
   }catch(e){
     document.getElementById('fm-list').innerHTML=`<p style="color:#e74c3c;padding:16px">読み込み失敗。GAS① URLを確認してください。<br>${String(e.message||e)}</p>`;
   }
@@ -1455,52 +1240,18 @@ async function loadFreeMonth(){
 function renderFreeMonth(){
   const list=FREE_MONTH_APPLIED;
   document.getElementById('fm-count').textContent=`${list.length}件`;
-  if(!list.length){
-    document.getElementById('fm-list').innerHTML='<p style="color:var(--text2);padding:20px;text-align:center;background:#f8f9fa;border-radius:10px">現在、無料月適用中の会員はいません</p>';
-    return;
-  }
-  document.getElementById('fm-list').innerHTML=list.map(m=>{
-    return `<div class="fm-card">
-      <div class="fm-row-top">
-        <div class="fm-name">${escapeHtml(m.name||'-')}</div>
-        <span class="fm-badge">🎁 ${m.freeMonths}ヶ月無料</span>
-      </div>
-      <div class="fm-info">
-        ID：${escapeHtml(m.memberId)}　・　コース：${escapeHtml(m.course||'-')}<br>
-        無料開始月：${escapeHtml(m.freeStartMonth||'-')}
-      </div>
-      <div class="fm-edit-row">
-        <input type="number" id="fm-months-${escapeAttr(m.memberId)}" value="${m.freeMonths}" min="0" max="12" placeholder="月数">
-        <input type="text" id="fm-start-${escapeAttr(m.memberId)}" value="${escapeAttr(m.freeStartMonth||'')}" placeholder="例: 2026年5月">
-        <button class="btn btn-blue btn-sm" onclick="updateFreeMonth('${escapeAttr(m.memberId)}','${escapeAttr(m.name)}')">💾 更新</button>
-      </div>
-    </div>`;
-  }).join('');
+  if(!list.length){document.getElementById('fm-list').innerHTML='<p style="color:var(--text2);padding:20px;text-align:center;background:#f8f9fa;border-radius:10px">現在、無料月適用中の会員はいません</p>';return;}
+  document.getElementById('fm-list').innerHTML=list.map(m=>`<div class="fm-card"><div class="fm-row-top"><div class="fm-name">${escapeHtml(m.name||'-')}</div><span class="fm-badge">🎁 ${m.freeMonths}ヶ月無料</span></div><div class="fm-info">ID：${escapeHtml(m.memberId)}　・　コース：${escapeHtml(m.course||'-')}<br>無料開始月：${escapeHtml(m.freeStartMonth||'-')}</div><div class="fm-edit-row"><input type="number" id="fm-months-${escapeAttr(m.memberId)}" value="${m.freeMonths}" min="0" max="12" placeholder="月数"><input type="text" id="fm-start-${escapeAttr(m.memberId)}" value="${escapeAttr(m.freeStartMonth||'')}" placeholder="例: 2026年5月"><button class="btn btn-blue btn-sm" onclick="updateFreeMonth('${escapeAttr(m.memberId)}','${escapeAttr(m.name)}')">💾 更新</button></div></div>`).join('');
 }
 
 function renderFMAll(){
   const q=(document.getElementById('fm-search')||{}).value||'';
   const list=FREE_MONTH_ALL.filter(m=>!q||(m.name||'').includes(q));
-  if(!list.length){
-    document.getElementById('fm-all-list').innerHTML='<p style="color:var(--text2);padding:20px;text-align:center">該当なし</p>';
-    return;
-  }
+  if(!list.length){document.getElementById('fm-all-list').innerHTML='<p style="color:var(--text2);padding:20px;text-align:center">該当なし</p>';return;}
   const showList=list.slice(0,30);
   document.getElementById('fm-all-list').innerHTML=showList.map(m=>{
     const hasFree=Number(m.freeMonths||0)>0;
-    return `<div class="mi" style="border-left-color:${hasFree?'var(--blue)':'var(--gray2)'}">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-        <div>
-          <div class="mname">${escapeHtml(m.name)}</div>
-          <div class="mkana">${escapeHtml(m.course||'')}${hasFree?` ・ 🎁 ${m.freeMonths}ヶ月無料`:''}</div>
-        </div>
-      </div>
-      <div class="fm-edit-row">
-        <input type="number" id="fm-all-months-${escapeAttr(m.memberId)}" value="${m.freeMonths||0}" min="0" max="12" placeholder="月数">
-        <input type="text" id="fm-all-start-${escapeAttr(m.memberId)}" value="${escapeAttr(m.freeStartMonth||'')}" placeholder="例: 2026年5月">
-        <button class="btn btn-blue btn-sm" onclick="updateFreeMonthFromAll('${escapeAttr(m.memberId)}','${escapeAttr(m.name)}')">💾 保存</button>
-      </div>
-    </div>`;
+    return `<div class="mi" style="border-left-color:${hasFree?'var(--blue)':'var(--gray2)'}"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div><div class="mname">${escapeHtml(m.name)}</div><div class="mkana">${escapeHtml(m.course||'')}${hasFree?` ・ 🎁 ${m.freeMonths}ヶ月無料`:''}</div></div></div><div class="fm-edit-row"><input type="number" id="fm-all-months-${escapeAttr(m.memberId)}" value="${m.freeMonths||0}" min="0" max="12" placeholder="月数"><input type="text" id="fm-all-start-${escapeAttr(m.memberId)}" value="${escapeAttr(m.freeStartMonth||'')}" placeholder="例: 2026年5月"><button class="btn btn-blue btn-sm" onclick="updateFreeMonthFromAll('${escapeAttr(m.memberId)}','${escapeAttr(m.name)}')">💾 保存</button></div></div>`;
   }).join('')+(list.length>30?`<p style="color:var(--text2);padding:12px;text-align:center;font-size:11px">※検索で絞り込んでください（全${list.length}人中30人表示）</p>`:'');
 }
 
@@ -1509,18 +1260,9 @@ async function updateFreeMonth(memberId,name){
   const startMonth=document.getElementById(`fm-start-${memberId}`).value.trim();
   if(!confirm(`${name}さんの無料月を更新しますか？\n無料月数：${months}ヶ月\n開始月：${startMonth||'未設定'}`))return;
   try{
-    const res=await apiGas1({
-      action:'updateFreeMonthForMember_Nyukai',
-      memberId:memberId,
-      freeMonths:months,
-      freeStartMonth:startMonth
-    });
-    if(res.success){
-      toast(`${name}さんを更新しました`);
-      await loadFreeMonth();
-    }else{
-      toast(`エラー：${res.message||'不明'}`,true);
-    }
+    const res=await apiGas1({action:'updateFreeMonthForMember_Nyukai',memberId,freeMonths:months,freeStartMonth:startMonth});
+    if(res.success){toast(`${name}さんを更新しました`);await loadFreeMonth();}
+    else toast(`エラー：${res.message||'不明'}`,true);
   }catch(e){toast('通信エラー',true);}
 }
 
@@ -1529,58 +1271,22 @@ async function updateFreeMonthFromAll(memberId,name){
   const startMonth=document.getElementById(`fm-all-start-${memberId}`).value.trim();
   if(!confirm(`${name}さんの無料月を更新しますか？\n無料月数：${months}ヶ月\n開始月：${startMonth||'未設定'}`))return;
   try{
-    const res=await apiGas1({
-      action:'updateFreeMonthForMember_Nyukai',
-      memberId:memberId,
-      freeMonths:months,
-      freeStartMonth:startMonth
-    });
-    if(res.success){
-      toast(`${name}さんを更新しました`);
-      await loadFreeMonth();
-    }else{
-      toast(`エラー：${res.message||'不明'}`,true);
-    }
+    const res=await apiGas1({action:'updateFreeMonthForMember_Nyukai',memberId,freeMonths:months,freeStartMonth:startMonth});
+    if(res.success){toast(`${name}さんを更新しました`);await loadFreeMonth();}
+    else toast(`エラー：${res.message||'不明'}`,true);
   }catch(e){toast('通信エラー',true);}
 }
 
-function saveS(){
-  const u=document.getElementById('gu').value.trim();
-  if(!u){toast('URLを入力してください',true);return;}
-  localStorage.setItem('gasUrl',u);toast('保存しました');
-}
-
-function saveR(){
-  const u=document.getElementById('ru').value.trim();
-  if(!u){toast('URLを入力してください',true);return;}
-  localStorage.setItem('gasReserveUrl',u);toast('予約GAS URLを保存しました');
-}
-
-function saveG1(){
-  const u=document.getElementById('gu1').value.trim();
-  if(!u){toast('URLを入力してください',true);return;}
-  localStorage.setItem('gas1Url',u);toast('GAS① URLを保存しました');
-}
+function saveS(){const u=document.getElementById('gu').value.trim();if(!u){toast('URLを入力してください',true);return;}localStorage.setItem('gasUrl',u);toast('保存しました');}
+function saveR(){const u=document.getElementById('ru').value.trim();if(!u){toast('URLを入力してください',true);return;}localStorage.setItem('gasReserveUrl',u);toast('予約GAS URLを保存しました');}
+function saveG1(){const u=document.getElementById('gu1').value.trim();if(!u){toast('URLを入力してください',true);return;}localStorage.setItem('gas1Url',u);toast('GAS① URLを保存しました');}
 
 function mk(id,type,labels,data,colors,opts={}){
   if(CH[id]){CH[id].destroy();delete CH[id];}
   let datasets;
-  if(opts.multiDataset&&Array.isArray(data)&&data[0]&&typeof data[0]==='object'&&'label' in data[0]){
-    datasets=data;
-  } else {
-    const bgColors=opts.multiColor&&Array.isArray(colors)?colors:(Array.isArray(colors)?colors:(data.map?data.map(()=>colors):colors));
-    datasets=[{data,backgroundColor:bgColors,borderColor:opts.bdc||undefined,borderWidth:opts.bdc?2:0,borderRadius:type==='bar'?6:0}];
-  }
-  CH[id]=new Chart(document.getElementById(id),{
-    type,
-    data:{labels,datasets},
-    options:{
-      indexAxis:opts.indexAxis||undefined,
-      plugins:{legend:{display:!!opts.legend,position:'bottom',labels:{font:{size:11}}}},
-      responsive:true,maintainAspectRatio:false,cutout:opts.cutout||undefined,
-      scales:type==='bar'?{x:{grid:{display:false}},y:{beginAtZero:true,ticks:{font:{size:10}}}}:undefined
-    }
-  });
+  if(opts.multiDataset&&Array.isArray(data)&&data[0]&&typeof data[0]==='object'&&'label' in data[0]){datasets=data;}
+  else{const bgColors=opts.multiColor&&Array.isArray(colors)?colors:(Array.isArray(colors)?colors:(data.map?data.map(()=>colors):colors));datasets=[{data,backgroundColor:bgColors,borderColor:opts.bdc||undefined,borderWidth:opts.bdc?2:0,borderRadius:type==='bar'?6:0}];}
+  CH[id]=new Chart(document.getElementById(id),{type,data:{labels,datasets},options:{indexAxis:opts.indexAxis||undefined,plugins:{legend:{display:!!opts.legend,position:'bottom',labels:{font:{size:11}}}},responsive:true,maintainAspectRatio:false,cutout:opts.cutout||undefined,scales:type==='bar'?{x:{grid:{display:false}},y:{beginAtZero:true,ticks:{font:{size:10}}}}:undefined}});
 }
 
 const sh=id=>{document.getElementById(id).style.display='';};
