@@ -1189,12 +1189,16 @@ async function analyzeCSV(text){
     if(matched&&ok){matchedIds.push(matched.id);if(detectedBank&&!matched.bank)bankMap[matched.id]=detectedBank;}
   }
   const okCount=results.filter(r=>r.matched&&r.ok).length;
-  const ngCount=results.filter(r=>!r.ok).length;
+  const ngCount=results.filter(r=>r.matched&&!r.ok).length;
   const unkCount=results.filter(r=>!r.matched).length;
+  const ghostList=results.filter(r=>!r.matched&&r.ok);
   const bankCount=Object.keys(bankMap).length;
   const bankBadge=bankCount>0?`<span class="badge bb">🏦 銀行名 ${bankCount}件 自動入力予定</span>`:'';
+  const ghostBlock=ghostList.length>0?
+    `<div style="background:#fff0f0;border:2px solid var(--red);border-radius:10px;padding:12px;margin-bottom:12px"><div style="font-weight:800;color:var(--red);font-size:14px;margin-bottom:8px">⚠️ 未登録だけど入金あり（${ghostList.length}件）</div><div style="font-size:11px;color:var(--text2);margin-bottom:8px">会員マスタにいない人から入金がありました。取込もれ・別名義などの可能性。確認してください。</div>${ghostList.map(r=>`<div style="background:white;border-radius:8px;padding:8px 12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:700">${escapeHtml(r.csvName)}</div><div style="font-size:11px;color:var(--text2)">¥${r.amount.toLocaleString()}</div></div><div style="font-size:18px">💰</div></div>`).join('')}</div>`:'';
   document.getElementById('cr').innerHTML=
-    `<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap"><span class="badge bg">✅ ${okCount}件 入金確認</span><span class="badge br">⚠️ ${ngCount}件 要確認</span><span class="badge bgr">❓ ${unkCount}件 不明</span>${bankBadge}</div>`+
+    ghostBlock+
+    `<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap"><span class="badge bg">✅ ${okCount}件 入金確認</span><span class="badge br">⚠️ ${ngCount}件 要確認</span><span class="badge bgr">❓ ${unkCount}件 未登録</span>${bankBadge}</div>`+
     results.map(r=>{
       const bankInfo=r.matched&&r.ok&&r.detectedBank?`<div style="font-size:10px;color:var(--blue-dark);margin-top:2px">🏦 ${r.bankKana} → ${r.detectedBank}${r.member&&r.member.bank?'（既存あり：スキップ）':'（M列入力予定）'}</div>`:'';
       return `<div class="cri ${r.matched?(r.ok?'cok':'cng'):'cun'}"><div><div style="font-weight:700">${escapeHtml(r.name)}</div><div style="font-size:11px;color:var(--text2)">${escapeHtml(r.csvName)} ¥${r.amount.toLocaleString()}</div>${bankInfo}</div><div style="font-size:20px">${r.matched?(r.ok?'✅':'⚠️'):'❓'}</div></div>`;
