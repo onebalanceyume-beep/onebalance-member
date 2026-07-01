@@ -336,10 +336,10 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
     <div class="card"><div class="card-title">在籍会員 年代別</div><div class="cw"><canvas id="member-age-chart"></canvas></div></div>
     <div class="card">
       <div class="card-title">体験者 知ったキッカケ</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:center">
-        <div class="cw s"><canvas id="source-chart"></canvas></div>
-        <div id="source-legend" style="font-size:12px;line-height:2.2"></div>
-      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start">
+    <div class="cw s" style="flex:0 0 140px;width:140px"><canvas id="source-chart"></canvas></div>
+    <div id="source-legend" style="flex:1;min-width:150px;font-size:12px;line-height:2.2"></div>
+  </div>
     </div>
     <div class="card"><div class="card-title">体験種目別 人数（男女内訳）</div><div class="cw"><canvas id="type-chart"></canvas></div><div id="type-legend" style="font-size:12px;margin-top:10px;line-height:1.8"></div></div>
     <div class="card"><div class="card-title">グレード別 在籍人数</div><div id="grade-bars" style="display:flex;flex-direction:column;gap:12px;margin-top:4px"></div></div>
