@@ -174,7 +174,6 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 .fm-edit-row input:focus{border-color:var(--blue);}
 .fm-edit-row input[type="number"]{width:70px;}
 .fm-edit-row input[type="text"]{flex:1;min-width:120px;}
-/* 曜日ボタン */
 .day-btn{width:40px;height:40px;border-radius:8px;border:2px solid var(--gray2);background:white;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;}
 .day-btn.sel{background:var(--blue);color:white;border-color:var(--blue);}
 .day-btn:hover:not(.sel){border-color:var(--blue);color:var(--blue);}
@@ -214,7 +213,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
       <div class="fee-summary">
         <div class="fee-sum-card"><div class="fee-sum-label">見込み総額</div><div class="fee-sum-val total" id="fee-total">-</div><div style="font-size:10px;color:var(--text2);margin-top:2px">円</div></div>
         <div class="fee-sum-card"><div class="fee-sum-label">✅ 入金済み</div><div class="fee-sum-val paid" id="fee-paid">-</div><div style="font-size:10px;color:var(--text2);margin-top:2px">円</div></div>
-        <div class="fee-sum-card" style="cursor:pointer" onclick="goUnpaidList()"><div class="fee-sum-label">❌ 未入金</div><div class="fee-sum-val unpaid" id="fee-unpaid">-</div><div style="font-size:10px;color:var(--text2);margin-top:2px">円</div></div><div class="fee-sum-val unpaid" id="fee-unpaid">-</div><div style="font-size:10px;color:var(--text2);margin-top:2px">円</div></div>
+        <div class="fee-sum-card" style="cursor:pointer" onclick="goUnpaidList()"><div class="fee-sum-label">❌ 未入金</div><div class="fee-sum-val unpaid" id="fee-unpaid">-</div><div style="font-size:10px;color:var(--text2);margin-top:2px">円</div></div>
       </div>
     </div>
     <div class="card">
@@ -368,7 +367,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
     <div class="card-title">アプリ情報</div>
     <div style="font-size:13px;color:var(--text2);line-height:2.2">
       <div>アプリ名：one-BALANCE トレーナー管理</div>
-      <div>バージョン：2.0.0（曜日1・曜日2対応）</div>
+      <div>バージョン：2.0.1（表示崩れ修正）</div>
       <div>赤 #DB444C / 青 #5BB9CD</div>
     </div>
   </div>
@@ -376,7 +375,6 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 
 </div>
 
-<!-- 会員詳細モーダル -->
 <div class="modal-overlay" id="mm" onclick="clm(event)">
   <div class="modal">
     <div class="mh"><div class="mt" id="mn">-</div><button class="mx" onclick="clmd()">×</button></div>
@@ -400,7 +398,6 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
       </div>
       <div class="ir"><span class="il">会員URL</span><a id="mu" href="#" target="_blank" style="font-size:11px;color:var(--blue);word-break:break-all">-</a></div>
     </div>
-    <!-- 週1曜日設定セクション（週1コースのみ表示） -->
     <div class="ms" id="days-section" style="display:none">
       <div class="mst">週1曜日設定</div>
       <p style="font-size:12px;color:var(--text2);margin-bottom:10px">週1コースの方の通う曜日を設定します（2つ選択）</p>
@@ -550,7 +547,7 @@ const GRADE_COLORS={
 };
 
 let AM=[],FM=[],CP=1,CM=null,SD=null,GF='';
-  let FEE_FILTER='all';
+let FEE_FILTER='all';
 let SELECTED_MONTH='';
 let AR=[],RF='upcoming';
 let FREE_MONTH_APPLIED=[],FREE_MONTH_ALL=[];
@@ -768,7 +765,6 @@ async function changeCourse(){
     document.getElementById('mco').textContent=c.n;
     document.getElementById('mfee').textContent=`¥${c.f.toLocaleString()}`;
     document.getElementById('course-fee-preview').textContent=`✅ 変更済：¥${c.f.toLocaleString()}/月`;
-    // コース変更後に曜日セクション表示を更新
     const isWeekly=(c.n||'').includes('週');
     document.getElementById('days-section').style.display=isWeekly?'':'none';
     document.getElementById('days-info').style.display=isWeekly?'':'none';
@@ -848,7 +844,6 @@ function opM(id){
   document.getElementById('course-select').value='';
   document.getElementById('course-fee-preview').textContent=`現在：¥${Number(m.fee||0).toLocaleString()}/月`;
 
-  // 週1コースの場合のみ曜日セクション・曜日表示を出す
   const isWeekly=(m.course||'').includes('週');
   document.getElementById('days-section').style.display=isWeekly?'':'none';
   const daysInfo=document.getElementById('days-info');
@@ -885,7 +880,6 @@ function opM(id){
   document.getElementById('mm').classList.add('open');
 }
 
-// 曜日ボタン初期化
 function initDayBtns(day1,day2){
   SEL_DAY1=day1||'';
   SEL_DAY2=day2||'';
@@ -897,7 +891,6 @@ function initDayBtns(day1,day2){
   });
 }
 
-// 曜日ボタン選択
 function selDay(num,day){
   if(num===1){
     SEL_DAY1=SEL_DAY1===day?'':day;
@@ -912,7 +905,6 @@ function selDay(num,day){
   }
 }
 
-// 曜日保存
 async function saveDays(){
   if(!CM)return;
   if(!SEL_DAY1&&!SEL_DAY2){toast('曜日を選択してください',true);return;}
@@ -1150,7 +1142,7 @@ async function manF(id){
   }catch(e){toast('エラー',true);}
 }
 
-  function goUnpaidList(){
+function goUnpaidList(){
   FEE_FILTER='unpaid';
   const btn=document.querySelector('.tab-btn[onclick*="fee"]');
   sw('fee',btn);
