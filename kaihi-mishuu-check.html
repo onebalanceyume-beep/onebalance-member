@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="会費チェック">
+<meta name="theme-color" content="#DB444C">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>ワンバランス 会費未収金チェック</title>
+<link id="favicon-link" rel="icon" href="">
+<link id="apple-icon-link" rel="apple-touch-icon" href="">
+<style>
+  :root{
+    --red:#DB444C;
+    --blue:#5BB9CD;
+    --gray:#EAEAEA;
+    --dark:#333;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{
+    margin:0; padding:0;
+    touch-action:manipulation;
+    overscroll-behavior:none;
+    font-family:"Hiragino Maru Gothic ProN","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+    background:#fafafa;
+    color:var(--dark);
+    -webkit-user-select:none;
+    user-select:none;
+  }
+  header{
+    background:var(--red);
+    color:#fff;
+    padding:14px 16px 12px;
+    text-align:center;
+    position:sticky;
+    top:0;
+    z-index:20;
+    box-shadow:0 2px 6px rgba(0,0,0,0.15);
+  }
+  header h1{ margin:0; font-size:17px; }
+  header .sub{ font-size:11px; opacity:0.9; margin-top:2px; }
+
+  .summary{
+    max-width:700px;
+    margin:14px auto 0;
+    padding:0 12px;
+    display:flex;
+    gap:10px;
+  }
+  .summary .card{
+    flex:1;
+    background:#fff;
+    border-radius:12px;
+    padding:10px 8px;
+    text-align:center;
+    box-shadow:0 1px 4px rgba(0,0,0,0.08);
+  }
+  .summary .card .num{ font-size:20px; font-weight:bold; color:var(--red); }
+  .summary .card .label{ font-size:11px; color:#777; margin-top:2px; }
+
+  .alert-box{
+    max-width:700px;
+    margin:14px auto 0;
+    padding:12px 14px;
+    border-radius:12px;
+    background:#fff5f5;
+    border:1.5px solid var(--red);
+  }
+  .alert-box.clear{
+    background:#f2fbfa;
+    border-color:var(--blue);
+  }
+  .alert-title{
+    font-size:13px;
+    font-weight:bold;
+    color:var(--red);
+    margin-bottom:6px;
+  }
+  .alert-box.clear .alert-title{ color:var(--blue); }
+  .alert-names{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  .alert-chip{
+    background:var(--red);
+    color:#fff;
+    font-size:12px;
+    padding:4px 10px;
+    border-radius:20px;
+  }
+
+  .year-nav{
+    max-width:700px;
+    margin:12px auto 0;
+    padding:0 12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:16px;
+  }
+  .year-nav button{
+    background:#fff;
+    border:1px solid #ccc;
+    border-radius:8px;
+    padding:6px 12px;
+    font-size:16px;
+  }
+  .year-nav .year-label{ font-size:16px; font-weight:bold; }
+
+  .table-wrap{
+    max-width:700px;
+    margin:12px auto;
+    padding:0 12px;
+    overflow-x:auto;
+  }
+  table{
+    border-collapse:collapse;
+    width:100%;
+    background:#fff;
+    border-radius:10px;
+    overflow:hidden;
+    font-size:12px;
+    min-width:640px;
+  }
+  th, td{
+    border:1px solid #eee;
+    text-align:center;
+    padding:6px 2px;
+  }
+  th{
+    background:#f5f5f5;
+    font-weight:bold;
+    font-size:11px;
+    color:#555;
+  }
+  td.name-cell{
+    text-align:left;
+    padding-left:8px;
+    font-weight:bold;
+    white-space:nowrap;
+    background:#fff;
+    position:sticky;
+    left:0;
+    z-index:5;
+    border-right:2px solid #ddd;
+  }
+  td.month-cell{
+    cursor:pointer;
+    width:34px;
+    height:34px;
+  }
+  .mark{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:26px;
+    height:26px;
+    border-radius:6px;
+    font-size:14px;
+    font-weight:bold;
+    color:#fff;
+  }
+  .mark.paid{ background:var(--blue); }
+  .mark.free{ background:#F4B942; color:#5c4300; }
+  .mark.unpaid{ background:var(--gray); color:#aaa; }
+  td.del-cell{
+    width:30px;
+  }
+  .del-btn{
+    color:#bbb;
+    font-size:16px;
+    padding:2px 6px;
+  }
+
+  .add-wrap{
+    max-width:700px;
+    margin:0 auto 30px;
+    padding:0 12px;
+    display:flex;
+    gap:8px;
+  }
+  .add-wrap input{
+    flex:1;
+    padding:12px 10px;
+    font-size:15px;
+    border-radius:10px;
+    border:1px solid #ccc;
+    -webkit-user-select:text;
+    user-select:text;
+  }
+  .add-wrap button{
+    background:var(--red);
+    color:#fff;
+    border:none;
+    border-radius:10px;
+    padding:12px 18px;
+    font-weight:bold;
+    font-size:14px;
+    white-space:nowrap;
+  }
+
+  .status-line{
+    text-align:center;
+    font-size:12px;
+    color:#888;
+    margin:0 auto 20px;
+    max-width:700px;
+    padding:0 12px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>💰 会費 未収金チェック</h1>
+  <div class="sub">月をタップして「済」に切り替え</div>
+</header>
+
+<div class="summary">
+  <div class="card"><div class="num" id="unpaid-count">0</div><div class="label">未収の枠数</div></div>
+  <div class="card"><div class="num" id="free-count" style="color:#D9A400;">0</div><div class="label">無料の枠数</div></div>
+  <div class="card"><div class="num" id="member-count">0</div><div class="label">登録人数</div></div>
+</div>
+
+<div class="alert-box" id="alert-box">
+  <div class="alert-title" id="alert-title">今月の未収者</div>
+  <div class="alert-names" id="alert-names"></div>
+</div>
+
+<div class="year-nav">
+  <button id="prev-year">◀</button>
+  <div class="year-label"><span id="year-label"></span>年</div>
+  <button id="next-year">▶</button>
+</div>
+
+<div class="table-wrap">
+  <table id="fee-table">
+    <thead>
+      <tr id="table-head"></tr>
+    </thead>
+    <tbody id="table-body"></tbody>
+  </table>
+</div>
+
+<div class="add-wrap">
+  <input id="new-name" type="text" placeholder="会員名を入力">
+  <button id="add-btn">追加</button>
+</div>
+
+<div class="status-line" id="status-line">マス目タップで 未収→入金済み→キャンペーン無料 の順に切り替わります（無料は収入に数えません）。名前を長押しで削除。</div>
+
+<script>
+const STORAGE_KEY = 'onebalance-fee-tracker-v1';
+const MONTHS = [1,2,3,4,5,6,7,8,9,10,11,12];
+
+let state = {
+  members: [],   // [{id, name}]
+  payments: {}   // { memberId: { "2026-01": true } }
+};
+let currentYear = new Date().getFullYear();
+
+async function loadState(){
+  try{
+    const res = await window.storage.get(STORAGE_KEY, false);
+    if(res && res.value){
+      const parsed = JSON.parse(res.value);
+      if(parsed.members) state = parsed;
+    }
+  }catch(e){
+    // 初回はデータなし
+  }
+  render();
+}
+
+async function saveState(){
+  try{
+    await window.storage.set(STORAGE_KEY, JSON.stringify(state), false);
+  }catch(e){
+    document.getElementById('status-line').textContent = '保存に失敗しました。通信環境をご確認ください。';
+  }
+}
+
+function monthKey(y,m){
+  return y + '-' + String(m).padStart(2,'0');
+}
+
+// status: 0 = 未収, 1 = 入金済み, 2 = キャンペーン無料
+function getStatus(memberId, y, m){
+  const p = state.payments[memberId];
+  if(!p) return 0;
+  const v = p[monthKey(y,m)];
+  if(v === true) return 1;      // 旧データ互換
+  if(v === 1 || v === 2) return v;
+  return 0;
+}
+
+function setStatus(memberId, y, m, status){
+  if(!state.payments[memberId]) state.payments[memberId] = {};
+  state.payments[memberId][monthKey(y,m)] = status;
+  saveState();
+  render();
+}
+
+function cycleStatus(memberId, y, m){
+  const current = getStatus(memberId, y, m);
+  const next = (current + 1) % 3;
+  setStatus(memberId, y, m, next);
+}
+
+function isPaid(memberId, y, m){
+  // 収入としてカウントする「実際に入金済み」の判定
+  return getStatus(memberId, y, m) === 1;
+}
+
+function isResolved(memberId, y, m){
+  // 未収リストから消してよいか（入金済み or キャンペーン無料）
+  return getStatus(memberId, y, m) !== 0;
+}
+
+function addMember(){
+  const input = document.getElementById('new-name');
+  const name = input.value.trim();
+  if(!name) return;
+  const id = 'm_' + Date.now();
+  state.members.push({id, name});
+  state.payments[id] = {};
+  input.value = '';
+  saveState();
+  render();
+}
+
+function deleteMember(id){
+  const m = state.members.find(x=>x.id===id);
+  if(!m) return;
+  if(!confirm(m.name + ' を削除します。よろしいですか？')) return;
+  state.members = state.members.filter(x=>x.id!==id);
+  delete state.payments[id];
+  saveState();
+  render();
+}
+
+function renderHead(){
+  const head = document.getElementById('table-head');
+  head.innerHTML = '<th class="name-cell">会員名</th>' + MONTHS.map(m=>'<th>'+m+'月</th>').join('') + '<th></th>';
+}
+
+function renderBody(){
+  const body = document.getElementById('table-body');
+  body.innerHTML = '';
+  state.members.forEach(mem=>{
+    const tr = document.createElement('tr');
+
+    const nameTd = document.createElement('td');
+    nameTd.className = 'name-cell';
+    nameTd.textContent = mem.name;
+    let pressTimer;
+    nameTd.addEventListener('touchstart', ()=>{ pressTimer = setTimeout(()=>deleteMember(mem.id), 600); });
+    nameTd.addEventListener('touchend', ()=>{ clearTimeout(pressTimer); });
+    nameTd.addEventListener('mousedown', ()=>{ pressTimer = setTimeout(()=>deleteMember(mem.id), 600); });
+    nameTd.addEventListener('mouseup', ()=>{ clearTimeout(pressTimer); });
+    tr.appendChild(nameTd);
+
+    MONTHS.forEach(m=>{
+      const td = document.createElement('td');
+      td.className = 'month-cell';
+      const status = getStatus(mem.id, currentYear, m);
+      const span = document.createElement('span');
+      if(status === 1){
+        span.className = 'mark paid';
+        span.textContent = '済';
+      }else if(status === 2){
+        span.className = 'mark free';
+        span.textContent = '無料';
+      }else{
+        span.className = 'mark unpaid';
+        span.textContent = '未';
+      }
+      td.appendChild(span);
+      td.addEventListener('click', ()=>cycleStatus(mem.id, currentYear, m));
+      tr.appendChild(td);
+    });
+
+    const delTd = document.createElement('td');
+    delTd.className = 'del-cell';
+    const delBtn = document.createElement('span');
+    delBtn.className = 'del-btn';
+    delBtn.textContent = '✕';
+    delBtn.addEventListener('click', ()=>deleteMember(mem.id));
+    delTd.appendChild(delBtn);
+    tr.appendChild(delTd);
+
+    body.appendChild(tr);
+  });
+}
+
+function renderCurrentMonthAlert(){
+  const now = new Date();
+  const thisYear = now.getFullYear();
+  const thisMonth = now.getMonth() + 1;
+  const box = document.getElementById('alert-box');
+  const title = document.getElementById('alert-title');
+  const namesEl = document.getElementById('alert-names');
+
+  const unpaidMembers = state.members.filter(mem => !isResolved(mem.id, thisYear, thisMonth));
+
+  title.textContent = thisMonth + '月の未収者（' + unpaidMembers.length + '人）';
+
+  if(unpaidMembers.length === 0){
+    box.classList.add('clear');
+    namesEl.innerHTML = '<span class="alert-chip" style="background:#5BB9CD;">全員対応済みです</span>';
+    return;
+  }
+  box.classList.remove('clear');
+  namesEl.innerHTML = '';
+  unpaidMembers.forEach(mem=>{
+    const chip = document.createElement('span');
+    chip.className = 'alert-chip';
+    chip.textContent = mem.name;
+    chip.title = 'タップで入金済みにする（長押しでキャンペーン無料）';
+    chip.addEventListener('click', ()=>{
+      setStatus(mem.id, thisYear, thisMonth, 1);
+    });
+    let pressTimer;
+    chip.addEventListener('touchstart', ()=>{ pressTimer = setTimeout(()=>setStatus(mem.id, thisYear, thisMonth, 2), 600); });
+    chip.addEventListener('touchend', ()=>{ clearTimeout(pressTimer); });
+    chip.addEventListener('mousedown', ()=>{ pressTimer = setTimeout(()=>setStatus(mem.id, thisYear, thisMonth, 2), 600); });
+    chip.addEventListener('mouseup', ()=>{ clearTimeout(pressTimer); });
+    namesEl.appendChild(chip);
+  });
+}
+
+function renderSummary(){
+  document.getElementById('member-count').textContent = state.members.length;
+  let unpaidCount = 0;
+  let freeCount = 0;
+  state.members.forEach(mem=>{
+    MONTHS.forEach(m=>{
+      const s = getStatus(mem.id, currentYear, m);
+      if(s === 0) unpaidCount++;
+      if(s === 2) freeCount++;
+    });
+  });
+  document.getElementById('unpaid-count').textContent = unpaidCount;
+  document.getElementById('free-count').textContent = freeCount;
+}
+
+function render(){
+  document.getElementById('year-label').textContent = currentYear;
+  renderHead();
+  renderBody();
+  renderSummary();
+  renderCurrentMonthAlert();
+}
+
+document.getElementById('add-btn').addEventListener('click', addMember);
+document.getElementById('new-name').addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter') addMember();
+});
+document.getElementById('prev-year').addEventListener('click', ()=>{ currentYear--; render(); });
+document.getElementById('next-year').addEventListener('click', ()=>{ currentYear++; render(); });
+
+function generateIcon(){
+  const canvas = document.createElement('canvas');
+  canvas.width = 180; canvas.height = 180;
+  const ctx = canvas.getContext('2d');
+  const grad = ctx.createLinearGradient(0,0,180,180);
+  grad.addColorStop(0,'#DB444C');
+  grad.addColorStop(1,'#5BB9CD');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,180,180);
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 90px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('¥', 90, 84);
+  ctx.font = 'bold 22px sans-serif';
+  ctx.fillText('会費チェック', 90, 145);
+  const dataUrl = canvas.toDataURL('image/png');
+  document.getElementById('apple-icon-link').setAttribute('href', dataUrl);
+  document.getElementById('favicon-link').setAttribute('href', dataUrl);
+}
+
+generateIcon();
+loadState();
+</script>
+
+</body>
+</html>
