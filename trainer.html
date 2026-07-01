@@ -218,15 +218,15 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
       </div>
     </div>
     <div class="card">
-      <div class="card-title">男女比（会員）</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:center">
-        <div class="cw s"><canvas id="gc"></canvas></div>
-        <div>
-          <div style="margin-bottom:10px"><div style="font-size:12px;color:var(--text2)">男性</div><div style="font-size:24px;font-weight:900;color:var(--blue)" id="sm">-人</div></div>
-          <div><div style="font-size:12px;color:var(--text2)">女性</div><div style="font-size:24px;font-weight:900;color:var(--red)" id="sf">-人</div></div>
-        </div>
-      </div>
+  <div class="card-title">男女比（会員） </div>
+  <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center">
+    <div class="cw s" style="flex:0 0 120px;width:120px"><canvas id="gc"></canvas></div>
+    <div style="flex:1;min-width:0">
+      <div style="margin-bottom:10px"><div style="font-size:12px;color:var(--text2)">男性</div><div style="font-size:22px;font-weight:900;color:var(--blue);white-space:nowrap" id="sm">-人</div></div>
+      <div><div style="font-size:12px;color:var(--text2)">女性</div><div style="font-size:22px;font-weight:900;color:var(--red);white-space:nowrap" id="sf">-人</div></div>
     </div>
+  </div>
+</div>
     <div class="card"><div class="card-title">年代別人数</div><div class="cw"><canvas id="agec"></canvas></div></div>
     <div class="card"><div class="card-title">コース別人数</div><div class="cw"><canvas id="cc"></canvas></div></div>
   </div>
