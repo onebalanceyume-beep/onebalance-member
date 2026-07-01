@@ -726,7 +726,7 @@ function renderSt(d){
     mk('type-chart','bar',typeLabels,[
       {label:'男性',data:typeLabels.map(l=>(ttg[l]||{}).男性||0),backgroundColor:'rgba(91,185,205,0.85)',borderRadius:4,borderSkipped:false},
       {label:'女性',data:typeLabels.map(l=>(ttg[l]||{}).女性||0),backgroundColor:'rgba(219,68,76,0.85)',borderRadius:4,borderSkipped:false}
-    ],null,{multiDataset:true,legend:true});
+    ],null,{multiDataset:true,legend:true});document.getElementById('type-legend').innerHTML=typeLabels.map(l=>{const g=ttg[l]||{};const male=g.男性||0;const female=g.女性||0;const tot=male+female||1;const mp=Math.round(male/tot*100);const fp=100-mp;return `<div style="margin-bottom:6px"><b>${l}</b>（計${tot}人）：男性 ${male}人(${mp}%) ／ 女性 ${female}人(${fp}%)</div>`;}).join('');
   }
   const gradeOrder=['ホワイト前','ホワイト','グリーン','ブルー','オレンジ','レッド','ゴールド'];
   const gc=d.gradeCounts||{};const maxG=Math.max(...gradeOrder.map(g=>gc[g]||0),1);
