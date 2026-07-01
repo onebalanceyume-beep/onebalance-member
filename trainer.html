@@ -652,7 +652,7 @@ async function loadD(){
   try{
     const d=await api({action:'getStats'});
     if(d.status!=='ok')throw 0;
-    SD=d.data;renderD(SD);hd('dl');sh('db');
+    SD=d.data;hd('dl');sh('db');renderD(SD);
     if(!AM.length)await loadM();
     renderFeeSummary();
   }catch(e){
