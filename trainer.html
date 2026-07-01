@@ -341,7 +341,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
         <div id="source-legend" style="font-size:12px;line-height:2.2"></div>
       </div>
     </div>
-    <div class="card"><div class="card-title">体験種目別 人数（男女内訳）</div><div class="cw"><canvas id="type-chart"></canvas></div></div>
+    <div class="card"><div class="card-title">体験種目別 人数（男女内訳）</div><div class="cw"><canvas id="type-chart"></canvas></div><div id="type-legend" style="font-size:12px;margin-top:10px;line-height:1.8"></div></div>
     <div class="card"><div class="card-title">グレード別 在籍人数</div><div id="grade-bars" style="display:flex;flex-direction:column;gap:12px;margin-top:4px"></div></div>
   </div>
 </div>
@@ -603,7 +603,7 @@ function sw(name,btn){
   if(name==='members'&&!AM.length)loadM();
   if(name==='fee'&&!AM.length)loadM().then(()=>renderFL());
   if(name==='fee'&&AM.length)renderFL();
-  if(name==='stats'){if(SD){renderSt(SD);hd('stl');sh('stb');}else{loadSt();}}
+  if(name==='stats'){if(SD){hd('stl');sh('stb');renderSt(SD);}else{loadSt();}}
   if(name==='reserve'&&!AR.length)loadR();
   if(name==='freemonth')loadFreeMonth();
 }
@@ -688,7 +688,7 @@ async function loadSt(){
   sh('stl');hd('stb');
   try{
     if(!SD){const d=await api({action:'getStats'});if(d.status!=='ok')throw 0;SD=d.data;}
-    renderSt(SD);hd('stl');sh('stb');
+    hd('stl');sh('stb');renderSt(SD);
   }catch(e){
     document.getElementById('stl').innerHTML='<p style="color:#e74c3c;padding:16px">読み込み失敗。GAS URLを確認してください。</p>';
   }
