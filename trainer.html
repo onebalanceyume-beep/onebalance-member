@@ -43,6 +43,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 .slabel{font-size:11px;color:var(--text2);font-weight:600;}
 .sval{font-size:24px;font-weight:900;color:var(--text);line-height:1.1;margin-top:4px;}
 .sval span{font-size:14px;font-weight:500;color:var(--text2);}
+  #sm,#sf{white-space:nowrap;}
 .fee-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:4px;}
 .fee-sum-card{background:#f8f9fa;border-radius:10px;padding:12px;text-align:center;}
 .fee-sum-label{font-size:11px;color:var(--text2);font-weight:600;margin-bottom:6px;}
@@ -340,6 +341,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
         <div id="source-legend" style="font-size:12px;line-height:2.2"></div>
       </div>
     </div>
+    <div class="card"><div class="card-title">体験種目別 人数（男女内訳）</div><div class="cw"><canvas id="type-chart"></canvas></div></div>
     <div class="card"><div class="card-title">グレード別 在籍人数</div><div id="grade-bars" style="display:flex;flex-direction:column;gap:12px;margin-top:4px"></div></div>
   </div>
 </div>
@@ -716,6 +718,15 @@ function renderSt(d){
     document.getElementById('source-legend').innerHTML=srcLabels.map((l,i)=>
       `<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><span style="width:10px;height:10px;border-radius:50%;background:${srcColors[i]||'#ccc'};display:inline-block;flex-shrink:0"></span><span>${l}：${srcData[i]}人（${Math.round(srcData[i]/total*100)}%）</span></div>`
     ).join('');
+  }
+  const tt=t.trialTypeCounts||{};
+  const ttg=t.trialTypeByGender||{};
+  const typeLabels=Object.keys(tt);
+  if(typeLabels.length>0){
+    mk('type-chart','bar',typeLabels,[
+      {label:'男性',data:typeLabels.map(l=>(ttg[l]||{}).男性||0),backgroundColor:'rgba(91,185,205,0.85)',borderRadius:4,borderSkipped:false},
+      {label:'女性',data:typeLabels.map(l=>(ttg[l]||{}).女性||0),backgroundColor:'rgba(219,68,76,0.85)',borderRadius:4,borderSkipped:false}
+    ],null,{multiDataset:true,legend:true});
   }
   const gradeOrder=['ホワイト前','ホワイト','グリーン','ブルー','オレンジ','レッド','ゴールド'];
   const gc=d.gradeCounts||{};const maxG=Math.max(...gradeOrder.map(g=>gc[g]||0),1);
