@@ -604,7 +604,7 @@ function sw(name,btn){
   if(name==='members'&&!AM.length)loadM();
   if(name==='fee'&&!AM.length)loadM().then(()=>renderFL());
   if(name==='fee'&&AM.length)renderFL();
-  if(name==='stats'&&!SD)loadSt();
+  if(name==='stats'){if(SD){renderSt(SD);hd('stl');sh('stb');}else{loadSt();}}
   if(name==='reserve'&&!AR.length)loadR();
   if(name==='freemonth')loadFreeMonth();
 }
