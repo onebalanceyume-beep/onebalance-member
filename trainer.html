@@ -289,7 +289,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
   <div class="card">
     <div class="card-title">手動チェック・一覧</div>
     <div class="msearch"><input type="text" id="fs" placeholder="名前で検索" oninput="renderFL()"></div>
-    <div id="fl" class="mlist"></div>
+    <div id="fl" class="mlist"></div>     </div>     <div class="card">       <div class="card-title">📋 未収金一覧（直近6ヶ月）</div>       <p style="font-size:12px;color:var(--text2);margin-bottom:12px">タップで入金済み⇔未収金を切り替えられます。入会前の月は「-」表示です。</p>       <div id="unpaid-grid"></div>
   </div>
 </div>
 
@@ -601,8 +601,8 @@ function sw(name,btn){
   document.getElementById('tab-'+name).classList.add('active');
   btn.classList.add('active');
   if(name==='members'&&!AM.length)loadM();
-  if(name==='fee'&&!AM.length)loadM().then(()=>renderFL());
-  if(name==='fee'&&AM.length)renderFL();
+  if(name==='fee'&&!AM.length)loadM().then(()=>{renderFL();renderUnpaidGrid();});
+  if(name==='fee'&&AM.length){renderFL();renderUnpaidGrid();}
   if(name==='stats'){if(SD){hd('stl');sh('stb');renderSt(SD);}else{loadSt();}}
   if(name==='reserve'&&!AR.length)loadR();
   if(name==='freemonth')loadFreeMonth();
@@ -660,10 +660,30 @@ async function loadD(){
 }
 
 function renderFeeSummary(){
+  function parseMonthKey(mk){
+  const m = mk && mk.match(/(\d+)年(\d+)月/);
+  return m ? {year:Number(m[1]), month:Number(m[2])} : null;
+}
+function isJoinedByMonth(member, year, month){
+  if(!member.joinDate) return true;
+  const jd = new Date(member.joinDate);
+  if(isNaN(jd.getTime())) return true;
+  const jy = jd.getFullYear(), jm = jd.getMonth()+1;
+  return (jy < year) || (jy===year && jm<=month);
+}
+function getRecentMonths(n){
+  const now=new Date();
+  const arr=[];
+  for(let i=n-1;i>=0;i--){
+    const d=new Date(now.getFullYear(), now.getMonth()-i, 1);
+    arr.push(`${d.getFullYear()}年${d.getMonth()+1}月`);
+  }
+  return arr;
+}
   if(!AM.length)return;
   const now=new Date();
   const mk=`${now.getFullYear()}年${now.getMonth()+1}月`;
-  const members=AM.filter(m=>m.status!=='退会');
+  const members=AM.filter(m=>m.status!=='退会' && isJoinedByMonth(m, now.getFullYear(), now.getMonth()+1));
   const total=members.reduce((s,m)=>s+Number(m.fee||0),0);
   const paid=members.filter(m=>m[mk]==='✅').reduce((s,m)=>s+Number(m.fee||0),0);
   const unpaid=total-paid;
@@ -1121,7 +1141,7 @@ function escapeAttr(s){if(s==null)return'';return String(s).replace(/[\\'"]/g,'\
 function renderFL(){
   const q=(document.getElementById('fs')||{}).value||'';
   const month=SELECTED_MONTH;
-  let list=AM.filter(m=>m.status!=='退会'&&(!q||m.name.includes(q)));
+  const __mk=parseMonthKey(month);   let list=AM.filter(m=>m.status!=='退会'&&(!q||m.name.includes(q))&&(!__mk||isJoinedByMonth(m,__mk.year,__mk.month)));
   if(FEE_FILTER==='unpaid')list=list.filter(m=>m[month]!=='✅');
   const total=list.reduce((s,m)=>s+Number(m.fee||0),0);
   const paid=list.filter(m=>m[month]==='✅').reduce((s,m)=>s+Number(m.fee||0),0);
@@ -1138,6 +1158,38 @@ function renderFL(){
   }).join('')||'<p style="color:var(--text2);padding:20px;text-align:center">データなし</p>';
 }
 function setFeeFilter(f){FEE_FILTER=f;renderFL();}
+  function renderUnpaidGrid(){
+  const container=document.getElementById('unpaid-grid');
+  if(!container)return;
+  const months=getRecentMonths(6);
+  const members=AM.filter(m=>m.status!=='退会');
+  const headerCells=months.map(mo=>`<th style="font-size:11px;padding:4px;text-align:center">${mo.replace(/^\d+年/,'')}</th>`).join('');
+  const rows=members.map(m=>{
+    const cells=months.map(mo=>{
+      const mk=parseMonthKey(mo);
+      if(!isJoinedByMonth(m,mk.year,mk.month))return `<td style="text-align:center;color:#ccc">-</td>`;
+      const paid=m[mo]==='✅';
+      return `<td style="text-align:center;cursor:pointer" onclick="toggleGridFee('${m.id}','${mo}')"><span style="display:inline-block;width:22px;height:22px;border-radius:6px;background:${paid?'#27ae60':'#eee'};color:${paid?'#fff':'#999'};font-size:13px;line-height:22px">${paid?'✓':''}</span></td>`;
+    }).join('');
+    return `<tr><td style="text-align:left;padding:6px 8px;font-weight:700;white-space:nowrap">${m.name}</td>${cells}</tr>`;
+  }).join('');
+  container.innerHTML=`<div style="overflow-x:auto"><table style="border-collapse:collapse;width:100%;font-size:12px"><thead><tr><th style="text-align:left;padding:6px 8px">会員名</th>${headerCells}</tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+async function toggleGridFee(id,month){
+  const m=AM.find(m=>m.id===id);
+  if(!m)return;
+  const cur=m[month]||'';
+  const next=cur==='✅'?'':'✅';
+  try{
+    await api({action:'updateFee',id,month,status:next});
+    m[month]=next;
+    renderUnpaidGrid();
+    renderFeeSummary();
+    renderFL();
+    toast(next==='✅'?`${m.name}さんの${month.replace(/^\d+年/,'')}を入金済みにしました`:`${m.name}さんの${month.replace(/^\d+年/,'')}を未入金に戻しました`);
+  }catch(e){toast('エラー',true);}
+}
 
 async function manF(id){
   const m=AM.find(m=>m.id===id);
@@ -1194,7 +1246,7 @@ function detectBankFromKana(bankKana){
 
 async function analyzeCSV(text){
   const lines=text.split(/\r?\n/).filter(l=>l.trim());
-  const results=[];const members=AM.filter(m=>m.status!=='退会');
+  const results=[];const members=AM.filter(m=>m.status!=='退会' && isJoinedByMonth(m, now.getFullYear(), now.getMonth()+1));
   const matchedIds=[];const bankMap={};
   for(let i=0;i<lines.length;i++){
     const cols=lines[i].split(',');if(cols[0]!=='2')continue;
