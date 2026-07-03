@@ -659,8 +659,7 @@ async function loadD(){
   }
 }
 
-function renderFeeSummary(){
-  function parseMonthKey(mk){
+function parseMonthKey(mk){
   const m = mk && mk.match(/(\d+)年(\d+)月/);
   return m ? {year:Number(m[1]), month:Number(m[2])} : null;
 }
@@ -680,6 +679,7 @@ function getRecentMonths(n){
   }
   return arr;
 }
+function renderFeeSummary(){
   if(!AM.length)return;
   const now=new Date();
   const mk=`${now.getFullYear()}年${now.getMonth()+1}月`;
@@ -1246,7 +1246,7 @@ function detectBankFromKana(bankKana){
 
 async function analyzeCSV(text){
   const lines=text.split(/\r?\n/).filter(l=>l.trim());
-  const results=[];const members=AM.filter(m=>m.status!=='退会' && isJoinedByMonth(m, now.getFullYear(), now.getMonth()+1));
+  const results=[];const members=AM.filter(m=>m.status!=='退会');
   const matchedIds=[];const bankMap={};
   for(let i=0;i<lines.length;i++){
     const cols=lines[i].split(',');if(cols[0]!=='2')continue;
