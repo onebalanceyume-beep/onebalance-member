@@ -830,9 +830,16 @@ function filterM(){
   });
   CP=1;renderML();
 }
-
+function isStillVisible(m){
+  if(m.status!=='退会') return true;
+  if(!m.resignDate) return false;
+  const rd=new Date(m.resignDate);
+  if(isNaN(rd.getTime())) return false;
+  const now=new Date();
+  return rd.getFullYear()===now.getFullYear() && rd.getMonth()===now.getMonth();
+}
 function renderML(){
-  const st=(CP-1)*PG,pg=FM.slice(st,st+PG);
+  const tot=Math.ceil(visibleFM.length/PG);
   document.getElementById('mc').textContent=GF?`「${GF}」${FM.length}人`:`${AM.filter(m=>m.status==='在籍').length}人在籍`;
   document.getElementById('ml').innerHTML=pg.map(m=>{
     const sc=m.status==='在籍'?'act':m.status==='休会'?'vac':'res';
@@ -850,7 +857,7 @@ function renderML(){
       <div class="minfo">${cb}${gb}</div>
     </div>`;
   }).join('')||'<p style="color:var(--text2);padding:20px;text-align:center">該当なし</p>';
-  const tot=Math.ceil(FM.length/PG);
+  const tot=Math.ceil(visibleFM.length/PG);
   document.getElementById('pg').innerHTML=tot<=1?'':Array.from({length:tot},(_,i)=>i+1).map(i=>`<button class="pb ${i===CP?'a':''}" onclick="gp(${i})">${i}</button>`).join('');
 }
 
