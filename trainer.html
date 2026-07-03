@@ -716,7 +716,7 @@ async function loadSt(){
 
 function renderSt(d){
   const t=d.trial||{};
-  si('st-trial-m',`${t.trialThisMonth||0}<span>人</span>`);si('st-join-m',`${t.joinedThisMonth||0}<span>人</span>`);
+  si('st-trial-m',`${t.trialThisMonth||0}<span>人</span>`);si('st-join-m',`${d.newThisMonth||0}<span>人</span>`);
   si('st-conv-m',`${t.convMonth||0}<span>%</span>`);si('st-total',`${d.total||0}<span>人</span>`);
   si('st-trial-y',`${t.trialYear||0}<span>人</span>`);si('st-join-y',`${t.joinedYear||0}<span>人</span>`);
   si('st-conv-y',`${t.convYear||0}<span>%</span>`);si('st-trial-total',`${t.trialTotal||0}<span>人</span>`);
