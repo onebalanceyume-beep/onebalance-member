@@ -839,7 +839,8 @@ function isStillVisible(m){
   return rd.getFullYear()===now.getFullYear() && rd.getMonth()===now.getMonth();
 }
 function renderML(){
-  const tot=Math.ceil(visibleFM.length/PG);
+  const start=(CP-1)*PG;
+  const pg=FM.slice(start,start+PG);
   document.getElementById('mc').textContent=GF?`「${GF}」${FM.length}人`:`${AM.filter(m=>m.status==='在籍').length}人在籍`;
   document.getElementById('ml').innerHTML=pg.map(m=>{
     const sc=m.status==='在籍'?'act':m.status==='休会'?'vac':'res';
@@ -857,7 +858,7 @@ function renderML(){
       <div class="minfo">${cb}${gb}</div>
     </div>`;
   }).join('')||'<p style="color:var(--text2);padding:20px;text-align:center">該当なし</p>';
-  const tot=Math.ceil(visibleFM.length/PG);
+  const tot=Math.ceil(FM.length/PG);
   document.getElementById('pg').innerHTML=tot<=1?'':Array.from({length:tot},(_,i)=>i+1).map(i=>`<button class="pb ${i===CP?'a':''}" onclick="gp(${i})">${i}</button>`).join('');
 }
 
