@@ -490,7 +490,19 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
       </label>
     </div>
 
-    <!-- クーポン5: 自由入力 -->
+    <!-- クーポン5: 月会費半額 -->
+    <div class="staff-coupon-item" data-staff-id="half">
+      <div class="staff-coupon-info">
+        <div class="staff-coupon-label">月会費半額</div>
+        <div class="staff-coupon-desc">選んだコースの初月会費が50%OFF</div>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" data-staff-toggle="half" onchange="onStaffToggle('half', this.checked)">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <!-- クーポン6: 自由入力 -->
     <div class="staff-coupon-item" data-staff-id="custom">
       <div class="staff-coupon-info">
         <div class="staff-coupon-label">自由割引（金額指定）</div>
@@ -678,6 +690,8 @@ function applyStaffDiscount(){
     state.staffDiscount = {id:'m2', label:'月会費2ヶ月無料', entryOff:0, freeMonths:2, customAmount:0, totalOff:0};
   }else if(activeId === 'taiken1100'){
     state.staffDiscount = {id:'taiken1100', label:'体験料金1,100円無料', entryOff:0, freeMonths:0, customAmount:0, totalOff:1100};
+  }else if(activeId === 'half'){
+    state.staffDiscount = {id:'half', label:'月会費半額', entryOff:0, freeMonths:0, customAmount:0, totalOff:0, halfFee:true};
   }else if(activeId === 'custom'){
     const amt = Number(document.getElementById('staff-custom-amount').value) || 0;
     if(amt <= 0){alert('割引金額を入力してください');return}
@@ -939,7 +953,10 @@ function calcFees(){
         freeStartMonth = `${startDate3.getFullYear()}年${startDate3.getMonth()+1}月`;
       }
     }
-    if(sd.totalOff > 0){
+    if(sd.halfFee){
+      // 月会費半額（初月会費の50%OFF）
+      staffTotalOff = Math.round(firstMonth * 0.5);
+    }else if(sd.totalOff > 0){
       // 合計から割引（体験1100円・自由割引）
       staffTotalOff = sd.totalOff;
     }
