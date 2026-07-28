@@ -44,6 +44,7 @@ main { max-width:480px; margin:0 auto; padding:18px 14px 100px; }
 .mc.sel-kick { border-color:var(--blue); background:var(--blue-p); }
 .mc.sel-boxing { border-color:var(--red); background:var(--red-p); }
 .mc.sel-tour { border-color:var(--yellow); background:var(--yl-p); }
+.mc.sel-join { border-color:#2E8B57; background:#EEFBF2; }
 .mc-head { display:flex; align-items:center; gap:10px; padding:12px 14px 10px; pointer-events:none; }
 .mc-ico { width:54px; height:54px; border-radius:12px; object-fit:cover; flex-shrink:0; }
 .mc-svg { width:54px; height:54px; border-radius:12px; background:var(--yl-l); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
@@ -61,6 +62,7 @@ main { max-width:480px; margin:0 auto; padding:18px 14px 100px; }
 .sel-kick .mc-chk { background:var(--blue); border-color:var(--blue); color:white; }
 .sel-boxing .mc-chk { background:var(--red); border-color:var(--red); color:white; }
 .sel-tour .mc-chk { background:var(--yellow); border-color:var(--yellow); color:white; }
+.sel-join .mc-chk { background:#2E8B57; border-color:#2E8B57; color:white; }
 .mc-body { font-size:12px; color:var(--g600); line-height:1.8; font-weight:500; border-top:1.5px dashed var(--g200); margin:0 12px; padding:10px 4px 12px; pointer-events:none; }
 .cal-card { background:var(--white); border-radius:var(--r); border:1.5px solid var(--g200); padding:16px; box-shadow:0 3px 10px rgba(0,0,0,0.05); margin-bottom:10px; }
 .cal-nav { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
@@ -95,6 +97,10 @@ main { max-width:480px; margin:0 auto; padding:18px 14px 100px; }
 .pax-btn { min-width:54px; padding:10px 6px; border-radius:11px; border:2px solid var(--g200); background:var(--cream); color:var(--g600); font-family:var(--font); font-size:14px; font-weight:900; cursor:pointer; text-align:center; touch-action:manipulation; }
 .pax-btn.sel { background:linear-gradient(135deg,#C8102E,#E8601C); border-color:transparent; color:white; }
 .pax-note { font-size:10px; color:var(--g400); font-weight:600; line-height:1.5; }
+.pax-stepper { display:flex; align-items:center; justify-content:center; gap:18px; background:var(--cream); border:2px solid var(--g200); border-radius:14px; padding:10px 20px; margin-bottom:6px; }
+.pax-arrow { width:40px; height:40px; border-radius:50%; border:2px solid var(--red); background:white; color:var(--red); font-size:14px; font-weight:900; cursor:pointer; display:flex; align-items:center; justify-content:center; touch-action:manipulation; }
+.pax-arrow:active { background:var(--red-l); }
+.pax-display { font-size:28px; font-weight:900; color:var(--g900); min-width:70px; text-align:center; }
 .conf-card { background:var(--white); border-radius:var(--r); overflow:hidden; box-shadow:0 3px 10px rgba(0,0,0,0.05); margin-bottom:14px; border:1.5px solid var(--g200); }
 .conf-hdr { background:linear-gradient(135deg,#C8102E,#E8601C,#F0B429); padding:13px 18px; color:white; font-size:15px; font-weight:900; }
 .conf-row { display:flex; padding:11px 18px; border-bottom:1px solid var(--g100); gap:12px; }
@@ -143,8 +149,7 @@ main { max-width:480px; margin:0 auto; padding:18px 14px 100px; }
 <div class="mc-head"><img class="mc-ico" src="https://onebalanceyume-beep.github.io/onebalance-member/images/visit.png"><div style="flex:1"><div class="mc-nm">ジム見学</div><div class="mc-badges"><span class="bdg">⏱ 所要時間30分</span></div></div><div class="mc-chk" id="chk-tour"></div></div>
 <div class="mc-body">まずは気軽に来てみてください♪ ジムの雰囲気・設備・スタッフをご確認いただけます。見学だけでも大歓迎！</div>
 </div>
-<a href="join.html" style="text-decoration:none;display:block;">
-<div class="mc" style="background:linear-gradient(135deg,#EEFBF2,#FFFFFF);border-color:#2E8B57;border-width:2.5px;">
+<div class="mc join" id="mc-join" onclick="pickMenu('join')">
 <div class="mc-head">
 <img class="mc-ico" src="https://onebalanceyume-beep.github.io/onebalance-member/images/join.png" alt="入会予約">
 <div style="flex:1">
@@ -154,13 +159,12 @@ main { max-width:480px; margin:0 auto; padding:18px 14px 100px; }
 <span class="bdg" style="background:#C8E6C9;color:#2E8B57;">手続き＋運動</span>
 </div>
 </div>
-<div class="mc-chk" style="background:#2E8B57;border-color:#2E8B57;color:white;">→</div>
+<div class="mc-chk" id="chk-join"></div>
 </div>
 <div class="mc-body">入会手続き後、そのまま運動できます！最初の運動は60分〜90分程度。専用ページへ移動します。</div>
 </div>
-</a>
 </div>
-<button class="btnp" onclick="go(2)">次へ　→　日程を選ぶ</button>
+<button class="btnp" onclick="nextFromMenu()">次へ　→　日程を選ぶ</button>
 </div>
 <div class="panel" id="p2">
 <p class="sec">日付を選んでね <span style="font-weight:600;color:var(--g400);font-size:9px;letter-spacing:0;">※日曜・祝日は定休日</span></p>
@@ -189,14 +193,12 @@ main { max-width:480px; margin:0 auto; padding:18px 14px 100px; }
 <div class="form-card">
 <div class="fg">
 <div class="flbl">参加人数 <span class="freq">必須</span></div>
-<div class="pax-row">
-<button class="pax-btn sel" onclick="pickPax(this)">1名</button>
-<button class="pax-btn" onclick="pickPax(this)">2名</button>
-<button class="pax-btn" onclick="pickPax(this)">3名</button>
-<button class="pax-btn" onclick="pickPax(this)">4名</button>
-<button class="pax-btn" onclick="pickPax(this)">5名</button>
+<div class="pax-stepper">
+<button type="button" class="pax-arrow" onclick="changePax(-1)">▼</button>
+<div class="pax-display" id="pax-display">1<span style="font-size:12px;font-weight:700;">名</span></div>
+<button type="button" class="pax-arrow" onclick="changePax(1)">▲</button>
 </div>
-<div class="pax-note">代表者の方がご入力ください。2名以上でも代表者情報のみでOK！</div>
+<div class="pax-note">代表者の方がご入力ください。2名以上でも代表者情報のみでOK！（最大10名まで）</div>
 </div>
 <div class="fg">
 <div class="flbl">代表者のお名前 <span class="freq">必須</span></div>
@@ -287,7 +289,7 @@ function init() {
 
 function pickMenu(m) {
   menu = m;
-  var types = ["kick","boxing","tour"];
+  var types = ["kick","boxing","tour","join"];
   for (var i = 0; i < types.length; i++) {
     var el = document.getElementById("mc-" + types[i]);
     el.className = "mc " + types[i];
@@ -295,6 +297,14 @@ function pickMenu(m) {
   }
   document.getElementById("mc-" + m).className = "mc " + m + " sel-" + m;
   document.getElementById("chk-" + m).textContent = "✓";
+}
+
+function nextFromMenu() {
+  if (menu === "join") {
+    location.href = "join.html";
+    return;
+  }
+  go(2);
 }
 
 function go(n) {
@@ -414,11 +424,9 @@ function fetchSlots() {
   document.head.appendChild(sc);
 }
 
-function pickPax(btn) {
-  pax = parseInt(btn.textContent);
-  var btns = document.querySelectorAll(".pax-btn");
-  for (var i = 0; i < btns.length; i++) btns[i].classList.remove("sel");
-  btn.classList.add("sel");
+function changePax(delta) {
+  pax = Math.min(10, Math.max(1, pax + delta));
+  document.getElementById("pax-display").innerHTML = pax + '<span style="font-size:12px;font-weight:700;">名</span>';
 }
 
 function chk() {
