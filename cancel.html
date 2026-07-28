@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+<title>予約キャンセル | ONE-BALANCE BOXING GYM</title>
+<link rel="apple-touch-icon" href="https://onebalanceyume-beep.github.io/onebalance-member/icons/logo-welcome.jpg">
+<link rel="icon" href="https://onebalanceyume-beep.github.io/onebalance-member/icons/logo-welcome.jpg">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red:#C8102E; --red-l:#FADADD; --red-p:#FFF5F6;
+  --orange:#E8601C; --cream:#FAF6EE; --white:#FFFFFF;
+  --g100:#F5F4F0; --g200:#E8E4DC; --g400:#B0A898; --g600:#7A6E60; --g900:#2A2018;
+  --r:20px; --font:'M PLUS Rounded 1c',sans-serif;
+}
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+html { -webkit-text-size-adjust:100%; }
+body { font-family:var(--font); background:var(--cream); color:var(--g900); min-height:100vh; padding:20px; }
+.wrap { max-width:480px; margin:40px auto; }
+.card { background:var(--white); border-radius:var(--r); padding:32px 24px; box-shadow:0 4px 20px rgba(0,0,0,0.06); }
+h1 { font-size:20px; color:var(--red); margin:0 0 20px; text-align:center; font-weight:900; }
+.info { background:var(--red-p); border-radius:12px; padding:16px; margin:20px 0; }
+.info dt { font-size:11px; color:var(--g400); font-weight:800; margin-top:8px; }
+.info dt:first-child { margin-top:0; }
+.info dd { font-size:14px; color:var(--g900); margin:4px 0 0; font-weight:600; }
+.note { background:#FFFBEF; border-left:4px solid #F0B429; padding:12px 14px; border-radius:8px; font-size:12px; color:var(--g600); line-height:1.8; margin:20px 0; }
+.btn-cancel { display:block; width:100%; padding:16px; background:linear-gradient(135deg,var(--red),var(--orange)); color:white; border:none; border-radius:14px; font-family:var(--font); font-size:15px; font-weight:900; cursor:pointer; box-shadow:0 4px 14px rgba(200,16,46,0.28); margin-top:12px; touch-action:manipulation; }
+.btn-back { display:block; width:100%; padding:12px; background:white; color:var(--g600); border:2px solid var(--g200); border-radius:14px; font-family:var(--font); font-size:13px; font-weight:800; cursor:pointer; margin-top:10px; text-decoration:none; text-align:center; touch-action:manipulation; }
+p.sub { font-size:13px; color:var(--g600); text-align:center; }
+.icon { font-size:64px; margin-bottom:16px; display:block; text-align:center; }
+.msg { font-size:14px; line-height:1.9; color:var(--g600); font-weight:500; text-align:center; }
+.spin-wrap { text-align:center; padding:40px 0; }
+.spin { width:46px; height:46px; border:4px solid var(--g200); border-top-color:var(--red); border-radius:50%; animation:sp 0.7s linear infinite; margin:0 auto 16px; }
+@keyframes sp { to { transform:rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="card" id="card">
+<div class="spin-wrap"><div class="spin"></div><p class="sub">読み込み中...</p></div>
+</div>
+</div>
+
+<script>
+var GAS = "https://script.google.com/macros/s/AKfycbzWPH4cO-kPMGqbJqHEsYG1yefxa0FoKQOgDJeIeUHIe9alN1yrsDVHe6E7yFY1DFiY/exec";
+
+function getIdFromUrl() {
+  var params = new URLSearchParams(window.location.search);
+  return params.get('id') || '';
+}
+
+function jsonp(url, cb) {
+  var cbName = 'cb_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
+  window[cbName] = function(data) {
+    cb(data);
+    delete window[cbName];
+    document.body.removeChild(s);
+  };
+  var s = document.createElement('script');
+  s.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + cbName;
+  s.onerror = function() { cb({ ok:false, error:'通信エラーが発生しました' }); delete window[cbName]; };
+  document.body.appendChild(s);
+}
+
+var reservationId = getIdFromUrl();
+var card = document.getElementById('card');
+
+function renderError(message) {
+  card.innerHTML =
+    '<span class="icon">⚠️</span>' +
+    '<h1>エラー</h1>' +
+    '<p class="msg">' + message + '</p>' +
+    '<a href="https://onebalanceyume-beep.github.io/onebalance-member/onebalance-v9.html" class="btn-back">予約サイトに戻る</a>';
+}
+
+function renderAlreadyCancelled(name) {
+  card.innerHTML =
+    '<span class="icon">ℹ️</span>' +
+    '<h1>既にキャンセル済みです</h1>' +
+    '<p class="msg">' + (name || '') + ' 様の予約はキャンセル処理が完了しています。</p>' +
+    '<a href="https://onebalanceyume-beep.github.io/onebalance-member/onebalance-v9.html" class="btn-back">予約サイトに戻る</a>';
+}
+
+function renderConfirm(info) {
+  card.innerHTML =
+    '<h1>予約キャンセルの確認</h1>' +
+    '<p class="sub">下記の予約をキャンセルします。よろしいですか？</p>' +
+    '<div class="info">' +
+    '<dt>お名前</dt><dd>' + info.name + ' 様</dd>' +
+    '<dt>体験種別</dt><dd>' + (info.taikenType || '体験') + '</dd>' +
+    '<dt>予約日時</dt><dd>' + info.reserveDate + '</dd>' +
+    '<dt>参加人数</dt><dd>' + (info.pax || '1') + '名</dd>' +
+    '<dt>予約ID</dt><dd>' + info.reservationId + '</dd>' +
+    '</div>' +
+    '<div class="note">※キャンセル後の取り消しはできません。<br>※日時変更の場合は、キャンセル後に再予約をお願いします。</div>' +
+    '<button type="button" class="btn-cancel" id="btn-cancel">キャンセルを確定する</button>' +
+    '<a href="https://onebalanceyume-beep.github.io/onebalance-member/onebalance-v9.html" class="btn-back">やめて予約サイトに戻る</a>';
+
+  document.getElementById('btn-cancel').addEventListener('click', function() {
+    if (!confirm('本当にキャンセルしますか？')) return;
+    card.innerHTML = '<div class="spin-wrap"><div class="spin"></div><p class="sub">処理中...</p></div>';
+    jsonp(GAS + '?action=cancelReservation&id=' + encodeURIComponent(reservationId), function(res) {
+      if (res.ok) {
+        renderSuccess(res.name);
+      } else if (res.alreadyCancelled) {
+        renderAlreadyCancelled(res.name);
+      } else {
+        renderError(res.error || 'キャンセル処理に失敗しました。お電話にてご連絡ください。');
+      }
+    });
+  });
+}
+
+function renderSuccess(name) {
+  card.innerHTML =
+    '<span class="icon">✅</span>' +
+    '<h1>キャンセルが完了しました</h1>' +
+    '<p class="msg">' + (name || '') + ' 様<br><br>予約のキャンセルを承りました。<br>またのご予約をお待ちしております。</p>' +
+    '<a href="https://onebalanceyume-beep.github.io/onebalance-member/onebalance-v9.html" class="btn-back">予約サイトに戻る</a>';
+}
+
+if (!reservationId) {
+  renderError('予約IDが指定されていません');
+} else {
+  jsonp(GAS + '?action=getCancelInfo&id=' + encodeURIComponent(reservationId), function(res) {
+    if (!res.ok) {
+      renderError(res.error || '予約が見つかりません');
+      return;
+    }
+    if (res.alreadyCancelled) {
+      renderAlreadyCancelled(res.name);
+      return;
+    }
+    renderConfirm(res);
+  });
+}
+</script>
+</body>
+</html>
