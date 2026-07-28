@@ -84,7 +84,7 @@ main { max-width:480px; margin:0 auto; padding:18px 14px 100px; }
 .gcal-txt.loading { color:var(--g400); }
 .slots-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:7px; margin-bottom:14px; }
 .slot { padding:13px 4px; border-radius:12px; border:2px solid var(--g200); background:var(--white); font-size:14px; font-weight:900; text-align:center; cursor:pointer; font-family:var(--font); touch-action:manipulation; }
-.slot.busy { color:var(--g200); background:var(--g100); cursor:not-allowed; text-decoration:line-through; pointer-events:none; }
+.slot.busy { color:#fff; background:var(--red); border-color:var(--red); font-weight:900; cursor:not-allowed; pointer-events:none; text-decoration:none; }
 .slot.sel { background:linear-gradient(135deg,#C8102E,#E8601C); border-color:transparent; color:white; }
 .form-card { background:var(--white); border-radius:var(--r); border:1.5px solid var(--g200); padding:18px 16px; box-shadow:0 3px 10px rgba(0,0,0,0.05); margin-bottom:14px; }
 .fg { margin-bottom:16px; }
@@ -400,17 +400,22 @@ function fetchSlots() {
     for (var i = 0; i < res.slots.length; i++) {
       (function(slot) {
         var btn = document.createElement("button");
-        btn.className = "slot";
-        btn.textContent = slot.label;
-        btn.addEventListener("click", function() {
-          selTime = slot.label;
-          selStart = slot.start;
-          selEnd = slot.end;
-          var all = document.querySelectorAll(".slot");
-          for (var j = 0; j < all.length; j++) all[j].classList.remove("sel");
-          btn.classList.add("sel");
-          document.getElementById("btn2").disabled = false;
-        });
+        if (slot.busy) {
+          btn.className = "slot busy";
+          btn.textContent = "満";
+        } else {
+          btn.className = "slot";
+          btn.textContent = slot.label;
+          btn.addEventListener("click", function() {
+            selTime = slot.label;
+            selStart = slot.start;
+            selEnd = slot.end;
+            var all = document.querySelectorAll(".slot");
+            for (var j = 0; j < all.length; j++) all[j].classList.remove("sel");
+            btn.classList.add("sel");
+            document.getElementById("btn2").disabled = false;
+          });
+        }
         grid.appendChild(btn);
       })(res.slots[i]);
     }
