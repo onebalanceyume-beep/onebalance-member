@@ -1250,18 +1250,9 @@ function findMatchedMember(csvNormKana,members){
     return{member:m,candidates:list};
   });
   const exact=memberCandidates.filter(mc=>mc.candidates.some(c=>c===csvNormKana));
-  if(exact.length===1)return exact[0].member;if(exact.length>1)return null;
-  const sortedCsv=csvNormKana.split('').sort().join('');
-  const anagram=memberCandidates.filter(mc=>mc.candidates.some(c=>c.length>=4&&c.split('').sort().join('')===sortedCsv));
-  if(anagram.length===1)return anagram[0].member;if(anagram.length>1)return null;
-  if(csvNormKana.length>=4){
-    const csvHead=csvNormKana.substring(0,4);
-    const prefix=memberCandidates.filter(mc=>mc.candidates.some(c=>c.length>=4&&c.substring(0,4)===csvHead));
-    if(prefix.length===1)return prefix[0].member;
-  }
+  if(exact.length===1)return exact[0].member;
   return null;
 }
-
 function detectBankFromKana(bankKana){
   const k=String(bankKana||'').trim();
   if(k.indexOf('ｻﾝｲﾝ')>=0||k.indexOf('ｺﾞｳﾄﾞｳ')>=0)return'山陰合同銀行';
