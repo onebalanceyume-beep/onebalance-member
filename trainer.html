@@ -213,6 +213,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
       <div class="sc blue"><div class="slabel">今月新規</div><div class="sval" id="s2">-<span>人</span></div></div>
       <div class="sc green"><div class="slabel">今月体験</div><div class="sval" id="s3">-<span>人</span></div></div>
       <div class="sc red2"><div class="slabel">今月成約率</div><div class="sval" id="s4">-<span>%</span></div></div>
+      <div class="sc" style="border-left-color:#5BB9CD"><div class="slabel">平均単価</div><div class="sval" id="s5">-<span>円</span></div></div>
     </div>
     <div class="card">
       <div class="card-title">💴 今月の会費状況</div>
@@ -707,6 +708,9 @@ function renderFeeSummary(){
   document.getElementById('fee-total').textContent=`¥${total.toLocaleString()}`;
   document.getElementById('fee-paid').textContent=`¥${paid.toLocaleString()}`;
   document.getElementById('fee-unpaid').textContent=`¥${unpaid.toLocaleString()}`;
+    const avgFee=members.length?Math.round(total/members.length):0;
+  const s5el=document.getElementById('s5');
+  if(s5el)s5el.innerHTML=`¥${avgFee.toLocaleString()}<span>円</span>`;
 }
 
 function renderD(d){
