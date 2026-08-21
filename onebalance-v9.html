@@ -12,7 +12,7 @@
   --yellow:#F0B429; --yl-l:#FFF3C4; --yl-p:#FFFBEF;
   --orange:#E8601C; --cream:#FAF6EE; --white:#FFFFFF;
   --g100:#F5F4F0; --g200:#E8E4DC; --g400:#B0A898; --g600:#7A6E60; --g900:#2A2018;
-  --r:20px; --font:'M PLUS Rounded 1c',sans-serif;
+  --r:20px; --font:'Helvetica Neue',Helvetica,Arial,'M PLUS Rounded 1c',sans-serif;
 }
 * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
 html { -webkit-text-size-adjust:100%; }
@@ -84,7 +84,9 @@ main { max-width:480px; margin:0 auto; padding:18px 14px 100px; }
 .gcal-txt.loading { color:var(--g400); }
 .slots-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:7px; margin-bottom:14px; }
 .slot { padding:13px 4px; border-radius:12px; border:2px solid var(--g200); background:var(--white); font-size:14px; font-weight:900; text-align:center; cursor:pointer; font-family:var(--font); touch-action:manipulation; }
-.slot.busy { color:#fff; background:var(--red); border-color:var(--red); font-weight:900; cursor:not-allowed; pointer-events:none; text-decoration:none; }
+.slot.busy { color:var(--g400); background:var(--g100); border-color:var(--g200); font-weight:700; cursor:not-allowed; pointer-events:none; text-decoration:none; }
+.slot.busy .slot-time { display:block; text-decoration:line-through; opacity:.6; font-size:12px; }
+.slot.busy .slot-tag { display:block; font-size:9px; letter-spacing:1.5px; margin-top:3px; color:var(--g400); font-weight:800; }
 .slot.sel { background:var(--red); border-color:transparent; color:white; }
 .form-card { background:var(--white); border-radius:var(--r); border:1.5px solid var(--g200); padding:18px 16px; box-shadow:0 3px 10px rgba(0,0,0,0.05); margin-bottom:14px; }
 .fg { margin-bottom:16px; }
@@ -402,7 +404,7 @@ function fetchSlots() {
         var btn = document.createElement("button");
         if (slot.busy) {
           btn.className = "slot busy";
-          btn.textContent = "満";
+          btn.innerHTML = '<span class="slot-time">' + slot.label + '</span><span class="slot-tag">満席</span>';
         } else {
           btn.className = "slot";
           btn.textContent = slot.label;
