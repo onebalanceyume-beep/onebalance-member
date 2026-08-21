@@ -7,8 +7,8 @@
 <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root {
-  --red:#C8102E; --red-l:#FADADD; --red-p:#FFF5F6;
-  --blue:#5B9DB5; --blue-l:#D0EAF3; --blue-p:#EEF8FC;
+  --red:#DB444C; --red-l:#F4C7C9; --red-p:#FBE9EA;
+  --blue:#5BB9CD; --blue-l:#CEEAF0; --blue-p:#EBF7F9;
   --yellow:#F0B429; --yl-l:#FFF3C4; --yl-p:#FFFBEF;
   --orange:#E8601C; --cream:#FAF6EE; --white:#FFFFFF;
   --g100:#F5F4F0; --g200:#E8E4DC; --g400:#B0A898; --g600:#7A6E60; --g900:#2A2018;
@@ -31,7 +31,7 @@ header { background:var(--white); box-shadow:0 2px 10px rgba(0,0,0,0.08); paddin
 .si:not(:last-child)::after { content:''; position:absolute; top:13px; left:55%; width:90%; height:2px; background:var(--g200); }
 .si.done:not(:last-child)::after { background:var(--red); }
 .sn { width:26px; height:26px; border-radius:50%; background:var(--g200); color:var(--g400); font-size:11px; font-weight:900; display:flex; align-items:center; justify-content:center; position:relative; z-index:1; }
-.si.active .sn { background:linear-gradient(135deg,#C8102E,#E8601C); color:white; box-shadow:0 0 0 3px var(--red-l); }
+.si.active .sn { background:var(--red); color:white; box-shadow:0 0 0 3px var(--red-l); }
 .si.done .sn { background:var(--red); color:white; }
 .sl { font-size:9px; font-weight:800; color:var(--g400); margin-top:4px; white-space:nowrap; }
 .si.active .sl { color:var(--red); }
@@ -77,7 +77,7 @@ main { max-width:480px; margin:0 auto; padding:18px 14px 100px; }
 .cday.holiday { color:#D44; background:#FFF0F0; }
 .cday.holiday.past { color:var(--g200); background:transparent; }
 .cday.avail:hover,.cday.avail:active { background:var(--yl-l); }
-.cday.sel { background:linear-gradient(135deg,#C8102E,#E8601C); color:white; font-weight:900; }
+.cday.sel { background:var(--red); color:white; font-weight:900; }
 .gcal-txt { font-size:11px; text-align:center; padding:6px 0 4px; font-weight:700; }
 .gcal-txt.ok { color:#059669; }
 .gcal-txt.err { color:var(--red); }
@@ -85,7 +85,7 @@ main { max-width:480px; margin:0 auto; padding:18px 14px 100px; }
 .slots-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:7px; margin-bottom:14px; }
 .slot { padding:13px 4px; border-radius:12px; border:2px solid var(--g200); background:var(--white); font-size:14px; font-weight:900; text-align:center; cursor:pointer; font-family:var(--font); touch-action:manipulation; }
 .slot.busy { color:#fff; background:var(--red); border-color:var(--red); font-weight:900; cursor:not-allowed; pointer-events:none; text-decoration:none; }
-.slot.sel { background:linear-gradient(135deg,#C8102E,#E8601C); border-color:transparent; color:white; }
+.slot.sel { background:var(--red); border-color:transparent; color:white; }
 .form-card { background:var(--white); border-radius:var(--r); border:1.5px solid var(--g200); padding:18px 16px; box-shadow:0 3px 10px rgba(0,0,0,0.05); margin-bottom:14px; }
 .fg { margin-bottom:16px; }
 .fg:last-child { margin-bottom:0; }
@@ -95,19 +95,19 @@ main { max-width:480px; margin:0 auto; padding:18px 14px 100px; }
 .finput:focus { background:var(--white); border-color:var(--orange); }
 .pax-row { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:6px; }
 .pax-btn { min-width:54px; padding:10px 6px; border-radius:11px; border:2px solid var(--g200); background:var(--cream); color:var(--g600); font-family:var(--font); font-size:14px; font-weight:900; cursor:pointer; text-align:center; touch-action:manipulation; }
-.pax-btn.sel { background:linear-gradient(135deg,#C8102E,#E8601C); border-color:transparent; color:white; }
+.pax-btn.sel { background:var(--red); border-color:transparent; color:white; }
 .pax-note { font-size:10px; color:var(--g400); font-weight:600; line-height:1.5; }
 .pax-stepper { display:flex; align-items:center; justify-content:center; gap:18px; background:var(--cream); border:2px solid var(--g200); border-radius:14px; padding:10px 20px; margin-bottom:6px; }
 .pax-arrow { width:40px; height:40px; border-radius:50%; border:2px solid var(--red); background:white; color:var(--red); font-size:14px; font-weight:900; cursor:pointer; display:flex; align-items:center; justify-content:center; touch-action:manipulation; }
 .pax-arrow:active { background:var(--red-l); }
 .pax-display { font-size:28px; font-weight:900; color:var(--g900); min-width:70px; text-align:center; }
 .conf-card { background:var(--white); border-radius:var(--r); overflow:hidden; box-shadow:0 3px 10px rgba(0,0,0,0.05); margin-bottom:14px; border:1.5px solid var(--g200); }
-.conf-hdr { background:linear-gradient(135deg,#C8102E,#E8601C,#F0B429); padding:13px 18px; color:white; font-size:15px; font-weight:900; }
+.conf-hdr { background:var(--red); padding:13px 18px; color:white; font-size:15px; font-weight:900; }
 .conf-row { display:flex; padding:11px 18px; border-bottom:1px solid var(--g100); gap:12px; }
 .conf-row:last-child { border-bottom:none; }
 .ck { font-size:10px; font-weight:800; color:var(--g400); width:64px; flex-shrink:0; padding-top:2px; }
 .cv { font-size:13px; color:var(--g900); font-weight:600; flex:1; line-height:1.5; }
-.btnp { width:100%; padding:16px; border-radius:16px; border:none; font-family:var(--font); font-size:15px; font-weight:900; cursor:pointer; margin-bottom:10px; display:block; background:linear-gradient(135deg,#C8102E,#E8601C,#F0B429); color:white; box-shadow:0 5px 16px rgba(200,16,46,0.28); touch-action:manipulation; }
+.btnp { width:100%; padding:16px; border-radius:16px; border:none; font-family:var(--font); font-size:15px; font-weight:900; cursor:pointer; margin-bottom:10px; display:block; background:var(--red); color:white; box-shadow:0 5px 16px rgba(219,68,76,0.28); touch-action:manipulation; }
 .btnp:disabled { background:var(--g200); color:var(--g400); cursor:not-allowed; box-shadow:none; }
 .btnb { width:100%; padding:12px; border-radius:16px; border:2px solid var(--g200); background:var(--white); color:var(--g600); font-family:var(--font); font-size:13px; font-weight:800; cursor:pointer; display:block; touch-action:manipulation; }
 .notice { background:var(--yl-p); border-radius:12px; padding:11px 13px; font-size:11px; color:var(--g600); line-height:1.7; margin-bottom:14px; font-weight:600; border-left:4px solid var(--yellow); }
@@ -244,7 +244,7 @@ main { max-width:480px; margin:0 auto; padding:18px 14px 100px; }
 <div class="suc-txt">確認メールをお送りしました✉️<br>当日のご来館をお待ちしております😊</div>
 <div style="background:#FFF5F6;border:2px solid #FADADD;border-radius:14px;padding:14px 16px;margin:0 auto 20px;max-width:320px;">
 <div style="font-size:10px;font-weight:800;color:#B0A898;letter-spacing:1px;margin-bottom:4px;">予約ID</div>
-<div id="suc-id" style="font-size:20px;font-weight:900;color:#C8102E;letter-spacing:2px;font-family:monospace;">--------</div>
+<div id="suc-id" style="font-size:20px;font-weight:900;color:var(--red);letter-spacing:2px;font-family:monospace;">--------</div>
 <div style="font-size:10px;color:#7A6E60;margin-top:6px;line-height:1.6;">※キャンセル時に必要です<br>※確認メールにもキャンセルURLを記載しています</div>
 </div>
 <div style="font-size:12px;color:#7A6E60;margin-bottom:24px;line-height:1.8;"><strong>ONE-BALANCE BOXING GYM</strong><br>鳥取県米子市車尾6丁目8-59<br>TEL：0859-49-5275</div>
