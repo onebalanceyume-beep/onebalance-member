@@ -348,6 +348,17 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
   </div>
     </div>
     <div class="card"><div class="card-title">体験種目別 人数（男女内訳）</div><div class="cw"><canvas id="type-chart"></canvas></div><div id="type-legend" style="font-size:12px;margin-top:10px;line-height:1.8"></div></div>
+    <div class="card">
+      <div class="card-title">🚫 体験予約キャンセル分析</div>
+      <div class="sgrid" style="margin-bottom:12px">
+        <div class="sc"><div class="slabel">体験予約数</div><div class="sval" id="cs-total">-<span>件</span></div></div>
+        <div class="sc red2"><div class="slabel">キャンセル数</div><div class="sval" id="cs-cancelled">-<span>件</span></div></div>
+        <div class="sc"><div class="slabel">キャンセル率</div><div class="sval" id="cs-rate">-<span>%</span></div></div>
+        <div class="sc blue"><div class="slabel">平均キャンセル日数</div><div class="sval" id="cs-avgdays">-<span>日</span></div></div>
+      </div>
+      <div style="font-size:12px;font-weight:800;color:var(--text2);margin-bottom:6px">理由別内訳</div>
+      <div id="cs-reasons" style="font-size:13px;line-height:2.2"></div>
+    </div>
     <div class="card"><div class="card-title">グレード別 在籍人数</div><div id="grade-bars" style="display:flex;flex-direction:column;gap:12px;margin-top:4px"></div></div>
   </div>
 </div>
@@ -730,9 +741,37 @@ async function loadSt(){
   try{
     if(!SD){const d=await api({action:'getStats'});if(d.status!=='ok')throw 0;SD=d.data;}
     hd('stl');sh('stb');renderSt(SD);
+    loadCancelStats();
   }catch(e){
     document.getElementById('stl').innerHTML='<p style="color:#e74c3c;padding:16px">読み込み失敗。GAS URLを確認してください。</p>';
   }
+}
+
+async function loadCancelStats(){
+  try{
+    const d = await apiReserve({action:'getCancelStats'});
+    if(!d.ok) return;
+    renderCancelStats(d);
+  }catch(e){
+    console.error('キャンセル分析の取得に失敗:', e);
+  }
+}
+
+function renderCancelStats(d){
+  si('cs-total', `${d.total||0}<span>件</span>`);
+  si('cs-cancelled', `${d.cancelled||0}<span>件</span>`);
+  si('cs-rate', `${d.cancelRate||0}<span>%</span>`);
+  si('cs-avgdays', d.avgCancelDays!=null ? `${d.avgCancelDays}<span>日</span>` : `-<span>日</span>`);
+  const reasons = d.reasonBreakdown || {};
+  const keys = Object.keys(reasons);
+  const el = document.getElementById('cs-reasons');
+  if(!el) return;
+  if(!keys.length){ el.innerHTML = '<span style="color:var(--text2)">データなし</span>'; return; }
+  el.innerHTML = keys.sort((a,b)=>reasons[b]-reasons[a]).map(k=>
+    `<div style="display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding:4px 0">
+      <span>${escapeHtml(k)}</span><span style="font-weight:700">${reasons[k]}件</span>
+    </div>`
+  ).join('');
 }
 
 function renderSt(d){
@@ -1141,7 +1180,8 @@ function renderR(){
     const cancelBtn=(!cancelled&&!past)?`<button class="r-btn-cancel" onclick="cancelReserve('${escapeAttr(r.reservationId)}','${escapeAttr(r.name)}','${escapeAttr(dateStr)}')">❌ キャンセル＋お詫びメール送信</button>`:'';
     const callBtn=r.phone?`<a class="r-btn-call" href="tel:${escapeAttr(r.phone)}">📞 電話する</a>`:'';
     const btnRow=(cancelBtn||callBtn)?`<div class="r-btn-row">${cancelBtn}${callBtn}</div>`:'';
-    return `<div class="${cls}"><div class="r-row"><div style="flex:1"><div class="r-name">${escapeHtml(r.name||'-')} 様</div><div class="r-date ${past?'past':''}">🗓 ${escapeHtml(dateStr)}</div></div>${statusBadge}</div><div class="r-info-row">${gender}${phone}${email}</div><div style="font-size:10px;color:var(--text2);margin-top:4px">予約ID：${escapeHtml(r.reservationId||'-')}</div>${btnRow}</div>`;
+    const reasonRow=(cancelled&&r.cancelReason)?`<div style="font-size:11px;color:#e74c3c;margin-top:4px">📝 キャンセル理由：${escapeHtml(r.cancelReason)}</div>`:'';
+    return `<div class="${cls}"><div class="r-row"><div style="flex:1"><div class="r-name">${escapeHtml(r.name||'-')} 様</div><div class="r-date ${past?'past':''}">🗓 ${escapeHtml(dateStr)}</div></div>${statusBadge}</div><div class="r-info-row">${gender}${phone}${email}</div><div style="font-size:10px;color:var(--text2);margin-top:4px">予約ID：${escapeHtml(r.reservationId||'-')}</div>${reasonRow}${btnRow}</div>`;
   }).join('');
 }
 
