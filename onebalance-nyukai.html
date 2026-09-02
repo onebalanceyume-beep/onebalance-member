@@ -897,7 +897,7 @@ function calcFees(){
       const cur = new Date(jd);
       while(cur <= nextMonth10){
         const dayJP = ['日','月','火','水','木','金','土'][cur.getDay()];
-        if(state.weeklyDays.includes(dayJP)) weeks++;
+        if(state.weeklyDays.includes(dayJP)) matchedDays++;
         cur.setDate(cur.getDate()+1);
       }
       firstMonth = Math.round(monthly/4 * Math.min(matchedDays/(state.weeklyDays.length||1), 4));
