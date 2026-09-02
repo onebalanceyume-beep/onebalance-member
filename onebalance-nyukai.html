@@ -893,14 +893,14 @@ function calcFees(){
     if(jd > nextMonth10) nextMonth10.setMonth(nextMonth10.getMonth()+1);
 
     if(state.gender==='week1'){
-      let weeks = 0;
+      let matchedDays = 0;
       const cur = new Date(jd);
       while(cur <= nextMonth10){
         const dayJP = ['日','月','火','水','木','金','土'][cur.getDay()];
         if(state.weeklyDays.includes(dayJP)) weeks++;
         cur.setDate(cur.getDate()+1);
       }
-      firstMonth = Math.round(monthly/4 * Math.min(weeks, 4));
+      firstMonth = Math.round(monthly/4 * Math.min(matchedDays/(state.weeklyDays.length||1), 4));
     }else{
       const days = Math.max(0, Math.ceil((nextMonth10 - jd)/(1000*60*60*24)));
       firstMonth = Math.round(monthly/26 * Math.min(days, 26));
@@ -1084,13 +1084,13 @@ function nextStep(){
   if(!canProceed()){alert('必要な項目を入力してください');return}
   if(state.currentStep===4){submit();return}
   state.currentStep++;
-  window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(()=>window.scrollTo(0,0),0);
   updateUI();
 }
 function prevStep(){
   if(state.currentStep===1)return;
   state.currentStep--;
-  window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(()=>window.scrollTo(0,0),0);
   updateUI();
 }
 
