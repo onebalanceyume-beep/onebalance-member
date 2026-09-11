@@ -27,6 +27,13 @@ body{font-family:'Noto Serif JP','M PLUS Rounded 1c',sans-serif;background:var(-
 .hd img{max-width:220px;width:60%;height:auto;display:block;margin:0 auto}
 .hd-sub{font-size:11px;color:var(--gold-text);letter-spacing:.22em;margin-top:6px;font-weight:700}
 .body{padding:20px}
+.price-notice{background:var(--card-bg);border:1.5px solid var(--gold);border-radius:14px;padding:14px 16px;margin-bottom:20px;text-align:center}
+.price-notice-badge{display:inline-block;background:var(--gold-gradient);color:#3a2e0a;font-size:11px;font-weight:800;padding:3px 12px;border-radius:20px;margin-bottom:8px;letter-spacing:.05em;font-family:'M PLUS Rounded 1c',sans-serif}
+.price-notice-main{font-family:'M PLUS Rounded 1c',sans-serif;line-height:1}
+.price-notice-main .yen{font-size:14px;font-weight:700;color:var(--gold-text);margin-right:1px}
+.price-notice-main .amount{font-size:30px;font-weight:900;color:var(--text)}
+.price-notice-main .mins{font-size:14px;font-weight:700;color:var(--gold-text);margin-left:6px}
+.price-notice-sub{font-size:11px;color:var(--text-sub);margin-top:6px}
 .title{font-size:18px;color:var(--text);font-weight:700;margin-bottom:24px;font-family:'Noto Serif JP',serif}
 .card{background:var(--card-bg);border-radius:16px;padding:20px;margin-bottom:16px;border:1px solid var(--card-border)}
 .card-title{font-size:11px;color:var(--gold-text);letter-spacing:.1em;margin-bottom:16px;font-weight:800;border-left:3px solid var(--gold);padding-left:8px}
@@ -88,6 +95,11 @@ body{font-family:'Noto Serif JP','M PLUS Rounded 1c',sans-serif;background:var(-
   </div>
   <div class="body">
     <div id="form-area">
+      <div class="price-notice">
+        <div class="price-notice-badge">初回体験</div>
+        <div class="price-notice-main"><span class="yen">¥</span><span class="amount">3,300</span><span class="mins">（40分）</span></div>
+        <div class="price-notice-sub">本セッションは50分です</div>
+      </div>
       <div class="title">ご希望の日にちをお選びください</div>
       <div class="card">
         <div class="card-title">予約情報</div>
