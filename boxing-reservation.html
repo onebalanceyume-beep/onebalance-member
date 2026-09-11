@@ -191,14 +191,16 @@ function renderTimeGrid(){
   const errMsg=document.getElementById('error-msg');
   grid.innerHTML='';
   if(!lastSlotsData||!lastSlotsData.length)return;
+  const effectiveTrainer = selectedTrainer || '稲田'; // 未選択時は稲田が基本対応
   lastSlotsData.forEach(slot=>{
-    const isNagaoBlocked = selectedTrainer==='長尾' && slot.nagaoFull;
-    const isFull = slot.status==='full' || isNagaoBlocked;
+    const isNagaoBlocked = effectiveTrainer==='長尾' && slot.nagaoFull;
+    const isInadaBlocked = effectiveTrainer==='稲田' && slot.inadaFull;
+    const isFull = slot.status==='full' || isNagaoBlocked || isInadaBlocked;
     const btn=document.createElement('button');
     btn.className='time-btn';btn.type='button';btn.textContent=slot.label;
     if(isFull){
       btn.classList.add('full');btn.disabled=true;
-      btn.title=isNagaoBlocked?'この時間は長尾が対応できません':'この時間帯は満員です';
+      btn.title=isNagaoBlocked?'この時間は長尾が対応できません':(isInadaBlocked?'この時間は稲田が対応できません':'この時間帯は満員です');
       if(selectedStart===slot.start){selectedStart=null;selectedEnd=null;document.getElementById('selected-info').style.display='none';document.getElementById('submit-btn').disabled=true;}
     }else{
       if(selectedStart===slot.start){btn.classList.add('selected');}
@@ -217,8 +219,9 @@ function renderTimeGrid(){
     grid.appendChild(btn);
   });
   const availableCount=lastSlotsData.filter(s=>{
-    const isNagaoBlocked = selectedTrainer==='長尾' && s.nagaoFull;
-    return s.status!=='full' && !isNagaoBlocked;
+    const isNagaoBlocked = effectiveTrainer==='長尾' && s.nagaoFull;
+    const isInadaBlocked = effectiveTrainer==='稲田' && s.inadaFull;
+    return s.status!=='full' && !isNagaoBlocked && !isInadaBlocked;
   }).length;
   if(availableCount===0){errMsg.textContent='この日は満員です。別の日をお選びください。';errMsg.style.display='block';}
   else{errMsg.style.display='none';}
