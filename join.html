@@ -115,6 +115,11 @@ main { max-width:480px; margin:0 auto; padding:18px 14px 100px; }
 .panel { display:none; }
 .panel.on { display:block; }
 .mt18 { margin-top:18px; }
+.minor-box { background:#fff; border:2px solid #E5E5E5; border-radius:12px; padding:14px; margin-bottom:14px; display:flex; align-items:flex-start; gap:10px; cursor:pointer; }
+.minor-box.on { border-color:#DB444C; background:#FBE9EA; }
+.minor-box input { width:22px; height:22px; flex-shrink:0; margin-top:2px; accent-color:#DB444C; cursor:pointer; }
+.minor-box span { font-size:12px; font-weight:700; color:#222; line-height:1.6; }
+.minor-box small { display:block; font-size:11px; font-weight:600; color:#666; margin-top:4px; }
 </style>
 </head>
 <body>
@@ -217,6 +222,10 @@ main { max-width:480px; margin:0 auto; padding:18px 14px 100px; }
 <span>利用規約に同意します。</span>
 </label>
 
+<label class="minor-box" id="minor-box">
+<input type="checkbox" id="minor-chk" onchange="toggleMinor()">
+<span>18歳以上です。または、18歳未満で保護者の同意を得ています。<small>※18歳未満の方は保護者の同意が必要です。当日、保護者の方の署名入り同意書をご持参ください。</small></span>
+</label>
 <div class="notice">🔒 入力情報は予約管理のみに使用します。</div>
 <button class="btnp" id="btn2" onclick="go(3)" disabled>次へ　→　内容確認</button>
 <button class="btnb" onclick="go(1)">← 戻る</button>
@@ -421,12 +430,20 @@ function pickPax(btn) {
   btn.classList.add("sel");
 }
 
+var minorOk = false;
+function toggleMinor() {
+  minorOk = document.getElementById("minor-chk").checked;
+  var b = document.getElementById("minor-box");
+  if (minorOk) b.classList.add("on"); else b.classList.remove("on");
+  chk();
+}
+
 function chk() {
   var formOk = document.getElementById("fn").value.trim() &&
                document.getElementById("ftel").value.trim() &&
                document.getElementById("fmail").value.trim() &&
                document.getElementById("fadr").value.trim();
-  document.getElementById("btn2").disabled = !(formOk && agreed);
+  document.getElementById("btn2").disabled = !(formOk && agreed && minorOk);
 }
 
 function fillConf() {
@@ -471,6 +488,7 @@ function doSub() {
     + "&email=" + encodeURIComponent(document.getElementById("fmail").value)
     + "&address=" + encodeURIComponent(document.getElementById("fadr").value)
     + "&agreed=1"
+    + "&minorConsent=" + (minorOk ? "1" : "0")
     + "&callback=" + cb;
   document.head.appendChild(sc);
 }
