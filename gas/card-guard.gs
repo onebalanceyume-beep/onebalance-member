@@ -82,7 +82,8 @@ function createRegistration_(p){
   var cust = stripe_('post', '/v1/customers', { name: p.name || '', email: p.email || '', metadata: { memberId: memberId } });
   var courseName = String(p.courseName || '月会費');
   var msg = '入会日にご来店いただけない場合は、月会費' + fee.toLocaleString() + '円（毎月）の請求が始まります。' +
-            'ご来店された方は、このカード登録を取り消します。今日は課金されません。';
+            'ご来店された方は、このカード登録を取り消します。今日は課金されません。' +
+            'また、口座引落ができなかった場合は、登録したクレジットカードで決済される場合があります。';
   var sess = stripe_('post', '/v1/checkout/sessions', {
     mode: 'subscription',
     customer: cust.id,
@@ -104,7 +105,7 @@ function createRegistration_(p){
 
 /* ---------- 状態の更新（Stripeに問い合わせる） ---------- */
 function refresh_(r){
-  if(r['状態'] === '取消済み' || r['状態'] === '課金開始') return r;
+  if(r['状態'] === '取消済み' || r['状態'] === '課金開始' || r['状態'] === '停止中') return r;
   var sid = prop_('SESS_' + r['会員ID']);
   if(!sid) return r;
   var s = stripe_('get', '/v1/checkout/sessions/' + sid, {});
@@ -136,8 +137,23 @@ function startSubscription_(memberId){
 function markVisited_(memberId){
   var r = findRow_(memberId); if(!r) throw new Error('会員が見つかりません');
   r = refresh_(r);
-  if(r['状態'] === '登録済み' && r['Stripeサブスク']){ stripe_('delete', '/v1/subscriptions/' + r['Stripeサブスク'], {}); }
+  if((r['状態'] === '登録済み' || r['状態'] === '課金開始' || r['状態'] === '停止中') && r['Stripeサブスク']){ stripe_('delete', '/v1/subscriptions/' + r['Stripeサブスク'], {}); }
   setCell_(r, '状態', '取消済み'); setCell_(r, '更新日時', ts_());
+  return { ok: true };
+}
+
+function pauseSubscription_(memberId){
+  var r = findRow_(memberId); if(!r) throw new Error('会員が見つかりません');
+  if(r['状態'] !== '課金開始') throw new Error('課金中ではありません（状態：' + r['状態'] + '）');
+  stripe_('post', '/v1/subscriptions/' + r['Stripeサブスク'], { pause_collection: { behavior: 'void' } });
+  setCell_(r, '状態', '停止中'); setCell_(r, '更新日時', ts_());
+  return { ok: true };
+}
+function resumeSubscription_(memberId){
+  var r = findRow_(memberId); if(!r) throw new Error('会員が見つかりません');
+  if(r['状態'] !== '停止中') throw new Error('停止中ではありません（状態：' + r['状態'] + '）');
+  stripe_('post', '/v1/subscriptions/' + r['Stripeサブスク'], { pause_collection: '' });
+  setCell_(r, '状態', '課金開始'); setCell_(r, '更新日時', ts_());
   return { ok: true };
 }
 
@@ -180,6 +196,8 @@ function doGet(e){
     if(!staffOk_(p.pass)) return out_(cb, { ok: false, error: '暗証番号が違います' });
     if(p.action === 'list'){ return out_(cb, { ok: true, items: list_() }); }
     if(p.action === 'start'){ return out_(cb, startSubscription_(p.memberId)); }
+    if(p.action === 'pause'){ return out_(cb, pauseSubscription_(p.memberId)); }
+    if(p.action === 'resume'){ return out_(cb, resumeSubscription_(p.memberId)); }
     if(p.action === 'visited'){ return out_(cb, markVisited_(p.memberId)); }
     return out_(cb, { ok: false, error: '不明なactionです' });
   }catch(err){ return out_(cb, { ok: false, error: String(err.message || err) }); }

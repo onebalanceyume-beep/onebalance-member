@@ -26,7 +26,7 @@ input{font:inherit;font-size:20px;letter-spacing:.3em;text-align:center;border:2
 .bx h2{margin:0 0 8px;font-size:18px}.bx p{margin:0 0 14px;font-size:14px;line-height:1.7;color:#333}
 .hint{font-size:12px;color:var(--sub);line-height:1.7;margin:4px 0 14px}
 </style></head><body>
-<header><h1>カード登録の管理</h1><p>来なかった人は「サブスク開始」／来た人は「来店済み」</p></header>
+<header><h1>カード登録の管理</h1><p>来なかった人は「サブスク開始」／来た人は「来店済み」／止めたい時は「課金を停止」</p></header>
 <div class="w">
   <div id="login" class="lg">
     <p class="hint">スタッフの暗証番号（4桁）を入れてください</p>
@@ -65,8 +65,14 @@ function load(){
     d.items.forEach(function(r){
       var cls = r.status==='登録済み' ? 'ok' : r.status==='課金開始' ? 'go' : 'no';
       var can = r.status==='登録済み';
+      var live = r.status==='課金開始', paused = r.status==='停止中';
+      var idn = ' data-id="'+esc(r.memberId)+'" data-n="'+esc(r.name)+'" data-f="'+esc(r.fee)+'" ';
+      var b1 = paused ? '<button class="b1" data-a="resume"'+idn+'>課金を再開</button>'
+             : live ? '<button class="b1" data-a="pause"'+idn+'>課金を停止</button>'
+             : '<button class="b1" data-a="start"'+idn+(can?'':'disabled')+'>サブスク開始</button>';
+      var b2 = '<button class="b2" data-a="visited"'+idn+((can||live||paused)?'':'disabled')+'>来店済み</button>';
       h += '<div class="card"><div class="nm">'+esc(r.name)+' 様</div><div class="mt">'+esc(r.course)+'｜月 '+Number(r.fee).toLocaleString()+'円｜会員ID '+esc(r.memberId)+'</div><div class="mt">申込 '+esc(r.at)+'</div><span class="st '+cls+'">'+esc(r.status)+'</span>'
-        + '<div class="row"><button class="b1" data-a="start" data-id="'+esc(r.memberId)+'" data-n="'+esc(r.name)+'" data-f="'+esc(r.fee)+'" '+(can?'':'disabled')+'>サブスク開始</button><button class="b2" data-a="visited" data-id="'+esc(r.memberId)+'" data-n="'+esc(r.name)+'" '+(can?'':'disabled')+'>来店済み</button></div></div>';
+        + '<div class="row">'+b1+b2+'</div></div>';
     });
     document.getElementById('list').innerHTML = h;
   });
@@ -78,6 +84,12 @@ document.getElementById('list').addEventListener('click', function(e){
   if(b.dataset.a === 'start'){
     document.getElementById('oh').textContent = 'サブスクを開始しますか？';
     document.getElementById('op').textContent = b.dataset.n + ' 様に、月会費 ' + Number(b.dataset.f).toLocaleString() + '円 をカードで請求し、毎月の請求を始めます。';
+  } else if(b.dataset.a === 'pause'){
+    document.getElementById('oh').textContent = '課金を停止しますか？';
+    document.getElementById('op').textContent = b.dataset.n + ' 様の毎月の請求を止めます。あとで「課金を再開」で戻せます。';
+  } else if(b.dataset.a === 'resume'){
+    document.getElementById('oh').textContent = '課金を再開しますか？';
+    document.getElementById('op').textContent = b.dataset.n + ' 様の毎月の請求を再開します。';
   } else {
     document.getElementById('oh').textContent = '来店済みにしますか？';
     document.getElementById('op').textContent = b.dataset.n + ' 様のカード登録（サブスク）を取り消します。月会費は口座引落のままです。';
