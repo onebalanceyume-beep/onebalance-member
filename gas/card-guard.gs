@@ -14,7 +14,7 @@ var REMIND_DAYS = 90;                            // 何日たっても「登録�
 var TRIAL_DAYS = 700;                            // お試し期間（Stripeの上限は730日）
 var RETURN_URL = 'https://onebalanceyume-beep.github.io/onebalance-member/card-done.html';
 var SHEET_NAME = 'カード登録台帳';
-var HEADERS = ['会員ID','名前','メール','コース','月会費','登録日時','状態','Stripe顧客','Stripe決済画面','Stripeサブスク','更新日時'];
+var HEADERS = ['会員ID','名前','メール','コース','月会費','登録日時','状態','Stripe顧客','Stripe決済画面','Stripeサブスク','更新日時','初月日割り','入会日'];
 
 function prop_(k){ return PropertiesService.getScriptProperties().getProperty(k) || ''; }
 function now_(){ return new Date(); }
@@ -74,6 +74,8 @@ function setCell_(row, header, val){ sheet_().getRange(row._row, HEADERS.indexOf
 function createRegistration_(p){
   var memberId = String(p.memberId || ''), fee = parseInt(p.fee, 10);
   if(!memberId || !fee || fee < 1000 || fee > 30000) throw new Error('会員IDまたは月会費が正しくありません');
+  var first = Math.max(0, parseInt(p.first, 10) || 0); if(first > fee) first = fee;
+  var joinDate = /^\d{4}-\d{2}-\d{2}$/.test(String(p.joinDate || '')) ? String(p.joinDate) : ts_().slice(0, 10).replace(/\//g, '-');
   var today = ts_().slice(0, 10), cnt = 0;
   rows_().forEach(function(r){ if(String(r['登録日時']).slice(0, 10) === today) cnt++; });
   if(cnt >= 60) throw new Error('本日の受付上限です。スタッフにお声がけください');
@@ -97,7 +99,7 @@ function createRegistration_(p){
     cancel_url: RETURN_URL + '?ok=0'
   });
   var sh = sheet_();
-  sh.appendRow([memberId, p.name || '', p.email || '', courseName, fee, ts_(), '未登録', cust.id, sess.url, '', ts_()]);
+  sh.appendRow([memberId, p.name || '', p.email || '', courseName, fee, ts_(), '未登録', cust.id, sess.url, '', ts_(), first, joinDate]);
   // appendRow した行は Stripe セッションIDを別に保存
   PropertiesService.getScriptProperties().setProperty('SESS_' + memberId, sess.id);
   return { url: sess.url };
@@ -126,11 +128,30 @@ function list_(){
     return { memberId: r['会員ID'], name: r['名前'], course: r['コース'], fee: r['月会費'], at: r['登録日時'], status: r['状態'] };
   });
 }
+// 入会日（なければ今日）より後の、最初の「10日 0:00（日本時間）」のUNIX秒。過去になる場合は今日以降の次の10日
+function next10_(joinDate){
+  var base = now_(), m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(joinDate || ''));
+  var y, mo;
+  if(m){ y = +m[1]; mo = +m[2] - 1; var jd = +m[3]; if(jd > 10){ mo++; } } else { y = base.getFullYear(); mo = base.getMonth(); if(base.getDate() > 10) mo++; }
+  var t = Date.UTC(y, mo, 10, 0, 0, 0) - 9 * 3600 * 1000;
+  while(t <= base.getTime() + 3600 * 1000){ mo++; t = Date.UTC(y, mo, 10, 0, 0, 0) - 9 * 3600 * 1000; }
+  return Math.floor(t / 1000);
+}
 function startSubscription_(memberId){
   var r = findRow_(memberId); if(!r) throw new Error('会員が見つかりません');
   r = refresh_(r);
   if(r['状態'] !== '登録済み') throw new Error('カードが登録されていません（状態：' + r['状態'] + '）');
-  stripe_('post', '/v1/subscriptions/' + r['Stripeサブスク'], { trial_end: 'now' });
+  // 入会アプリで計算済みの「初月日割り」（週1は週割り・いつでもは日割り）をその場で請求し、次の10日から毎月の請求にする
+  var sub = stripe_('get', '/v1/subscriptions/' + r['Stripeサブスク'], {});
+  var first = parseInt(r['初月日割り'], 10) || 0;
+  if(first > 0){
+    var pm = typeof sub.default_payment_method === 'string' ? sub.default_payment_method : (sub.default_payment_method && sub.default_payment_method.id);
+    stripe_('post', '/v1/invoiceitems', { customer: r['Stripe顧客'], amount: first, currency: 'jpy', description: '初月日割り月会費（' + r['コース'] + '）' });
+    var inv = stripe_('post', '/v1/invoices', { customer: r['Stripe顧客'], auto_advance: false, pending_invoice_items_behavior: 'include', default_payment_method: pm || undefined });
+    inv = stripe_('post', '/v1/invoices/' + inv.id + '/pay', {});
+    if(inv.status !== 'paid') throw new Error('日割り分の決済ができませんでした');
+  }
+  stripe_('post', '/v1/subscriptions/' + r['Stripeサブスク'], { trial_end: next10_(r['入会日']), proration_behavior: 'none' });
   setCell_(r, '状態', '課金開始'); setCell_(r, '更新日時', ts_());
   return { ok: true };
 }

@@ -1205,7 +1205,9 @@ function submit(){
             + '&name=' + encodeURIComponent(payload.name)
             + '&email=' + encodeURIComponent(payload.email)
             + '&courseName=' + encodeURIComponent((state.course.name||'') + (state.course.sub||''))
-            + '&fee=' + encodeURIComponent(state.course.fee);
+            + '&fee=' + encodeURIComponent(state.course.fee)
+            + '&first=' + encodeURIComponent(calcFees().firstMonth)
+            + '&joinDate=' + encodeURIComponent(state.joinDate);
           jsonp(cu, r2=>{
             if(r2 && r2.ok && r2.url){
               document.getElementById('done-card-fee').textContent = Number(state.course.fee).toLocaleString();
