@@ -425,6 +425,11 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
     <p>ご入会ありがとうございます。<br>
        ご登録のメールアドレスにマイページURLをお送りしました。</p>
     <div class="id-box" id="done-id">-</div>
+    <div id="done-pay" style="display:none;margin:16px 0;padding:14px 16px;border:2px solid #DD0B1B;border-radius:12px;background:#fff;text-align:left">
+      <div style="font-size:11px;font-weight:800;letter-spacing:.08em;color:#DD0B1B;margin-bottom:8px">スタッフ確認用｜今日受け取る金額</div>
+      <div id="done-pay-rows"></div>
+      <div id="done-pay-note" style="font-size:12px;color:#444;margin-top:8px;line-height:1.7"></div>
+    </div>
     <p>初回はご予約の上、ジムまでお越しください。<br>
        TEL: 0859-49-5275</p>
     <p style="margin-top:20px"><a href="https://onebalanceyume-beep.github.io/onebalance-member/" target="_blank">マイページを開く</a></p>
@@ -1169,6 +1174,22 @@ function submit(){
       document.getElementById('welcome').style.display='none';
       document.getElementById('btn-group').style.display='none';
       document.getElementById('done-id').textContent = '会員ID: ' + res.memberId;
+      try{
+        const yen = n => '¥' + Number(n||0).toLocaleString();
+        const row = (l,v,strong,red) => '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:'+(strong?'8px 0 0':'3px 0')+';'+(strong?'border-top:1px solid #ddd;margin-top:6px;font-weight:800;font-size:20px;':'font-size:14px;')+(red?'color:#DD0B1B;':'')+'"><span>'+l+'</span><span>'+v+'</span></div>';
+        let h = '';
+        h += row('入会金（'+state.people+'名で入会）', yen(f.entry));
+        h += row('初月日割り月会費', yen(f.firstMonth));
+        if(f.staffTotalOff > 0) h += row('割引', '-' + yen(f.staffTotalOff), false, true);
+        h += row('今日受け取る合計', yen(f.total), true, true);
+        document.getElementById('done-pay-rows').innerHTML = h;
+        let n = '';
+        if(couponCode) n += '適用：' + couponCode.replace(/\[STAFF\]/g,'') + '<br>';
+        if(f.freeMonths > 0) n += '月会費無料：' + f.freeStartMonth + 'から' + f.freeMonths + 'ヶ月<br>';
+        n += '会員ID：' + res.memberId + '／' + payload.name + ' 様';
+        document.getElementById('done-pay-note').innerHTML = n;
+        document.getElementById('done-pay').style.display = 'block';
+      }catch(e){}
     }else{
       alert('お申込みに失敗しました。\n' + (res.message||'時間をおいて再度お試しください'));
     }
