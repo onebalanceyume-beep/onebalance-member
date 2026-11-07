@@ -430,6 +430,13 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
       <div id="done-pay-rows"></div>
       <div id="done-pay-note" style="font-size:12px;color:#444;margin-top:8px;line-height:1.7"></div>
     </div>
+    <div id="done-card" style="display:none;margin:16px 0;padding:14px 16px;border:2px solid #222;border-radius:12px;background:#fff;text-align:left">
+      <div style="font-size:11px;font-weight:800;letter-spacing:.08em;margin-bottom:6px">最後に｜カードのご登録（今日は課金されません）</div>
+      <div style="font-size:13px;line-height:1.7;color:#333">入会日にご来店いただけない場合は、月会費（<span id="done-card-fee"></span>円／毎月）の請求が始まります。<br>ご来店された方は、このカード登録を取り消します。</div>
+      <a id="done-card-btn" href="#" target="_blank" rel="noopener" style="display:block;margin-top:12px;padding:14px;border-radius:10px;background:#DD0B1B;color:#fff;text-align:center;font-weight:800;font-size:16px;text-decoration:none">カードを登録する</a>
+      <div id="done-card-qr" style="margin:12px auto 0;width:140px;height:140px"></div>
+      <div style="font-size:11px;color:#777;margin-top:6px;text-align:center">スタッフのスマホで登録する場合は、QRを読み取ってください</div>
+    </div>
     <p>初回はご予約の上、ジムまでお越しください。<br>
        TEL: 0859-49-5275</p>
     <p style="margin-top:20px"><a href="https://onebalanceyume-beep.github.io/onebalance-member/" target="_blank">マイページを開く</a></p>
@@ -545,6 +552,7 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
 </div>
 
 <script>
+const CARD_GAS_URL = ''; // ← カード登録のApps Script（card-guard.gs）をデプロイしたURLを入れる。空のままなら表示されません
 const GAS2_URL = 'https://script.google.com/macros/s/AKfycbxOLa7yOFNUi7IaLRKVQlJ30s85Fk0nwMrrEk49b4upLAMDMZcnQWgd9XJxMDbxb8O6QQ/exec';
 const GAS1_URL = 'https://script.google.com/macros/s/AKfycbxNxYgejS-1NZvt33PuIkh-DIEtHS9-hTFyAxUjO_8a6E9MM9CPxxDV8KMhX189c8oyrg/exec';
 
@@ -1189,6 +1197,27 @@ function submit(){
         n += '会員ID：' + res.memberId + '／' + payload.name + ' 様';
         document.getElementById('done-pay-note').innerHTML = n;
         document.getElementById('done-pay').style.display = 'block';
+      }catch(e){}
+      try{
+        if(CARD_GAS_URL){
+          const cu = CARD_GAS_URL + '?action=register'
+            + '&memberId=' + encodeURIComponent(res.memberId)
+            + '&name=' + encodeURIComponent(payload.name)
+            + '&email=' + encodeURIComponent(payload.email)
+            + '&courseName=' + encodeURIComponent((state.course.name||'') + (state.course.sub||''))
+            + '&fee=' + encodeURIComponent(state.course.fee);
+          jsonp(cu, r2=>{
+            if(r2 && r2.ok && r2.url){
+              document.getElementById('done-card-fee').textContent = Number(state.course.fee).toLocaleString();
+              document.getElementById('done-card-btn').href = r2.url;
+              document.getElementById('done-card').style.display = 'block';
+              const sc = document.createElement('script');
+              sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+              sc.onload = ()=>{ try{ new QRCode(document.getElementById('done-card-qr'), {text:r2.url, width:140, height:140, correctLevel:QRCode.CorrectLevel.M}); }catch(e){} };
+              document.head.appendChild(sc);
+            }
+          });
+        }
       }catch(e){}
     }else{
       alert('お申込みに失敗しました。\n' + (res.message||'時間をおいて再度お試しください'));

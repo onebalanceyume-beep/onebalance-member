@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#DD0B1B">
+<link rel="apple-touch-icon" href="logo.png">
+<title>カード登録の管理｜ワンバランスボクシングジム</title>
+<style>
+:root{--red:#DD0B1B;--ink:#111;--sub:#666;--line:#e5e5e5}
+*{box-sizing:border-box}html,body{margin:0;background:#fff;color:var(--ink);font-family:Helvetica,Arial,"Hiragino Sans","Noto Sans JP",sans-serif;-webkit-text-size-adjust:100%;touch-action:manipulation}
+header{background:var(--red);color:#fff;padding:18px 16px}header h1{margin:0;font-size:22px;letter-spacing:.02em;white-space:nowrap}header p{margin:4px 0 0;font-size:12px;opacity:.9}
+.w{max-width:720px;margin:0 auto;padding:16px}
+.card{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px;background:#fff}
+.nm{font-size:18px;font-weight:800}.mt{font-size:13px;color:var(--sub);margin-top:2px}
+.st{display:inline-block;font-size:12px;font-weight:800;padding:3px 10px;border-radius:99px;margin-top:8px;border:1px solid #111}
+.st.ok{background:#111;color:#fff}.st.go{background:var(--red);color:#fff;border-color:var(--red)}.st.no{color:#999;border-color:#ccc}
+.row{display:flex;gap:8px;margin-top:12px}
+button{font:inherit;font-weight:800;border:0;border-radius:10px;padding:13px 10px;font-size:15px;cursor:pointer;flex:1}
+.b1{background:var(--red);color:#fff}.b2{background:#fff;color:#111;border:2px solid #111}.bg{background:#111;color:#fff}
+button:disabled{opacity:.35}
+input{font:inherit;font-size:20px;letter-spacing:.3em;text-align:center;border:2px solid #111;border-radius:10px;padding:12px;width:100%}
+.lg{padding:40px 16px;max-width:360px;margin:0 auto;text-align:center}
+.msg{font-size:13px;color:var(--red);min-height:20px;margin-top:8px}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:20px;z-index:10}
+.ov.on{display:flex}.bx{background:#fff;border-radius:14px;padding:20px;max-width:380px;width:100%}
+.bx h2{margin:0 0 8px;font-size:18px}.bx p{margin:0 0 14px;font-size:14px;line-height:1.7;color:#333}
+.hint{font-size:12px;color:var(--sub);line-height:1.7;margin:4px 0 14px}
+</style></head><body>
+<header><h1>カード登録の管理</h1><p>来なかった人は「サブスク開始」／来た人は「来店済み」</p></header>
+<div class="w">
+  <div id="login" class="lg">
+    <p class="hint">スタッフの暗証番号（4桁）を入れてください</p>
+    <input id="pass" type="tel" inputmode="numeric" maxlength="4" autocomplete="off">
+    <div class="row"><button class="b1" id="go">開く</button></div>
+    <div class="msg" id="lmsg"></div>
+  </div>
+  <div id="main" style="display:none">
+    <p class="hint">カードが登録された人だけ、ボタンが押せます。「サブスク開始」を押すと、その場で1回目の月会費が請求され、毎月の請求が始まります。「来店済み」を押すと、カード登録のサブスクが取り消されます（口座引落のままです）。</p>
+    <div id="list"></div>
+    <div class="row"><button class="b2" id="reload">更新する</button></div>
+  </div>
+</div>
+<div class="ov" id="ov"><div class="bx"><h2 id="oh"></h2><p id="op"></p><div class="row"><button class="b2" id="ono">やめる</button><button class="b1" id="oyes">実行する</button></div><div class="msg" id="omsg"></div></div></div>
+<script>
+var CARD_GAS_URL = ''; // ← card-guard.gs をデプロイしたURLを入れる
+var pass = '';
+try{ pass = localStorage.getItem('cg_pass') || ''; }catch(e){}
+function jsonp(params, cb){
+  var n = 'cg' + Date.now() + Math.floor(Math.random()*1000), q = [];
+  for(var k in params) q.push(k + '=' + encodeURIComponent(params[k]));
+  window[n] = function(d){ cb(d); delete window[n]; s.remove(); };
+  var s = document.createElement('script');
+  s.src = CARD_GAS_URL + '?' + q.join('&') + '&callback=' + n + '&_=' + Date.now();
+  s.onerror = function(){ cb({ok:false, error:'通信エラー'}); delete window[n]; };
+  document.body.appendChild(s);
+}
+function esc(t){ return String(t==null?'':t).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function load(){
+  document.getElementById('list').innerHTML = '<p class="hint">読み込み中…</p>';
+  jsonp({action:'list', pass:pass}, function(d){
+    if(!d.ok){ document.getElementById('main').style.display='none'; document.getElementById('login').style.display='block'; document.getElementById('lmsg').textContent = d.error || '開けませんでした'; try{localStorage.removeItem('cg_pass');}catch(e){} return; }
+    document.getElementById('login').style.display='none'; document.getElementById('main').style.display='block';
+    var h = '';
+    if(!d.items.length) h = '<p class="hint">まだ登録はありません。</p>';
+    d.items.forEach(function(r){
+      var cls = r.status==='登録済み' ? 'ok' : r.status==='課金開始' ? 'go' : 'no';
+      var can = r.status==='登録済み';
+      h += '<div class="card"><div class="nm">'+esc(r.name)+' 様</div><div class="mt">'+esc(r.course)+'｜月 '+Number(r.fee).toLocaleString()+'円｜会員ID '+esc(r.memberId)+'</div><div class="mt">申込 '+esc(r.at)+'</div><span class="st '+cls+'">'+esc(r.status)+'</span>'
+        + '<div class="row"><button class="b1" data-a="start" data-id="'+esc(r.memberId)+'" data-n="'+esc(r.name)+'" data-f="'+esc(r.fee)+'" '+(can?'':'disabled')+'>サブスク開始</button><button class="b2" data-a="visited" data-id="'+esc(r.memberId)+'" data-n="'+esc(r.name)+'" '+(can?'':'disabled')+'>来店済み</button></div></div>';
+    });
+    document.getElementById('list').innerHTML = h;
+  });
+}
+var pending = null;
+document.getElementById('list').addEventListener('click', function(e){
+  var b = e.target.closest('button'); if(!b || b.disabled) return;
+  pending = {a:b.dataset.a, id:b.dataset.id};
+  if(b.dataset.a === 'start'){
+    document.getElementById('oh').textContent = 'サブスクを開始しますか？';
+    document.getElementById('op').textContent = b.dataset.n + ' 様に、月会費 ' + Number(b.dataset.f).toLocaleString() + '円 をカードで請求し、毎月の請求を始めます。';
+  } else {
+    document.getElementById('oh').textContent = '来店済みにしますか？';
+    document.getElementById('op').textContent = b.dataset.n + ' 様のカード登録（サブスク）を取り消します。月会費は口座引落のままです。';
+  }
+  document.getElementById('omsg').textContent = ''; document.getElementById('ov').classList.add('on');
+});
+document.getElementById('ono').onclick = function(){ document.getElementById('ov').classList.remove('on'); pending = null; };
+document.getElementById('oyes').onclick = function(){
+  if(!pending) return; var btn = this; btn.disabled = true;
+  jsonp({action:pending.a, pass:pass, memberId:pending.id}, function(d){
+    btn.disabled = false;
+    if(d.ok){ document.getElementById('ov').classList.remove('on'); pending = null; load(); }
+    else { document.getElementById('omsg').textContent = d.error || '失敗しました'; }
+  });
+};
+document.getElementById('reload').onclick = load;
+document.getElementById('go').onclick = function(){
+  pass = document.getElementById('pass').value.trim();
+  if(!/^\d{4}$/.test(pass)){ document.getElementById('lmsg').textContent = '4桁の数字を入れてください'; return; }
+  try{ localStorage.setItem('cg_pass', pass); }catch(e){}
+  load();
+};
+if(!CARD_GAS_URL){ document.getElementById('lmsg').textContent = '準備中です（Apps Script のURLが未設定です）'; document.getElementById('go').disabled = true; }
+else if(pass){ load(); }
+</script></body></html>
