@@ -187,6 +187,18 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
 </style>
 </head>
 <body>
+<div id="feePinOv" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.55);align-items:center;justify-content:center;padding:16px;">
+  <div style="background:#fff;border-radius:14px;padding:22px 20px;width:100%;max-width:320px;text-align:center;font-family:Helvetica,Arial,sans-serif;">
+    <div style="font-size:17px;font-weight:800;margin-bottom:6px;">月会費は暗証番号が必要です</div>
+    <div style="font-size:12px;color:#777;margin-bottom:12px;">4桁の番号を入れてください</div>
+    <input id="feePinIn" type="tel" inputmode="numeric" maxlength="4" autocomplete="off" style="width:100%;font-size:24px;text-align:center;letter-spacing:.4em;padding:10px;border:2px solid #ddd;border-radius:10px;box-sizing:border-box;" onkeydown="if(event.key==='Enter')feePinGo()">
+    <div id="feePinMsg" style="color:#DB444C;font-size:13px;min-height:18px;margin:8px 0;"></div>
+    <div style="display:flex;gap:8px;">
+      <button onclick="feePinCancel()" style="flex:1;padding:12px;border:1px solid #ccc;background:#fff;border-radius:10px;font-size:15px;">やめる</button>
+      <button onclick="feePinGo()" style="flex:1;padding:12px;border:0;background:#DB444C;color:#fff;border-radius:10px;font-size:15px;font-weight:700;">開く</button>
+    </div>
+  </div>
+</div>
 <div class="g-loading-overlay" id="gLoading"><div class="g-spinner"></div></div>
 <div class="header">
   <div class="header-inner">
@@ -612,7 +624,22 @@ function onMonthChange(){
   renderFL();
 }
 
+/* 月会費タブは暗証番号つき（直すときの検索ワード：FEE_PIN）。画面を開くたびに1回入れる */
+const FEE_PIN='0707';
+function feeOk(){try{return sessionStorage.getItem('fee_ok')==='1';}catch(e){return false;}}
+function askFeePin(btn){
+  const ov=document.getElementById('feePinOv');document.getElementById('feePinIn').value='';document.getElementById('feePinMsg').textContent='';
+  ov.style.display='flex';setTimeout(()=>document.getElementById('feePinIn').focus(),50);
+  ov._btn=btn;
+}
+function feePinGo(){
+  const ov=document.getElementById('feePinOv'),v=document.getElementById('feePinIn').value.trim();
+  if(v===FEE_PIN){try{sessionStorage.setItem('fee_ok','1');}catch(e){}ov.style.display='none';const b=ov._btn;if(b)sw('fee',b);}
+  else{document.getElementById('feePinMsg').textContent='番号が違います';document.getElementById('feePinIn').value='';}
+}
+function feePinCancel(){document.getElementById('feePinOv').style.display='none';}
 function sw(name,btn){
+  if(name==='fee'&&!feeOk()){askFeePin(btn);return;}
   document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));
   document.getElementById('tab-'+name).classList.add('active');
