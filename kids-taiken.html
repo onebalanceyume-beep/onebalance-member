@@ -186,26 +186,18 @@ textarea.finput { min-height:84px; resize:vertical; }
 </div>
 <div class="form-card">
 <div class="fg">
-<div class="flbl">体験するお子さまのお名前 <span class="freq">必須</span></div>
-<input class="finput" id="fchild" type="text" placeholder="長澤 たろう" oninput="chk()">
-</div>
-<div class="fg">
-<div class="flbl">学年 <span class="freq">必須</span></div>
-<input type="hidden" id="fgrade" value="">
-<div class="grade-grid" id="grade-grid"><button type="button" class="grade-btn" onclick="pickGrade(this,'小1')">小1</button><button type="button" class="grade-btn" onclick="pickGrade(this,'小2')">小2</button><button type="button" class="grade-btn" onclick="pickGrade(this,'小3')">小3</button><button type="button" class="grade-btn" onclick="pickGrade(this,'小4')">小4</button><button type="button" class="grade-btn" onclick="pickGrade(this,'小5')">小5</button><button type="button" class="grade-btn" onclick="pickGrade(this,'小6')">小6</button></div>
-</div>
-<div class="fg">
 <div class="flbl">体験するお子さまの人数 <span class="freq">必須</span></div>
 <div class="pax-stepper">
 <button type="button" class="pax-arrow" onclick="changePax(-1)">▼</button>
 <div class="pax-display" id="pax-display">1<span style="font-size:12px;font-weight:700;">名</span></div>
 <button type="button" class="pax-arrow" onclick="changePax(1)">▲</button>
 </div>
-<div class="pax-note">きょうだいで来る場合は人数を増やして、下の備考に2人目以降のお名前と学年をご記入ください。（最大5名）</div>
+<div class="pax-note">きょうだいで来る場合は人数を増やして、お一人ずつ入力してください。（最大5名）</div>
 </div>
+<div id="kids-box"></div>
 <div class="fg">
 <div class="flbl">備考・ご質問 <span class="fopt">任意</span></div>
-<textarea class="finput" id="fnote" placeholder="きょうだいのお名前・学年、ご質問など" maxlength="300"></textarea>
+<textarea class="finput" id="fnote" placeholder="ご質問など" maxlength="300"></textarea>
 </div>
 </div>
 </div>
@@ -339,33 +331,60 @@ function renderDays(){
   });
 }
 
+var kids = [{name:"", grade:""}];
 function changePax(delta){
   pax = Math.min(5, Math.max(1, pax + delta));
   document.getElementById("pax-display").innerHTML = pax + '<span style="font-size:12px;font-weight:700;">名</span>';
+  while (kids.length < pax) kids.push({name:"", grade:""});
+  kids.length = pax;
+  renderKids();
+  chk();
 }
+function renderKids(){
+  var box = document.getElementById("kids-box");
+  var html = "";
+  for (var i = 0; i < kids.length; i++){
+    var lab = kids.length > 1 ? (i + 1) + "人目" : "";
+    html += '<div class="kid-card" style="' + (kids.length > 1 ? 'border:2px solid #FADADD;border-radius:14px;padding:12px;margin-bottom:12px;' : '') + '">';
+    html += '<div class="fg"><div class="flbl">' + lab + 'お子さまのお名前 <span class="freq">必須</span></div>';
+    html += '<input class="finput" type="text" placeholder="長澤 たろう" value="' + esc(kids[i].name) + '" oninput="setKidName(' + i + ',this.value)"></div>';
+    html += '<div class="fg"><div class="flbl">' + lab + '学年 <span class="freq">必須</span></div><div class="grade-grid">';
+    for (var g = 1; g <= 6; g++){
+      html += '<button type="button" class="grade-btn' + (kids[i].grade === "小" + g ? " on" : "") + '" onclick="pickGrade(' + i + ',\'小' + g + '\')">小' + g + '</button>';
+    }
+    html += '</div></div></div>';
+  }
+  box.innerHTML = html;
+}
+function setKidName(i, val){ kids[i].name = val; chk(); }
 function toggleMinor(){
   minorOk = document.getElementById("minor-chk").checked;
   var b = document.getElementById("minor-box");
   if (minorOk) b.classList.add("on"); else b.classList.remove("on");
   chk();
 }
-function pickGrade(btn, g){
-  document.getElementById("fgrade").value = g;
-  var all = document.querySelectorAll(".grade-btn");
-  for (var i=0;i<all.length;i++) all[i].classList.remove("on");
-  btn.classList.add("on");
+function pickGrade(i, g){
+  kids[i].grade = g;
+  renderKids();
   chk();
+}
+function kidsOk(){
+  for (var i = 0; i < kids.length; i++){ if (!kids[i].name.trim() || !kids[i].grade) return false; }
+  return true;
+}
+function kidsText(){
+  return kids.map(function(k){ return k.name.trim() + "（" + k.grade + "）"; }).join("、");
 }
 function v(id){ return document.getElementById(id).value.trim(); }
 function chk(){
-  var ok = v("fn") && v("ftel") && v("fmail") && v("fadr") && v("fchild") && v("fgrade");
+  var ok = v("fn") && v("ftel") && v("fmail") && v("fadr") && kidsOk();
   var mailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v("fmail"));
   document.getElementById("btn2").disabled = !(ok && mailOk && minorOk);
 }
 function fillConf(){
   document.getElementById("cv-d").textContent = fmtJP(selDate) + "　" + CLASS_TIME + "〜";
-  document.getElementById("cv-c").textContent = v("fchild") + "（" + v("fgrade") + "）";
-  document.getElementById("cv-pax").textContent = pax + "名";
+  document.getElementById("cv-c").textContent = kidsText();
+  document.getElementById("cv-pax").textContent = pax + "名（体験代 " + (1100 * pax).toLocaleString() + "円・当日お支払い）";
   document.getElementById("cv-n").textContent = v("fn");
   document.getElementById("cv-t").textContent = v("ftel");
   document.getElementById("cv-e").textContent = v("fmail");
@@ -377,7 +396,7 @@ function doSub(){
   jsonp({
     action:"saveKids", date:selDate, time:CLASS_TIME, pax:pax,
     name:v("fn"), phone:v("ftel"), email:v("fmail"), address:v("fadr"),
-    child:v("fchild"), grade:v("fgrade"), note:v("fnote"),
+    children:JSON.stringify(kids.map(function(k){ return {name:k.name.trim(), grade:k.grade}; })), note:v("fnote"),
     minorConsent: minorOk ? "1" : "0"
   }, function(res){
     document.getElementById("lov").classList.remove("on");
@@ -398,6 +417,7 @@ function doSub(){
   });
 }
 
+renderKids();
 loadDays();
 </script>
 </body>
