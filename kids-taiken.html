@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>キッズ体験予約（小学生・土曜16:30）| ONE-BALANCE BOXING GYM</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="キッズ体験予約">
+<meta name="theme-color" content="#DB444C">
+<link rel="apple-touch-icon" href="icons/icon-192x192.png">
+<link rel="icon" href="icons/icon-192x192.png">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red:#DB444C; --red-l:#F4C7C9; --red-p:#FBE9EA;
+  --blue:#5BB9CD; --blue-l:#CEEAF0; --blue-p:#EBF7F9;
+  --yellow:#F0B429; --yl-l:#FFF3C4; --yl-p:#FFFBEF;
+  --orange:#E8601C; --cream:#FAF6EE; --white:#FFFFFF;
+  --g100:#F5F4F0; --g200:#E8E4DC; --g400:#B0A898; --g600:#7A6E60; --g900:#2A2018;
+  --r:20px; --font:'Helvetica Neue',Helvetica,Arial,'M PLUS Rounded 1c',sans-serif;
+}
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+html { -webkit-text-size-adjust:100%; }
+body { font-family:var(--font); background:var(--cream); color:var(--g900); min-height:100vh; overflow-x:hidden; touch-action:manipulation; }
+img { max-width:100%; }
+header { background:var(--white); box-shadow:0 2px 10px rgba(0,0,0,0.08); padding:0 16px; position:sticky; top:0; z-index:200; }
+.hd { max-width:480px; margin:0 auto; height:60px; display:flex; align-items:center; justify-content:space-between; }
+.hd-img { height:46px; width:auto; object-fit:contain; }
+.hd-tag { font-size:11px; font-weight:800; color:var(--red); border:2px solid var(--red); padding:4px 12px; border-radius:20px; background:var(--red-p); white-space:nowrap; }
+.hero { position:relative; overflow:hidden; height:240px; background:#222; }
+.hero-img { width:100%; height:100%; object-fit:cover; object-position:center 35%; display:block; }
+.hero-ov { position:absolute; inset:0; background:linear-gradient(to top,rgba(0,0,0,.62),rgba(0,0,0,0) 62%); display:flex; align-items:flex-end; padding:18px 20px; }
+.hero-catch { font-size:clamp(22px,6vw,32px); font-weight:900; color:#fff; line-height:1.4; letter-spacing:1px; text-shadow:0 2px 4px rgba(0,0,0,.8); }
+.hero-catch small { display:block; font-size:.5em; letter-spacing:0; margin-bottom:4px; }
+.step-bar { background:var(--white); padding:12px 16px; border-bottom:2px solid var(--g100); }
+.step-in { max-width:480px; margin:0 auto; display:flex; align-items:center; }
+.si { flex:1; display:flex; flex-direction:column; align-items:center; position:relative; }
+.si:not(:last-child)::after { content:''; position:absolute; top:13px; left:55%; width:90%; height:2px; background:var(--g200); }
+.si.done:not(:last-child)::after { background:var(--red); }
+.sn { width:26px; height:26px; border-radius:50%; background:var(--g200); color:var(--g400); font-size:11px; font-weight:900; display:flex; align-items:center; justify-content:center; position:relative; z-index:1; }
+.si.active .sn { background:var(--red); color:white; box-shadow:0 0 0 3px var(--red-l); }
+.si.done .sn { background:var(--red); color:white; }
+.sl { font-size:9px; font-weight:800; color:var(--g400); margin-top:4px; white-space:nowrap; }
+.si.active .sl { color:var(--red); }
+.si.done .sl { color:var(--g600); }
+main { max-width:480px; margin:0 auto; padding:18px 14px 100px; }
+.sec { font-size:10px; font-weight:900; letter-spacing:2px; color:var(--g400); margin-bottom:12px; display:flex; align-items:center; gap:6px; }
+.sec::after { content:''; flex:1; height:1.5px; background:var(--g200); }
+.mt18 { margin-top:18px; }
+.panel { display:none; }
+.panel.on { display:block; }
+
+.course { background:var(--white); border:2.5px solid var(--red); border-radius:var(--r); padding:16px; margin-bottom:16px; box-shadow:0 3px 10px rgba(0,0,0,.05); }
+.course .nm { font-size:18px; font-weight:900; color:var(--red); margin-bottom:6px; }
+.course .badges { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
+.bdg { display:inline-flex; font-size:11px; font-weight:800; padding:4px 10px; border-radius:14px; background:var(--red-l); color:var(--red); }
+.bdg.price { font-size:13px; font-weight:900; }
+.course p { font-size:12px; color:var(--g600); line-height:1.8; font-weight:500; }
+
+.days { display:grid; gap:10px; margin-bottom:12px; }
+.day { display:flex; align-items:center; gap:12px; width:100%; text-align:left; background:var(--white); border:2.5px solid var(--g200); border-radius:16px; padding:14px 16px; font-family:var(--font); cursor:pointer; touch-action:manipulation; }
+.day .dt { font-size:20px; font-weight:900; color:var(--g900); line-height:1.2; }
+.day .tm { font-size:12px; font-weight:700; color:var(--g600); }
+.day .st { margin-left:auto; font-size:12px; font-weight:900; color:var(--red); }
+.day.sel { border-color:var(--red); background:var(--red-p); }
+.day.sel .st::before { content:"✓ "; }
+.day.off { background:var(--g100); cursor:not-allowed; pointer-events:none; }
+.day.off .dt, .day.off .tm { color:var(--g400); text-decoration:line-through; }
+.day.off .st { color:var(--g400); }
+.gcal-txt { font-size:11px; text-align:center; padding:6px 0 8px; font-weight:700; }
+.gcal-txt.ok { color:#059669; } .gcal-txt.err { color:var(--red); } .gcal-txt.loading { color:var(--g400); }
+
+.line-box { background:var(--blue-p); border:2px solid var(--blue-l); border-radius:14px; padding:14px; font-size:12px; line-height:1.8; font-weight:700; color:var(--g900); margin:6px 0 18px; text-align:center; }
+.line-box a { display:inline-block; margin-top:8px; background:#06C755; color:#fff; font-weight:900; font-size:13px; padding:10px 22px; border-radius:24px; text-decoration:none; }
+
+.form-card { background:var(--white); border-radius:var(--r); border:1.5px solid var(--g200); padding:18px 16px; box-shadow:0 3px 10px rgba(0,0,0,.05); margin-bottom:14px; }
+.fg { margin-bottom:16px; } .fg:last-child { margin-bottom:0; }
+.flbl { font-size:11px; font-weight:800; color:var(--g600); margin-bottom:7px; display:flex; align-items:center; gap:6px; }
+.freq { font-size:9px; font-weight:900; color:var(--red); background:var(--red-l); padding:1px 6px; border-radius:5px; }
+.fopt { font-size:9px; font-weight:900; color:var(--g600); background:var(--g100); padding:1px 6px; border-radius:5px; }
+.finput { width:100%; background:var(--cream); border:2px solid var(--g200); border-radius:11px; padding:13px 14px; color:var(--g900); font-family:var(--font); font-size:16px; outline:none; -webkit-appearance:none; appearance:none; }
+.finput:focus { background:var(--white); border-color:var(--orange); }
+textarea.finput { min-height:84px; resize:vertical; }
+.pax-note { font-size:10px; color:var(--g400); font-weight:600; line-height:1.5; }
+.pax-stepper { display:flex; align-items:center; justify-content:center; gap:18px; background:var(--cream); border:2px solid var(--g200); border-radius:14px; padding:10px 20px; margin-bottom:6px; }
+.pax-arrow { width:40px; height:40px; border-radius:50%; border:2px solid var(--red); background:white; color:var(--red); font-size:14px; font-weight:900; cursor:pointer; display:flex; align-items:center; justify-content:center; touch-action:manipulation; }
+.pax-arrow:active { background:var(--red-l); }
+.pax-display { font-size:28px; font-weight:900; min-width:70px; text-align:center; }
+.minor-box { background:#fff; border:2px solid #E5E5E5; border-radius:12px; padding:14px; margin-bottom:14px; display:flex; align-items:flex-start; gap:10px; cursor:pointer; }
+.minor-box.on { border-color:#DB444C; background:#FBE9EA; }
+.minor-box input { width:22px; height:22px; flex-shrink:0; margin-top:2px; accent-color:#DB444C; cursor:pointer; }
+.minor-box span { font-size:12px; font-weight:700; color:#222; line-height:1.6; }
+.minor-box small { display:block; font-size:11px; font-weight:600; color:#666; margin-top:4px; }
+.conf-card { background:var(--white); border-radius:var(--r); overflow:hidden; box-shadow:0 3px 10px rgba(0,0,0,.05); margin-bottom:14px; border:1.5px solid var(--g200); }
+.conf-hdr { background:var(--red); padding:13px 18px; color:white; font-size:15px; font-weight:900; }
+.conf-row { display:flex; padding:11px 18px; border-bottom:1px solid var(--g100); gap:12px; }
+.conf-row:last-child { border-bottom:none; }
+.ck { font-size:10px; font-weight:800; color:var(--g400); width:74px; flex-shrink:0; padding-top:2px; }
+.cv { font-size:13px; font-weight:600; flex:1; line-height:1.5; word-break:break-all; white-space:pre-wrap; }
+.btnp { width:100%; padding:16px; border-radius:16px; border:none; font-family:var(--font); font-size:15px; font-weight:900; cursor:pointer; margin-bottom:10px; display:block; background:var(--red); color:white; box-shadow:0 5px 16px rgba(219,68,76,.28); touch-action:manipulation; }
+.btnp:disabled { background:var(--g200); color:var(--g400); cursor:not-allowed; box-shadow:none; }
+.btnb { width:100%; padding:12px; border-radius:16px; border:2px solid var(--g200); background:var(--white); color:var(--g600); font-family:var(--font); font-size:13px; font-weight:800; cursor:pointer; display:block; touch-action:manipulation; }
+.notice { background:var(--yl-p); border-radius:12px; padding:11px 13px; font-size:11px; color:var(--g600); line-height:1.7; margin-bottom:14px; font-weight:600; border-left:4px solid var(--yellow); }
+.suc-wrap { text-align:center; padding:40px 16px; }
+.suc-icon { font-size:68px; margin-bottom:18px; display:block; }
+.suc-ttl { font-size:22px; font-weight:900; margin-bottom:10px; }
+.suc-txt { font-size:13px; color:var(--g600); line-height:1.9; margin-bottom:24px; font-weight:500; }
+.lov { position:fixed; inset:0; background:rgba(255,255,255,.88); display:flex; align-items:center; justify-content:center; z-index:999; opacity:0; pointer-events:none; transition:opacity .3s; }
+.lov.on { opacity:1; pointer-events:all; }
+.spin { width:46px; height:46px; border:4px solid var(--g200); border-top-color:var(--red); border-radius:50%; animation:sp .7s linear infinite; }
+@keyframes sp { to { transform:rotate(360deg); } }
+
+/* PC画面：広めのレイアウトで表示（スマホは上のまま） */
+@media (min-width:900px) {
+  .hd, .step-in { max-width:960px; }
+  .hero { height:340px; }
+  .hero-catch { font-size:44px; max-width:960px; margin:0 auto; width:100%; padding:0 8px; }
+  main { max-width:960px; padding:32px 24px 120px; }
+  .pc-2col { display:grid; grid-template-columns:1fr 1fr; gap:28px; align-items:start; }
+  .panel > .btnp, .panel > .btnb, .panel > .notice, .panel > div > .btnp, .panel > div > .btnb { max-width:520px; margin-left:auto; margin-right:auto; }
+  .sl { font-size:11px; } .sn { width:30px; height:30px; font-size:13px; }
+  .si:not(:last-child)::after { top:15px; }
+  .conf-card { max-width:620px; margin-left:auto; margin-right:auto; }
+  .minor-box { max-width:none; }
+}
+</style>
+</head>
+<body>
+<header><div class="hd"><img class="hd-img" src="images/logo.jpg" alt="ONE-BALANCE"><div class="hd-tag">キッズ体験予約</div></div></header>
+<div class="hero"><img class="hero-img" src="images/kids-hero.jpg" alt="ワンバランスのキッズクラスの小学生"><div class="hero-ov"><div class="hero-catch"><small>小学生（小1〜小6）</small>キッズボクシング<br>体験しよう！</div></div></div>
+<div class="step-bar"><div class="step-in">
+<div class="si active" id="sd1"><div class="sn">1</div><div class="sl">日程</div></div>
+<div class="si" id="sd2"><div class="sn">2</div><div class="sl">お客様情報</div></div>
+<div class="si" id="sd3"><div class="sn">3</div><div class="sl">確認</div></div>
+</div></div>
+<main>
+
+<!-- STEP1 日程 -->
+<div class="panel on" id="p1">
+<div class="pc-2col">
+<div>
+<p class="sec">体験のこと</p>
+<div class="course">
+<div class="nm">キッズボクシング体験</div>
+<div class="badges"><span class="bdg">小学1〜6年生</span><span class="bdg">毎週土曜 16:30〜</span><span class="bdg">60〜90分</span><span class="bdg price">体験 ¥1,100</span></div>
+<p>土曜16:30のキッズクラスに参加して体験できます。動きやすい服装で来てください。お支払いは当日、現金・PayPay・クレジットカードが使えます。</p>
+</div>
+<div class="line-box">土曜16:30以外をご希望の方は、<br>LINEでご相談ください。<br><a href="https://lin.ee/2dtDdkF">LINEで相談する</a></div>
+</div>
+<div>
+<p class="sec">日にちを選んでね</p>
+<div class="days" id="days"></div>
+<div class="gcal-txt" id="gcal-txt"></div>
+</div>
+</div>
+<button class="btnp" id="btn1" onclick="go(2)" disabled>次へ　→　お客様情報</button>
+</div>
+
+<!-- STEP2 情報 -->
+<div class="panel" id="p2">
+<p class="sec">保護者の方の情報</p>
+<div class="pc-2col">
+<div class="form-card">
+<div class="fg">
+<div class="flbl">保護者のお名前 <span class="freq">必須</span></div>
+<input class="finput" id="fn" type="text" placeholder="長澤 まさみ" oninput="chk()" autocomplete="name">
+</div>
+<div class="fg">
+<div class="flbl">電話番号 <span class="freq">必須</span></div>
+<input class="finput" id="ftel" type="tel" placeholder="090-0000-0000" oninput="chk()" autocomplete="tel">
+</div>
+<div class="fg">
+<div class="flbl">メールアドレス <span class="freq">必須</span></div>
+<input class="finput" id="fmail" type="email" placeholder="example@gmail.com" oninput="chk()" autocomplete="email">
+</div>
+<div class="fg">
+<div class="flbl">住所 <span class="freq">必須</span></div>
+<input class="finput" id="fadr" type="text" placeholder="鳥取県米子市〇〇町0-0" oninput="chk()" autocomplete="street-address">
+</div>
+</div>
+<div class="form-card">
+<div class="fg">
+<div class="flbl">体験するお子さまのお名前 <span class="freq">必須</span></div>
+<input class="finput" id="fchild" type="text" placeholder="長澤 たろう" oninput="chk()">
+</div>
+<div class="fg">
+<div class="flbl">学年 <span class="freq">必須</span></div>
+<select class="finput" id="fgrade" onchange="chk()">
+<option value="">選んでください</option>
+<option>小1</option><option>小2</option><option>小3</option><option>小4</option><option>小5</option><option>小6</option>
+</select>
+</div>
+<div class="fg">
+<div class="flbl">体験するお子さまの人数 <span class="freq">必須</span></div>
+<div class="pax-stepper">
+<button type="button" class="pax-arrow" onclick="changePax(-1)">▼</button>
+<div class="pax-display" id="pax-display">1<span style="font-size:12px;font-weight:700;">名</span></div>
+<button type="button" class="pax-arrow" onclick="changePax(1)">▲</button>
+</div>
+<div class="pax-note">きょうだいで来る場合は人数を増やして、下の備考に2人目以降のお名前と学年をご記入ください。（最大5名）</div>
+</div>
+<div class="fg">
+<div class="flbl">備考・ご質問 <span class="fopt">任意</span></div>
+<textarea class="finput" id="fnote" placeholder="きょうだいのお名前・学年、ご質問など" maxlength="300"></textarea>
+</div>
+</div>
+</div>
+<label class="minor-box" id="minor-box">
+<input type="checkbox" id="minor-chk" onchange="toggleMinor()">
+<span>保護者の同意を得ています。<small>※18歳未満の方は保護者の同意が必要です。当日、保護者の方の署名入り同意書をご持参ください。</small></span>
+</label>
+<div class="notice">🔒 入力情報は予約管理のみに使用します。</div>
+<button class="btnp" id="btn2" onclick="go(3)" disabled>次へ　→　内容確認</button>
+<button class="btnb" onclick="go(1)">← 戻る</button>
+</div>
+
+<!-- STEP3 確認 -->
+<div class="panel" id="p3">
+<p class="sec">予約内容の確認</p>
+<div class="conf-card">
+<div class="conf-hdr">キッズボクシング体験</div>
+<div class="conf-row"><div class="ck">日時</div><div class="cv" id="cv-d"></div></div>
+<div class="conf-row"><div class="ck">お子さま</div><div class="cv" id="cv-c"></div></div>
+<div class="conf-row"><div class="ck">人数</div><div class="cv" id="cv-pax"></div></div>
+<div class="conf-row"><div class="ck">保護者名</div><div class="cv" id="cv-n"></div></div>
+<div class="conf-row"><div class="ck">電話番号</div><div class="cv" id="cv-t"></div></div>
+<div class="conf-row"><div class="ck">メール</div><div class="cv" id="cv-e"></div></div>
+<div class="conf-row"><div class="ck">住所</div><div class="cv" id="cv-a"></div></div>
+<div class="conf-row"><div class="ck">備考</div><div class="cv" id="cv-note"></div></div>
+</div>
+<div class="notice">📩 確定後、ご入力のメールアドレスに確認メールをお送りします。体験代1,100円は当日お支払いください。</div>
+<button class="btnp" onclick="doSub()">🎉 この内容で予約を確定する</button>
+<button class="btnb" onclick="go(2)">← 戻る</button>
+</div>
+
+<!-- 完了 -->
+<div class="panel" id="p4">
+<div class="suc-wrap">
+<span class="suc-icon">🎉</span>
+<div class="suc-ttl">ご予約完了！</div>
+<div class="suc-txt">確認メールをお送りしました✉️<br>当日のご来館をお待ちしております😊<br><br>動きやすい服装で来てください。<br>18歳未満の方は、保護者の方の署名入り同意書をご持参ください。</div>
+<div style="background:#FFF5F6;border:2px solid #FADADD;border-radius:14px;padding:14px 16px;margin:0 auto 20px;max-width:320px;">
+<div style="font-size:10px;font-weight:800;color:#B0A898;letter-spacing:1px;margin-bottom:4px;">予約ID</div>
+<div id="suc-id" style="font-size:20px;font-weight:900;color:var(--red);letter-spacing:2px;font-family:monospace;">--------</div>
+<div style="font-size:10px;color:#7A6E60;margin-top:6px;line-height:1.6;">※変更・キャンセルはLINEまたはお電話でご連絡ください</div>
+</div>
+<div style="font-size:12px;color:#7A6E60;margin-bottom:24px;line-height:1.8;"><strong>ONE-BALANCE BOXING GYM</strong><br>鳥取県米子市車尾6丁目8-59<br>TEL：0859-49-5275</div>
+<button class="btnp" onclick="location.href='https://www.one-balance.jp/kids.html'">キッズのページへ戻る</button>
+<button class="btnb" onclick="location.href='https://lin.ee/2dtDdkF'">LINEで連絡する</button>
+</div>
+</div>
+</main>
+<div class="lov" id="lov"><div class="spin"></div></div>
+
+<script>
+/* ===== 設定（ここだけ変える） ===== */
+var KIDS_GAS   = "";      /* ← キッズ予約GASのウェブアプリURL（https://script.google.com/macros/s/.../exec）を貼る */
+var CLASS_TIME = "16:30";
+var WEEKS_SHOWN = 8;      /* 何週先まで表示するか */
+/* ================================== */
+
+var DOW = ["日","月","火","水","木","金","土"];
+var selDate = null;
+var pax = 1;
+var minorOk = false;
+var loadedDays = [];
+
+function p2(n){ return n < 10 ? "0" + n : "" + n; }
+function fmtJP(ds){ var d = new Date(ds + "T00:00:00"); return (d.getMonth()+1) + "月" + d.getDate() + "日（" + DOW[d.getDay()] + "）"; }
+function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+
+function go(n){
+  var panels = document.querySelectorAll(".panel");
+  for (var i = 0; i < panels.length; i++) panels[i].classList.remove("on");
+  document.getElementById("p" + n).classList.add("on");
+  for (var i = 1; i <= 3; i++){
+    var el = document.getElementById("sd" + i);
+    el.classList.remove("active","done");
+    if (i < n) el.classList.add("done");
+    if (i === n) el.classList.add("active");
+  }
+  if (n === 3) fillConf();
+  window.scrollTo(0, 0);
+}
+
+function jsonp(params, ok, ng){
+  if (!KIDS_GAS){ ng("予約システムを準備中です。LINEまたはお電話でご連絡ください。"); return; }
+  var cb = "cb" + Date.now() + Math.floor(Math.random()*1000);
+  var done = false;
+  var sc = document.createElement("script");
+  var timer = setTimeout(function(){ if (done) return; done = true; delete window[cb]; sc.remove(); ng("通信に時間がかかっています。もう一度お試しください。"); }, 20000);
+  window[cb] = function(res){ if (done) return; done = true; clearTimeout(timer); delete window[cb]; sc.remove(); ok(res); };
+  sc.onerror = function(){ if (done) return; done = true; clearTimeout(timer); delete window[cb]; sc.remove(); ng("取得に失敗しました。もう一度お試しください。"); };
+  var q = []; for (var k in params) q.push(k + "=" + encodeURIComponent(params[k]));
+  q.push("callback=" + cb);
+  q.push("_=" + Date.now());   /* キャッシュ回避 */
+  sc.src = KIDS_GAS + (KIDS_GAS.indexOf("?") < 0 ? "?" : "&") + q.join("&");
+  document.head.appendChild(sc);
+}
+
+function loadDays(){
+  var box = document.getElementById("days");
+  var txt = document.getElementById("gcal-txt");
+  box.innerHTML = "";
+  txt.className = "gcal-txt loading";
+  txt.textContent = "⌛ 空き状況を確認中...";
+  jsonp({action:"getKidsDays", weeks:WEEKS_SHOWN}, function(res){
+    if (!res || res.error || !res.days){
+      txt.className = "gcal-txt err";
+      txt.textContent = "⚠️ " + ((res && res.error) || "取得に失敗しました。LINEでご連絡ください。");
+      return;
+    }
+    loadedDays = res.days;
+    txt.className = "gcal-txt ok";
+    txt.textContent = "✅ 空き状況を取得しました";
+    renderDays();
+  }, function(msg){
+    txt.className = "gcal-txt err";
+    txt.textContent = "⚠️ " + msg;
+  });
+}
+
+function renderDays(){
+  var box = document.getElementById("days");
+  box.innerHTML = "";
+  if (!loadedDays.length){ box.innerHTML = "<p style='color:var(--g400);font-size:12px;'>予約できる日がありません。LINEでご相談ください。</p>"; return; }
+  loadedDays.forEach(function(d){
+    var b = document.createElement("button");
+    b.type = "button";
+    var off = d.status !== "ok";
+    b.className = "day" + (off ? " off" : "") + (selDate === d.date ? " sel" : "");
+    b.innerHTML = '<div><div class="dt">' + esc(fmtJP(d.date)) + '</div><div class="tm">' + CLASS_TIME + '〜（60〜90分）</div></div><div class="st">' + (off ? "お休み" : (selDate === d.date ? "選択中" : "予約できます")) + '</div>';
+    if (!off) b.addEventListener("click", function(){ selDate = d.date; renderDays(); document.getElementById("btn1").disabled = false; });
+    box.appendChild(b);
+  });
+}
+
+function changePax(delta){
+  pax = Math.min(5, Math.max(1, pax + delta));
+  document.getElementById("pax-display").innerHTML = pax + '<span style="font-size:12px;font-weight:700;">名</span>';
+}
+function toggleMinor(){
+  minorOk = document.getElementById("minor-chk").checked;
+  var b = document.getElementById("minor-box");
+  if (minorOk) b.classList.add("on"); else b.classList.remove("on");
+  chk();
+}
+function v(id){ return document.getElementById(id).value.trim(); }
+function chk(){
+  var ok = v("fn") && v("ftel") && v("fmail") && v("fadr") && v("fchild") && v("fgrade");
+  var mailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v("fmail"));
+  document.getElementById("btn2").disabled = !(ok && mailOk && minorOk);
+}
+function fillConf(){
+  document.getElementById("cv-d").textContent = fmtJP(selDate) + "　" + CLASS_TIME + "〜";
+  document.getElementById("cv-c").textContent = v("fchild") + "（" + v("fgrade") + "）";
+  document.getElementById("cv-pax").textContent = pax + "名";
+  document.getElementById("cv-n").textContent = v("fn");
+  document.getElementById("cv-t").textContent = v("ftel");
+  document.getElementById("cv-e").textContent = v("fmail");
+  document.getElementById("cv-a").textContent = v("fadr");
+  document.getElementById("cv-note").textContent = v("fnote") || "なし";
+}
+function doSub(){
+  document.getElementById("lov").classList.add("on");
+  jsonp({
+    action:"saveKids", date:selDate, time:CLASS_TIME, pax:pax,
+    name:v("fn"), phone:v("ftel"), email:v("fmail"), address:v("fadr"),
+    child:v("fchild"), grade:v("fgrade"), note:v("fnote"),
+    minorConsent: minorOk ? "1" : "0"
+  }, function(res){
+    document.getElementById("lov").classList.remove("on");
+    if (res && res.ok){
+      if (res.reservationId) document.getElementById("suc-id").textContent = res.reservationId;
+      var panels = document.querySelectorAll(".panel");
+      for (var i = 0; i < panels.length; i++) panels[i].classList.remove("on");
+      document.getElementById("p4").classList.add("on");
+      for (var j = 1; j <= 3; j++){ var el = document.getElementById("sd" + j); el.classList.remove("active"); el.classList.add("done"); }
+      window.scrollTo(0, 0);
+    } else {
+      alert((res && res.error) || "送信に失敗しました。お電話（0859-49-5275）にてご連絡ください。");
+      if (res && res.reload) { go(1); loadDays(); }
+    }
+  }, function(msg){
+    document.getElementById("lov").classList.remove("on");
+    alert(msg + "\nお電話（0859-49-5275）でもご予約いただけます。");
+  });
+}
+
+loadDays();
+</script>
+</body>
+</html>
