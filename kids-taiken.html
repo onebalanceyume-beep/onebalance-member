@@ -82,6 +82,9 @@ main { max-width:480px; margin:0 auto; padding:18px 14px 100px; }
 .freq { font-size:9px; font-weight:900; color:var(--red); background:var(--red-l); padding:1px 6px; border-radius:5px; }
 .fopt { font-size:9px; font-weight:900; color:var(--g600); background:var(--g100); padding:1px 6px; border-radius:5px; }
 .finput { width:100%; background:var(--cream); border:2px solid var(--g200); border-radius:11px; padding:13px 14px; color:var(--g900); font-family:var(--font); font-size:16px; outline:none; -webkit-appearance:none; appearance:none; }
+.grade-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.grade-btn { min-height:52px; border-radius:12px; border:2px solid var(--g200); background:var(--cream); color:var(--g900); font-family:var(--font); font-size:18px; font-weight:900; cursor:pointer; touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
+.grade-btn.on { background:var(--red); border-color:var(--red); color:#fff; }
 .finput:focus { background:var(--white); border-color:var(--orange); }
 textarea.finput { min-height:84px; resize:vertical; }
 .pax-note { font-size:10px; color:var(--g400); font-weight:600; line-height:1.5; }
@@ -188,10 +191,8 @@ textarea.finput { min-height:84px; resize:vertical; }
 </div>
 <div class="fg">
 <div class="flbl">学年 <span class="freq">必須</span></div>
-<select class="finput" id="fgrade" onchange="chk()">
-<option value="">選んでください</option>
-<option>小1</option><option>小2</option><option>小3</option><option>小4</option><option>小5</option><option>小6</option>
-</select>
+<input type="hidden" id="fgrade" value="">
+<div class="grade-grid" id="grade-grid"><button type="button" class="grade-btn" onclick="pickGrade(this,'小1')">小1</button><button type="button" class="grade-btn" onclick="pickGrade(this,'小2')">小2</button><button type="button" class="grade-btn" onclick="pickGrade(this,'小3')">小3</button><button type="button" class="grade-btn" onclick="pickGrade(this,'小4')">小4</button><button type="button" class="grade-btn" onclick="pickGrade(this,'小5')">小5</button><button type="button" class="grade-btn" onclick="pickGrade(this,'小6')">小6</button></div>
 </div>
 <div class="fg">
 <div class="flbl">体験するお子さまの人数 <span class="freq">必須</span></div>
@@ -346,6 +347,13 @@ function toggleMinor(){
   minorOk = document.getElementById("minor-chk").checked;
   var b = document.getElementById("minor-box");
   if (minorOk) b.classList.add("on"); else b.classList.remove("on");
+  chk();
+}
+function pickGrade(btn, g){
+  document.getElementById("fgrade").value = g;
+  var all = document.querySelectorAll(".grade-btn");
+  for (var i=0;i<all.length;i++) all[i].classList.remove("on");
+  btn.classList.add("on");
   chk();
 }
 function v(id){ return document.getElementById(id).value.trim(); }
