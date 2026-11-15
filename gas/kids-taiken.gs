@@ -27,6 +27,7 @@ var CONFIG = {
   ADMIN_EMAILS: ['one.balance.yume@gmail.com'],      // 予約が入ったら通知するアドレス
   GUEST_EMAILS: ['feel.good.yoshi3@gmail.com'],      // 予定にゲストとして追加（個人カレンダーにも出る）
 
+  BRING_ITEMS: ['軍手', 'タオル', '飲み物', '上履き'],   // 当日の持ち物（メールに出る）
   GYM_NAME: 'ONE-BALANCE BOXING GYM（ワンバランスボクシングジム）',
   GYM_ADDRESS: '鳥取県米子市車尾6丁目8-59',
   GYM_TEL: '0859-49-5275',
@@ -154,7 +155,7 @@ function saveKids_(p) {
     var title = '【キッズ体験】' + child + '様（' + grade + '）' + (pax > 1 ? pax + '名' : '');
     var desc = '予約ID: ' + id + '\n保護者: ' + name + '\n電話: ' + phone + '\nメール: ' + email +
       '\n住所: ' + address + '\n人数: ' + pax + '名\n備考: ' + (note || 'なし') +
-      '\n体験代1,100円（当日お支払い）\n保護者の同意: あり（署名入り同意書を当日持参）';
+      '\n体験代1,100円（当日お支払い）\n保護者の同意: あり';
     var cal = CalendarApp.getDefaultCalendar();
     var opts = { description: desc, location: CONFIG.GYM_ADDRESS };
     if (CONFIG.GUEST_EMAILS.length) { opts.guests = CONFIG.GUEST_EMAILS.join(','); opts.sendInvites = false; }
@@ -208,18 +209,69 @@ function jpDate_(ds) {
   return Utilities.formatDate(d, CONFIG.TZ, 'M月d日') + '（' + w + '）';
 }
 
+function esc_(t) {
+  return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
 function sendMails_(id, ds, name, child, grade, email, phone, address, pax, note) {
-  var when = jpDate_(ds) + ' ' + CONFIG.START_TIME + '〜';
-  var body =
-    name + ' 様\n\nこのたびは「キッズボクシング体験」にお申し込みいただき、ありがとうございます。\n' +
-    '以下の内容で予約を承りました。\n\n' +
-    '■予約ID：' + id + '\n■日時：' + when + '（60〜90分ほど）\n' +
-    '■お子さま：' + child + '（' + grade + '）　' + pax + '名\n' +
-    '■体験代：1,100円（当日、現金・PayPay・クレジットカードでお支払いください）\n\n' +
-    '■当日のお願い\n・動きやすい服装でお越しください。\n・18歳未満の方は、保護者の方の署名入り同意書をご持参ください。\n\n' +
-    '■変更・キャンセル\nLINE：' + CONFIG.LINE_URL + '\nお電話：' + CONFIG.GYM_TEL + '\n\n' +
-    CONFIG.GYM_NAME + '\n' + CONFIG.GYM_ADDRESS + '\nTEL ' + CONFIG.GYM_TEL + '\n';
-  MailApp.sendEmail({ to: email, subject: '【ご予約完了】キッズボクシング体験 ' + jpDate_(ds) + ' ' + CONFIG.START_TIME + '〜（' + CONFIG.GYM_NAME + '）', body: body, name: 'ワンバランスボクシングジム' });
+  var when = jpDate_(ds) + ' ' + CONFIG.START_TIME + '〜（60〜90分ほど）';
+  var kid = child + '（' + grade + '）' + pax + '名';
+  var pay = '1,100円（当日、現金・PayPay・クレジットカード）';
+  var items = CONFIG.BRING_ITEMS;
+
+  // 文字だけのメール（HTMLが表示できない場合用）。1行を短くして改行位置が崩れないようにする
+  var lines = [
+    name + ' 様', '',
+    'キッズボクシング体験に', 'お申し込みいただき、ありがとうございます。', '下記の内容でご予約を承りました。', '',
+    '【ご予約内容】',
+    '・予約ID：' + id,
+    '・日時：' + when,
+    '・お子さま：' + kid,
+    '・体験代：' + pay, '',
+    '【当日の持ち物】'
+  ];
+  items.forEach(function (x) { lines.push('・' + x); });
+  lines.push('※動きやすい服装でお越しください', '',
+    '【保護者の方へ】',
+    '・体験には、保護者の方の同意が必要です', '',
+    '【変更・キャンセル】',
+    '・LINE：' + CONFIG.LINE_URL,
+    '・お電話：' + CONFIG.GYM_TEL, '',
+    CONFIG.GYM_NAME, CONFIG.GYM_ADDRESS, 'TEL ' + CONFIG.GYM_TEL);
+  var body = lines.join('\n');
+
+  // 見やすいHTMLメール（箇条書き）
+  var li = function (t) { return '<li style="margin:4px 0;">' + t + '</li>'; };
+  var h = function (t) { return '<p style="margin:20px 0 6px;font-weight:bold;color:#DD0B1B;">' + t + '</p>'; };
+  var html =
+    '<div style="font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:1.7;color:#222;max-width:520px;">' +
+    '<p>' + esc_(name) + ' 様</p>' +
+    '<p>キッズボクシング体験に<br>お申し込みいただき、ありがとうございます。<br>下記の内容でご予約を承りました。</p>' +
+    h('■ ご予約内容') +
+    '<ul style="margin:0;padding-left:20px;">' +
+      li('予約ID：<b>' + esc_(id) + '</b>') +
+      li('日時：<b>' + esc_(when) + '</b>') +
+      li('お子さま：' + esc_(kid)) +
+      li('体験代：' + esc_(pay)) +
+    '</ul>' +
+    h('■ 当日の持ち物') +
+    '<ul style="margin:0;padding-left:20px;">' + items.map(function (x) { return li(esc_(x)); }).join('') + '</ul>' +
+    '<p style="margin:6px 0 0;">※動きやすい服装でお越しください</p>' +
+    h('■ 保護者の方へ') +
+    '<ul style="margin:0;padding-left:20px;">' + li('体験には、保護者の方の同意が必要です') + '</ul>' +
+    h('■ 変更・キャンセル') +
+    '<ul style="margin:0;padding-left:20px;">' +
+      li('LINE：<a href="' + esc_(CONFIG.LINE_URL) + '">' + esc_(CONFIG.LINE_URL) + '</a>') +
+      li('お電話：' + esc_(CONFIG.GYM_TEL)) +
+    '</ul>' +
+    '<p style="margin-top:24px;border-top:1px solid #ddd;padding-top:12px;">' + esc_(CONFIG.GYM_NAME) + '<br>' + esc_(CONFIG.GYM_ADDRESS) + '<br>TEL ' + esc_(CONFIG.GYM_TEL) + '</p>' +
+    '</div>';
+
+  MailApp.sendEmail({
+    to: email,
+    subject: '【ご予約完了】キッズボクシング体験 ' + jpDate_(ds) + ' ' + CONFIG.START_TIME + '〜（' + CONFIG.GYM_NAME + '）',
+    body: body, htmlBody: html, name: 'ワンバランスボクシングジム'
+  });
 
   if (CONFIG.ADMIN_EMAILS.length) {
     var adminBody = '【キッズ体験の予約が入りました】\n\n予約ID：' + id + '\n日時：' + when + '\nお子さま：' + child + '（' + grade + '）　' + pax + '名\n' +
