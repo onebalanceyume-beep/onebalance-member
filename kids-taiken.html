@@ -162,6 +162,20 @@ body { background:var(--ky-p); }
 .btnp:disabled { background:var(--g200); color:var(--g400); box-shadow:none; }
 .spin { border-top-color:var(--ky-d); }
 @media (min-width:900px) { .kidsbadge { box-shadow:0 4px 0 var(--ky-d); } }
+
+/* ===== 見出しを写真の下の黄色い帯へ（顔に重ならない） ===== */
+.hero { height:auto; background:var(--ky); overflow:visible; }
+.hero-img { height:230px; object-position:center 30%; }
+.hero-ov { position:static; inset:auto; background:var(--ky); padding:16px 20px 18px; display:block; border-top:4px solid var(--ky-d); }
+.hero-catch { color:var(--ink); text-shadow:none; max-width:480px; margin:0 auto; line-height:1.35; }
+.hero-catch small { background:#fff; color:var(--ink); }
+.kidsbadge { background:var(--ink); color:var(--ky); box-shadow:0 3px 0 rgba(0,0,0,.25); }
+@media (min-width:900px) {
+  .hero-img { height:340px; object-position:center 28%; }
+  .hero-ov { padding:20px 24px 22px; }
+  .hero-catch { max-width:960px; font-size:44px; }
+  .kidsbadge { box-shadow:0 4px 0 rgba(0,0,0,.25); }
+}
 </style>
 </head>
 <body>
