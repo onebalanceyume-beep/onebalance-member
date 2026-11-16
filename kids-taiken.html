@@ -191,11 +191,25 @@ body { background:var(--ky-p); }
 
 /* ===== 見出しを3段に：①小学生 ②KIDSボクシング ③体験しよう！ ===== */
 .hero-catch small { display:block; width:max-content; margin:0 0 8px; }
+
+/* ===== 黄色い帯の右側：ステッカー（パソコン画面だけ表示） ===== */
+.hero-stk { display:none; }
+@media (min-width:900px) {
+  .hero-ov { position:relative; }
+  .hero-stk { display:flex; position:absolute; right:max(24px, calc((100% - 960px)/2 + 8px)); top:50%; transform:translateY(-50%); gap:18px; align-items:center; }
+  .stk { width:150px; height:150px; border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; font-weight:900; line-height:1.25; box-shadow:0 5px 0 rgba(58,42,0,.22); }
+  .stk b { font-size:21px; } .stk i { font-style:normal; font-size:30px; letter-spacing:-.5px; } .stk small { font-size:15px; font-weight:800; }
+  .stk-a { background:#fff; color:var(--ink); border:5px solid var(--gr); transform:rotate(-6deg); }
+  .stk-b { background:var(--gr); color:#fff; transform:rotate(4deg); width:164px; height:164px; }
+  .stk-b i { font-size:34px; }
+  .stk-c { background:var(--ink); color:var(--ky); transform:rotate(-3deg); }
+  .stk-c small { color:#fff; }
+}
 </style>
 </head>
 <body>
 <header><div class="hd"><img class="hd-img" src="images/logo.jpg" alt="ONE-BALANCE"><div class="hd-tag">KIDS体験予約</div></div></header>
-<div class="hero"><img class="hero-img" src="images/kids-hero.jpg" alt="ワンバランスのKIDSクラスの小学生"><div class="hero-ov"><div class="hero-catch"><small>小学生（小1〜小6）</small><span class="kidsbadge">KIDS</span>ボクシング<br>体験しよう！</div></div></div>
+<div class="hero"><img class="hero-img" src="images/kids-hero.jpg" alt="ワンバランスのKIDSクラスの小学生"><div class="hero-ov"><div class="hero-catch"><small>小学生（小1〜小6）</small><span class="kidsbadge">KIDS</span>ボクシング<br>体験しよう！</div><div class="hero-stk"><div class="stk stk-a"><b>毎週土曜</b><i>16:30〜</i></div><div class="stk stk-b"><small>体験</small><i>¥1,100</i></div><div class="stk stk-c"><b>60〜90分</b><small>小1〜小6</small></div></div></div></div>
 <div class="step-bar"><div class="step-in">
 <div class="si active" id="sd1"><div class="sn">1</div><div class="sl">日程</div></div>
 <div class="si" id="sd2"><div class="sn">2</div><div class="sl">お客様情報</div></div>
