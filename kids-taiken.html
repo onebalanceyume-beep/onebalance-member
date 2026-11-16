@@ -218,6 +218,10 @@ body { background:var(--ky-p); }
   .stk-c { display:none; }
 }
 @media (max-width:370px) { .hero-stk { display:none; } }
+/* ===== 「何で知りましたか」ボタン ===== */
+.src-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+.src-btn { min-height:48px; padding:6px 8px; border-radius:12px; border:2px solid var(--g200); background:var(--cream); color:var(--g900); font-family:var(--font); font-size:13px; font-weight:800; line-height:1.3; cursor:pointer; touch-action:manipulation; }
+.src-btn.on { background:var(--ky); border-color:var(--ky-d); color:var(--ink); }
 </style>
 </head>
 <body>
@@ -284,6 +288,10 @@ body { background:var(--ky-p); }
 <div class="pax-note">きょうだいで来る場合は人数を増やして、お一人ずつ入力してください。（最大5名）</div>
 </div>
 <div id="kids-box"></div>
+<div class="fg" style="margin-top:20px">
+<div class="flbl">このページを何で知りましたか <span class="freq">必須</span></div>
+<div class="src-grid" id="src-grid"></div>
+</div>
 <div class="fg">
 <div class="flbl">備考・ご質問 <span class="fopt">任意</span></div>
 <textarea class="finput" id="fnote" placeholder="ご質問など" maxlength="300"></textarea>
@@ -311,6 +319,7 @@ body { background:var(--ky-p); }
 <div class="conf-row"><div class="ck">電話番号</div><div class="cv" id="cv-t"></div></div>
 <div class="conf-row"><div class="ck">メール</div><div class="cv" id="cv-e"></div></div>
 <div class="conf-row"><div class="ck">住所</div><div class="cv" id="cv-a"></div></div>
+<div class="conf-row"><div class="ck">きっかけ</div><div class="cv" id="cv-src"></div></div>
 <div class="conf-row"><div class="ck">備考</div><div class="cv" id="cv-note"></div></div>
 </div>
 <div class="notice">📩 確定後、ご入力のメールアドレスに確認メールをお送りします。体験代1,100円は当日お支払いください。</div>
@@ -457,6 +466,17 @@ function pickGrade(i, g){
   renderKids();
   chk();
 }
+var SRC_OPTS = ["Instagram","YouTube","ホームページ","ブログ記事","ChatGPTなどのAI","Google検索","Googleマップ","友達・知人の紹介","チラシ・看板","その他・覚えていない"];
+var srcVal = "";
+function renderSrc(){
+  var h = "";
+  for (var i = 0; i < SRC_OPTS.length; i++){
+    h += '<button type="button" class="src-btn' + (srcVal === SRC_OPTS[i] ? " on" : "") + '" onclick="pickSrc(' + i + ')">' + SRC_OPTS[i] + '</button>';
+  }
+  document.getElementById("src-grid").innerHTML = h;
+}
+function pickSrc(i){ srcVal = SRC_OPTS[i]; renderSrc(); chk(); }
+renderSrc();
 function kidsOk(){
   for (var i = 0; i < kids.length; i++){ if (!kids[i].name.trim() || !kids[i].grade) return false; }
   return true;
@@ -466,7 +486,7 @@ function kidsText(){
 }
 function v(id){ return document.getElementById(id).value.trim(); }
 function chk(){
-  var ok = v("fn") && v("ftel") && v("fmail") && v("fadr") && kidsOk();
+  var ok = v("fn") && v("ftel") && v("fmail") && v("fadr") && kidsOk() && srcVal;
   var mailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v("fmail"));
   document.getElementById("btn2").disabled = !(ok && mailOk && minorOk);
 }
@@ -478,6 +498,7 @@ function fillConf(){
   document.getElementById("cv-t").textContent = v("ftel");
   document.getElementById("cv-e").textContent = v("fmail");
   document.getElementById("cv-a").textContent = v("fadr");
+  document.getElementById("cv-src").textContent = srcVal;
   document.getElementById("cv-note").textContent = v("fnote") || "なし";
 }
 function doSub(){
@@ -485,7 +506,7 @@ function doSub(){
   jsonp({
     action:"saveKids", date:selDate, time:CLASS_TIME, pax:pax,
     name:v("fn"), phone:v("ftel"), email:v("fmail"), address:v("fadr"),
-    children:JSON.stringify(kids.map(function(k){ return {name:k.name.trim(), grade:k.grade}; })), note:v("fnote"),
+    children:JSON.stringify(kids.map(function(k){ return {name:k.name.trim(), grade:k.grade}; })), note:v("fnote"), source:srcVal,
     minorConsent: minorOk ? "1" : "0"
   }, function(res){
     document.getElementById("lov").classList.remove("on");

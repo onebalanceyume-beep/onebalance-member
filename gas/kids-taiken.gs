@@ -120,7 +120,7 @@ function saveKids_(p) {
   var ds = clean_(p.date, 10);
   var name = clean_(p.name, 60);
   var phone = clean_(p.phone, 30), email = clean_(p.email, 100), address = clean_(p.address, 150);
-  var note = clean_(p.note, 300);
+  var note = clean_(p.note, 300); var source = clean_(p.source, 40);
 
   // お子さま（きょうだい対応：children=[{name,grade}]。古い形式 child/grade も受け付ける）
   var kids = [];
@@ -144,7 +144,7 @@ function saveKids_(p) {
     if (isOffDay_(ds)) return { error: 'この日はお休みです。別の日をお選びください。', reload: true };
 
     // 同じメール・同じ日・同じお子さまの二重予約を防ぐ
-    var sheet = getSheet_();
+    var sheet = getSheet_(); if (sheet.getRange(1, 15).getValue() === '') { sheet.getRange(1, 15).setValue('流入元'); }
     var last = sheet.getLastRow();
     if (last > 1) {
       var rows = sheet.getRange(2, 1, last - 1, 13).getValues();
@@ -168,15 +168,15 @@ function saveKids_(p) {
       var title = '【キッズ体験】' + k.name + '様（' + k.grade + '）' + (pax > 1 ? '※きょうだい' + pax + '名' : '');
       var desc = '予約ID: ' + id + '\n保護者: ' + name + '\n電話: ' + phone + '\nメール: ' + email +
         '\n住所: ' + address + '\n同時申込: ' + pax + '名' + (pax > 1 ? '（' + kids.map(function (x) { return x.name; }).join('・') + '）' : '') +
-        '\n備考: ' + (note || 'なし') +
+        '\n備考: ' + (note || 'なし') + '\n流入元: ' + (source || '未回答') +
         '\n体験代1,100円（当日お支払い）\n保護者の同意: あり';
       var opts = { description: desc, location: CONFIG.GYM_ADDRESS };
       if (CONFIG.GUEST_EMAILS.length) { opts.guests = CONFIG.GUEST_EMAILS.join(','); opts.sendInvites = false; }
       var ev = cal.createEvent(title, start, end, opts);
-      sheet.appendRow([stamp, id, ds, CONFIG.START_TIME, name, phone, k.name, k.grade, email, address, pax, note, '予約中', ev.getId()]);
+      sheet.appendRow([stamp, id, ds, CONFIG.START_TIME, name, phone, k.name, k.grade, email, address, pax, note, '予約中', ev.getId(), source]);
     });
 
-    sendMails_(id, ds, name, kids, email, phone, address, note);
+    sendMails_(id, ds, name, kids, email, phone, address, note, source);
     return { ok: true, reservationId: id };
   } finally {
     lock.releaseLock();
@@ -206,7 +206,7 @@ function getSheet_() {
   }
   if (sh.getLastRow() === 0) {
     // 列：A受付日時 B予約ID C体験日 D開始 E保護者 F電話 G お子さま H学年 I メール J住所 K人数 L備考 M状態 N予定ID
-    sh.appendRow(['受付日時', '予約ID', '体験日', '開始', '保護者名', '電話', 'お子さま名', '学年', 'メール', '住所', '人数', '備考', '状態', 'カレンダー予定ID']);
+    sh.appendRow(['受付日時', '予約ID', '体験日', '開始', '保護者名', '電話', 'お子さま名', '学年', 'メール', '住所', '人数', '備考', '状態', 'カレンダー予定ID', '流入元']);
     sh.setFrozenRows(1);
   }
   return sh;
@@ -223,7 +223,7 @@ function esc_(t) {
   return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-function sendMails_(id, ds, name, kids, email, phone, address, note) {
+function sendMails_(id, ds, name, kids, email, phone, address, note, source) {
   var pax = kids.length;
   var child = kids.map(function (k) { return k.name; }).join('・');
   var grade = kids.map(function (k) { return k.grade; }).join('・');
@@ -289,7 +289,7 @@ function sendMails_(id, ds, name, kids, email, phone, address, note) {
 
   if (CONFIG.ADMIN_EMAILS.length) {
     var adminBody = '【キッズ体験の予約が入りました】\n\n予約ID：' + id + '\n日時：' + when + '\nお子さま（' + pax + '名）：' + kidList.join('、') + '\n体験代：' + total + '円\n' +
-      '保護者：' + name + '\n電話：' + phone + '\nメール：' + email + '\n住所：' + address + '\n備考：' + (note || 'なし') + '\n';
+      '保護者：' + name + '\n電話：' + phone + '\nメール：' + email + '\n住所：' + address + '\n備考：' + (note || 'なし') + '\n流入元：' + (source || '未回答') + '\n';
     MailApp.sendEmail({ to: CONFIG.ADMIN_EMAILS.join(','), subject: '【キッズ体験予約】' + child + '様（' + grade + '）' + pax + '名 ' + jpDate_(ds), body: adminBody, name: 'キッズ体験予約' });
   }
 }
