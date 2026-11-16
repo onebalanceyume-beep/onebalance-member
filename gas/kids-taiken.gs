@@ -236,7 +236,7 @@ function sendMails_(id, ds, name, kids, email, phone, address, note) {
   // 文字だけのメール（HTMLが表示できない場合用）。1行を短くして改行位置が崩れないようにする
   var lines = [
     name + ' 様', '',
-    'キッズボクシング体験に', 'お申し込みいただき、ありがとうございます。', '下記の内容でご予約を承りました。', '',
+    'KIDSボクシング体験に', 'お申し込みいただき、ありがとうございます。', '下記の内容でご予約を承りました。', '',
     '【ご予約内容】',
     '・予約ID：' + id,
     '・日時：' + when,
@@ -260,7 +260,7 @@ function sendMails_(id, ds, name, kids, email, phone, address, note) {
   var html =
     '<div style="font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:1.7;color:#222;max-width:520px;">' +
     '<p>' + esc_(name) + ' 様</p>' +
-    '<p>キッズボクシング体験に<br>お申し込みいただき、ありがとうございます。<br>下記の内容でご予約を承りました。</p>' +
+    '<p>KIDSボクシング体験に<br>お申し込みいただき、ありがとうございます。<br>下記の内容でご予約を承りました。</p>' +
     h('■ ご予約内容') +
     '<ul style="margin:0;padding-left:20px;">' +
       li('予約ID：<b>' + esc_(id) + '</b>') +
@@ -283,7 +283,7 @@ function sendMails_(id, ds, name, kids, email, phone, address, note) {
 
   MailApp.sendEmail({
     to: email,
-    subject: '【ご予約完了】キッズボクシング体験 ' + jpDate_(ds) + ' ' + CONFIG.START_TIME + '〜（' + CONFIG.GYM_NAME + '）',
+    subject: '【ご予約完了】KIDSボクシング体験 ' + jpDate_(ds) + ' ' + CONFIG.START_TIME + '〜（' + CONFIG.GYM_NAME + '）',
     body: body, htmlBody: html, name: 'ワンバランスボクシングジム'
   });
 
