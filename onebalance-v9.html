@@ -3,6 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ONE-BALANCE">
+<link rel="apple-touch-icon" href="icons/icon-192x192.png">
+<link rel="icon" href="icons/icon-192x192.png">
 <title>体験・見学予約 | ONE-BALANCE BOXING GYM</title>
 <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -41,27 +48,38 @@ main { max-width:480px; margin:0 auto; padding:18px 14px 100px; }
 .sec::after { content:''; flex:1; height:1.5px; background:var(--g200); }
 .mgrid { display:flex; flex-direction:column; gap:12px; margin-bottom:24px; }
 .mc { background:var(--white); border-radius:var(--r); border:2.5px solid var(--g200); overflow:hidden; cursor:pointer; box-shadow:0 3px 10px rgba(0,0,0,0.05); -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
-.mc.sel-kick { border-color:var(--blue); background:var(--blue-p); }
-.mc.sel-boxing { border-color:var(--red); background:var(--red-p); }
-.mc.sel-tour { border-color:var(--yellow); background:var(--yl-p); }
-.mc.sel-join { border-color:#2E8B57; background:#EEFBF2; }
+@font-face { font-family:'RiiCookie'; src:url('fonts/RiiCookieRt.otf?v=20261117') format('opentype'); font-display:swap; }
+.mc { border-width:3px; }
+.mc.kick { background:#CFECF4; border-color:var(--blue); }
+.mc.boxing { background:#FDDADD; border-color:var(--red); }
+.mc.tour { background:#FFECC8; border-color:#B8741A; }
+.mc.junior { background:#FFF2A3; border-color:#C48C00; }
+.mc.join { background:#D6F0DE; border-color:#2E8B57; }
+.mc[class*="sel-"] { border-width:5px; box-shadow:0 6px 16px rgba(0,0,0,0.14); }
 .mc-head { display:flex; align-items:center; gap:10px; padding:12px 14px 10px; pointer-events:none; }
-.mc-ico { width:54px; height:54px; border-radius:12px; object-fit:cover; flex-shrink:0; }
+.mc-ico { width:90px; height:68px; border-radius:12px; object-fit:cover; flex-shrink:0; }
 .mc-svg { width:54px; height:54px; border-radius:12px; background:var(--yl-l); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
 .mc-nm { font-size:16px; font-weight:900; line-height:1.1; margin-bottom:4px; }
-.kick .mc-nm { color:var(--blue); }
+.kick .mc-nm { color:#2A7C93; }
 .boxing .mc-nm { color:var(--red); }
-.tour .mc-nm { color:var(--orange); }
+.tour .mc-nm { color:#B8741A; }
+.junior .mc-nm { color:#C48C00; }
+.join .mc-nm { color:#2E8B57; }
+.mc-nm { font-family:'RiiCookie',var(--font); font-size:17px; letter-spacing:0; white-space:nowrap; }
 .mc-badges { display:flex; gap:6px; flex-wrap:wrap; }
 .bdg { display:inline-flex; align-items:center; font-size:10px; font-weight:800; padding:3px 9px; border-radius:14px; }
-.kick .bdg { background:var(--blue-l); color:var(--blue); }
+.kick .bdg { color:#2A7C93; }
 .boxing .bdg { background:var(--red-l); color:var(--red); }
-.tour .bdg { background:var(--yl-l); color:#c48000; }
+.tour .bdg { color:#B8741A; }
+.junior .bdg { color:#C48C00; }
+.join .bdg { color:#2E8B57; }
+.bdg { background:#fff !important; font-family:'RiiCookie',var(--font); font-size:12px; }
 .bdg-price { font-size:12px; font-weight:900; }
-.mc-chk { width:26px; height:26px; border-radius:50%; border:2.5px solid var(--g200); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:900; transition:all 0.2s; flex-shrink:0; margin-left:auto; }
+.mc-chk { width:28px; height:28px; border-radius:50%; border:2.5px solid #999; background:#fff; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:900; transition:all 0.2s; flex-shrink:0; margin-left:auto; }
 .sel-kick .mc-chk { background:var(--blue); border-color:var(--blue); color:white; }
 .sel-boxing .mc-chk { background:var(--red); border-color:var(--red); color:white; }
-.sel-tour .mc-chk { background:var(--yellow); border-color:var(--yellow); color:white; }
+.sel-tour .mc-chk { background:#B8741A; border-color:#B8741A; color:white; }
+.sel-junior .mc-chk { background:#C48C00; border-color:#C48C00; color:white; }
 .sel-join .mc-chk { background:#2E8B57; border-color:#2E8B57; color:white; }
 .mc-body { font-size:12px; color:var(--g600); line-height:1.8; font-weight:500; border-top:1.5px dashed var(--g200); margin:0 12px; padding:10px 4px 12px; pointer-events:none; }
 .cal-card { background:var(--white); border-radius:var(--r); border:1.5px solid var(--g200); padding:16px; box-shadow:0 3px 10px rgba(0,0,0,0.05); margin-bottom:10px; }
@@ -109,7 +127,7 @@ main { max-width:480px; margin:0 auto; padding:18px 14px 100px; }
 .conf-row:last-child { border-bottom:none; }
 .ck { font-size:10px; font-weight:800; color:var(--g400); width:64px; flex-shrink:0; padding-top:2px; }
 .cv { font-size:13px; color:var(--g900); font-weight:600; flex:1; line-height:1.5; }
-.btnp { width:100%; padding:16px; border-radius:16px; border:none; font-family:var(--font); font-size:15px; font-weight:900; cursor:pointer; margin-bottom:10px; display:block; background:var(--red); color:white; box-shadow:0 5px 16px rgba(219,68,76,0.28); touch-action:manipulation; }
+.btnp { font-family:'RiiCookie',var(--font) !important; letter-spacing:2px; width:100%; padding:16px; border-radius:16px; border:none; font-family:var(--font); font-size:18px; font-weight:900; cursor:pointer; margin-bottom:10px; display:block; background:var(--red); color:white; box-shadow:0 5px 16px rgba(219,68,76,0.28); touch-action:manipulation; }
 .btnp:disabled { background:var(--g200); color:var(--g400); cursor:not-allowed; box-shadow:none; }
 .btnb { width:100%; padding:12px; border-radius:16px; border:2px solid var(--g200); background:var(--white); color:var(--g600); font-family:var(--font); font-size:13px; font-weight:800; cursor:pointer; display:block; touch-action:manipulation; }
 .notice { background:var(--yl-p); border-radius:12px; padding:11px 13px; font-size:11px; color:var(--g600); line-height:1.7; margin-bottom:14px; font-weight:600; border-left:4px solid var(--yellow); }
@@ -144,30 +162,24 @@ main { max-width:480px; margin:0 auto; padding:18px 14px 100px; }
 <div class="panel on" id="p1">
 <p class="sec">コースを選んでね</p>
 <div class="mgrid">
-<div class="mc kick sel-kick" id="mc-kick" onclick="pickMenu('kick')">
-<div class="mc-head"><img class="mc-ico" src="https://onebalanceyume-beep.github.io/onebalance-member/images/kick.jpg" alt=""><div style="flex:1"><div class="mc-nm">キックボクササイズ体験</div><div class="mc-badges"><span class="bdg">⏱ 体験時間30分</span><span class="bdg bdg-price">¥1,100</span></div></div><div class="mc-chk" id="chk-kick">✓</div></div>
-<div class="mc-body">本格的に戦い合うキックボクシングではなく、とにかく楽しくパンチ、キックしてお尻と腰回りを鍛えるコースです！</div>
-</div>
-<div class="mc boxing" id="mc-boxing" onclick="pickMenu('boxing')">
-<div class="mc-head"><img class="mc-ico" src="https://onebalanceyume-beep.github.io/onebalance-member/images/boxing.jpg" alt=""><div style="flex:1"><div class="mc-nm">ボクシング体験</div><div class="mc-badges"><span class="bdg">⏱ 体験時間30分</span><span class="bdg bdg-price">¥1,100</span></div></div><div class="mc-chk" id="chk-boxing"></div></div>
-<div class="mc-body">カッコいいボクシングをしたい方はこれ！健康×ボクシング！ボクシングの「キツい」「苦しい」を「楽しい」に変えるメインコースで、１番人気のコースです。</div>
-</div>
 <div class="mc tour" id="mc-tour" onclick="pickMenu('tour')">
-<div class="mc-head"><img class="mc-ico" src="https://onebalanceyume-beep.github.io/onebalance-member/images/visit.png"><div style="flex:1"><div class="mc-nm">ジム見学</div><div class="mc-badges"><span class="bdg">⏱ 所要時間30分</span></div></div><div class="mc-chk" id="chk-tour"></div></div>
+<div class="mc-head"><img class="mc-ico" src="images/course-tour.jpg" alt=""><div style="flex:1"><div class="mc-nm">ジム見学</div><div class="mc-badges"><span class="bdg">所要時間30分</span></div></div><div class="mc-chk" id="chk-tour"></div></div>
 <div class="mc-body">まずは気軽に来てみてください♪ ジムの雰囲気・設備・スタッフをご確認いただけます。見学だけでも大歓迎！</div>
 </div>
+<div class="mc boxing sel-boxing" id="mc-boxing" onclick="pickMenu('boxing')">
+<div class="mc-head"><img class="mc-ico" src="images/course-boxing.jpg" alt=""><div style="flex:1"><div class="mc-nm">ボクシング体験</div><div class="mc-badges"><span class="bdg">体験時間30分</span><span class="bdg bdg-price">¥1,100</span></div></div><div class="mc-chk" id="chk-boxing">✓</div></div>
+<div class="mc-body">カッコいいボクシングをしたい方はこれ！健康×ボクシング！ボクシングの「キツい」「苦しい」を「楽しい」に変えるメインコースで、１番人気のコースです。</div>
+</div>
+<div class="mc junior" id="mc-junior" onclick="pickMenu('junior')">
+<div class="mc-head"><img class="mc-ico" src="images/course-junior.jpg" alt=""><div style="flex:1"><div class="mc-nm">ジュニアボクシング体験</div><div class="mc-badges"><span class="bdg">小学1〜6年生</span><span class="bdg">毎週土曜 16:30</span></div></div><div class="mc-chk" id="chk-junior"></div></div>
+<div class="mc-body">礼儀・あいさつ・仲間と協力することを、ボクシングを通して学ぶジュニアクラスです。体験には保護者の方の同意が必要です。専用ページへ移動します。</div>
+</div>
+<div class="mc kick" id="mc-kick" onclick="pickMenu('kick')">
+<div class="mc-head"><img class="mc-ico" src="images/course-kick.jpg" alt=""><div style="flex:1"><div class="mc-nm">キックボクササイズ体験</div><div class="mc-badges"><span class="bdg">体験時間30分</span><span class="bdg bdg-price">¥1,100</span></div></div><div class="mc-chk" id="chk-kick"></div></div>
+<div class="mc-body">本格的に戦い合うキックボクシングではなく、とにかく楽しくパンチ、キックしてお尻と腰回りを鍛えるコースです！</div>
+</div>
 <div class="mc join" id="mc-join" onclick="pickMenu('join')">
-<div class="mc-head">
-<img class="mc-ico" src="https://onebalanceyume-beep.github.io/onebalance-member/images/join.png" alt="入会予約">
-<div style="flex:1">
-<div class="mc-nm" style="color:#2E8B57;">入会予約はこちら</div>
-<div class="mc-badges">
-<span class="bdg" style="background:#C8E6C9;color:#2E8B57;">⏱ 所要時間60分</span>
-<span class="bdg" style="background:#C8E6C9;color:#2E8B57;">手続き＋運動</span>
-</div>
-</div>
-<div class="mc-chk" id="chk-join"></div>
-</div>
+<div class="mc-head"><img class="mc-ico" src="images/course-join.jpg" alt=""><div style="flex:1"><div class="mc-nm">入会予約はこちら</div><div class="mc-badges"><span class="bdg">所要時間60分</span><span class="bdg">手続き＋運動</span></div></div><div class="mc-chk" id="chk-join"></div></div>
 <div class="mc-body">入会手続き後、そのまま運動できます！最初の運動は60分〜90分程度。専用ページへ移動します。</div>
 </div>
 </div>
@@ -269,7 +281,7 @@ main { max-width:480px; margin:0 auto; padding:18px 14px 100px; }
 var GAS = "https://script.google.com/macros/s/AKfycbzWPH4cO-kPMGqbJqHEsYG1yefxa0FoKQOgDJeIeUHIe9alN1yrsDVHe6E7yFY1DFiY/exec";
 var LABELS = {kick:"キックボクササイズ体験", boxing:"ボクシング体験", tour:"ジム見学"};
 var DOW = ["日","月","火","水","木","金","土"];
-var menu = "kick";
+var menu = "boxing";
 var selDate = null;
 var selTime = null;
 var selStart = null;
@@ -290,7 +302,15 @@ function loadHolidays() {
     .catch(function() {});
 }
 
+function applyMenuFromUrl() {
+  try {
+    var q = new URLSearchParams(location.search).get("menu");
+    if (q && ["tour","boxing","junior","kick","join"].indexOf(q) >= 0) pickMenu(q);
+  } catch (e) {}
+}
+
 function init() {
+  applyMenuFromUrl();
   var n = new Date();
   cY = n.getFullYear();
   cM = n.getMonth();
@@ -300,7 +320,7 @@ function init() {
 
 function pickMenu(m) {
   menu = m;
-  var types = ["kick","boxing","tour","join"];
+  var types = ["tour","boxing","junior","kick","join"];
   for (var i = 0; i < types.length; i++) {
     var el = document.getElementById("mc-" + types[i]);
     el.className = "mc " + types[i];
@@ -313,6 +333,10 @@ function pickMenu(m) {
 function nextFromMenu() {
   if (menu === "join") {
     location.href = "join.html";
+    return;
+  }
+  if (menu === "junior") {
+    location.href = "kids-taiken.html";
     return;
   }
   go(2);
