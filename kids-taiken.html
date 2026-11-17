@@ -226,7 +226,8 @@ body { background:var(--ky-p); }
 .iw{position:relative}
 .hero-catch{position:relative;z-index:1}
 .course{position:relative}
-
+.tagB,.tagB2,.burstC{display:none}
+@media (min-width:900px){.tagB,.tagB2{display:block}
 body{background:repeating-linear-gradient(-45deg,#FFFBEF 0 16px,#FFF1BE 16px 32px)}
 .tagB{position:absolute;left:12px;bottom:14px;background:#fff;color:#3A2A00;font:900 16px/1 var(--font);letter-spacing:2px;padding:8px 14px;transform:skew(-8deg) rotate(-2deg);border:2px solid #3A2A00;box-shadow:3px 3px 0 #3A2A00}
 .tagB2{position:absolute;right:12px;bottom:18px;background:#2FB36B;color:#fff;font:900 12px/1 var(--font);letter-spacing:2px;padding:7px 12px;transform:skew(-8deg);border:2px solid #fff;box-shadow:2px 2px 0 #3A2A00}
@@ -237,11 +238,22 @@ body{background:repeating-linear-gradient(-45deg,#FFFBEF 0 16px,#FFF1BE 16px 32p
 #p1 .pc-2col>div:nth-child(2) .sec::before{content:"SELECT DATE ·  ";color:#3A2A00;font-weight:900;letter-spacing:2px}
 .course::before{content:"TRIAL LESSON ★";position:absolute;top:-11px;left:16px;background:#2FB36B;color:#fff;font:900 11px/1 var(--font);letter-spacing:2px;padding:6px 10px;border-radius:4px;transform:skew(-8deg)}
 @media (min-width:900px){.tagB{font-size:22px;left:max(24px,calc((100% - 960px)/2));bottom:20px}.tagB2{right:max(24px,calc((100% - 960px)/2));bottom:24px;font-size:15px}}
-</style>
+}
+@media (max-width:899px){
+body{background:#FFF8DC url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M16 6L18 14L26 16L18 18L16 26L14 18L6 16L14 14Z' fill='%23F7C21B' fill-opacity='.35'/%3E%3Ccircle cx='46' cy='44' r='3' fill='%232FB36B' fill-opacity='.3'/%3E%3Cpath d='M48 12L49 16L53 17L49 18L48 22L47 18L43 17L47 16Z' fill='%23F7C21B' fill-opacity='.4'/%3E%3C/svg%3E") 0 0/64px 64px}
+.burstC{position:absolute;left:10px;top:10px;width:78px;height:78px;background:#F7C21B;color:#3A2A00;font:900 19px/1.05 var(--font);letter-spacing:1px;display:flex;align-items:center;justify-content:center;text-align:center;transform:rotate(-12deg);clip-path:polygon(50% 0%,61% 12%,76% 6%,80% 21%,95% 25%,89% 40%,100% 50%,89% 60%,95% 75%,80% 79%,76% 94%,61% 88%,50% 100%,39% 88%,24% 94%,20% 79%,5% 75%,11% 60%,0% 50%,11% 40%,5% 25%,20% 21%,24% 6%,39% 12%)}
+.hero-ov{border-top:0!important;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath d='M10 0L12.5 7.5L20 10L12.5 12.5L10 20L7.5 12.5L0 10L7.5 7.5Z' fill='%23fff' fill-opacity='.7'/%3E%3C/svg%3E") 22px 16px/22px 22px no-repeat,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath d='M10 0L12.5 7.5L20 10L12.5 12.5L10 20L7.5 12.5L0 10L7.5 7.5Z' fill='%23fff' fill-opacity='.7'/%3E%3C/svg%3E") 150px 96px/14px 14px no-repeat,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath d='M10 0L12.5 7.5L20 10L12.5 12.5L10 20L7.5 12.5L0 10L7.5 7.5Z' fill='%23fff' fill-opacity='.7'/%3E%3C/svg%3E") 60px 100px/12px 12px no-repeat,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath d='M10 0L12.5 7.5L20 10L12.5 12.5L10 20L7.5 12.5L0 10L7.5 7.5Z' fill='%23fff' fill-opacity='.7'/%3E%3C/svg%3E") 250px 14px/12px 12px no-repeat,#F7C21B!important}
+.hero-ov::before{content:"";position:absolute;left:0;right:0;top:-13px;height:14px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='14' viewBox='0 0 40 14'%3E%3Cpath d='M0 14L0 7Q10 0 20 7T40 7L40 14Z' fill='%23F7C21B'/%3E%3C/svg%3E") repeat-x 0 0/40px 14px;z-index:1}
+.hero-catch::after{content:"READY? FIGHT!";display:block;margin-top:8px;font:900 12px/1 var(--font);letter-spacing:3px;color:#fff;text-shadow:0 1px 0 rgba(58,42,0,.35)}
+#p1 .pc-2col>div:first-child .sec::before{content:"WELCOME ✦  ";color:#E5A800;font-weight:900;letter-spacing:2px}
+#p1 .pc-2col>div:nth-child(2) .sec::before{content:"PICK A DAY ✦  ";color:#E5A800;font-weight:900;letter-spacing:2px}
+.course::before{content:"✦ TRIAL LESSON ✦";position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#2FB36B;color:#fff;font:900 11px/1 var(--font);letter-spacing:2px;padding:6px 14px;border-radius:999px;white-space:nowrap}
+@media (min-width:900px){.burstC{left:max(24px,calc((100% - 960px)/2));top:18px;width:104px;height:104px;font-size:26px}}
+}</style>
 </head>
 <body>
 <header><div class="hd"><img class="hd-img" src="images/logo.jpg" alt="ONE-BALANCE"><div class="hd-tag">KIDS体験予約</div></div></header>
-<div class="hero"><div class="iw"><img class="hero-img" src="images/kids-hero.jpg" alt="ワンバランスのKIDSクラスの小学生"><div class="tagB">LET'S BOX!</div><div class="tagB2">ROUND 1 ▶</div></div><div class="hero-ov"><div class="hero-catch"><small>小学生（小1〜小6）</small><span class="kidsbadge">KIDS</span>ボクシング<br>体験しよう！</div><div class="hero-stk"><div class="stk stk-a"><b>毎週土曜</b><i>16:30〜</i></div><div class="stk stk-b"><small>体験</small><i>¥1,100</i></div><div class="stk stk-c"><b>60〜90分</b><small>小1〜小6</small></div></div></div></div>
+<div class="hero"><div class="iw"><img class="hero-img" src="images/kids-hero.jpg" alt="ワンバランスのKIDSクラスの小学生"><div class="tagB">LET'S BOX!</div><div class="tagB2">ROUND 1 ▶</div><div class="burstC">GO!<br>GO!</div></div><div class="hero-ov"><div class="hero-catch"><small>小学生（小1〜小6）</small><span class="kidsbadge">KIDS</span>ボクシング<br>体験しよう！</div><div class="hero-stk"><div class="stk stk-a"><b>毎週土曜</b><i>16:30〜</i></div><div class="stk stk-b"><small>体験</small><i>¥1,100</i></div><div class="stk stk-c"><b>60〜90分</b><small>小1〜小6</small></div></div></div></div>
 <div class="step-bar"><div class="step-in">
 <div class="si active" id="sd1"><div class="sn">1</div><div class="sl">日程</div></div>
 <div class="si" id="sd2"><div class="sn">2</div><div class="sl">お客様情報</div></div>
