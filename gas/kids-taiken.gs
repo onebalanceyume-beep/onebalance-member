@@ -34,8 +34,9 @@ var CONFIG = {
   LINE_URL: 'https://lin.ee/2dtDdkF',
   MAP_URL: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('鳥取県米子市車尾6丁目8-59 ワンバランスボクシングジム'),   // メールに載せるGoogleマップ
 
-  SHEET_TITLE: '【ワンバランス】キッズ体験予約一覧',
-  SHEET_NAME: 'キッズ体験予約',
+  SHEET_TITLE: '【ワンバランス】ジュニア体験予約一覧',
+  SHEET_NAME: 'ジュニア体験予約',
+  SHEET_NAME_OLD: 'キッズ体験予約',   // 旧名。見つかったらジュニアに名前変更（データはそのまま）
   SHEET_ID_PROP: 'KIDS_SHEET_ID'
 };
 /* ===== 設定エリアここまで ===== */
@@ -200,7 +201,12 @@ function getSheet_() {
     ss = SpreadsheetApp.create(CONFIG.SHEET_TITLE);
     props.setProperty(CONFIG.SHEET_ID_PROP, ss.getId());
   }
+  if (ss.getName() !== CONFIG.SHEET_TITLE) { try { ss.rename(CONFIG.SHEET_TITLE); } catch (e) {} }
   var sh = ss.getSheetByName(CONFIG.SHEET_NAME);
+  if (!sh) {
+    var old = ss.getSheetByName(CONFIG.SHEET_NAME_OLD);
+    if (old) { old.setName(CONFIG.SHEET_NAME); sh = old; }
+  }
   if (!sh) {
     sh = ss.getSheets()[0];
     sh.setName(CONFIG.SHEET_NAME);
