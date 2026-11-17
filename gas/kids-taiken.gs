@@ -1,5 +1,5 @@
 /**
- * ワンバランス キッズ体験予約 GAS（APIキー不要）
+ * ワンバランス ジュニア体験予約 GAS（APIキー不要）
  * ----------------------------------------------------
  * 役割
  *  1) getKidsDays : 直近の土曜16:30を返す。カレンダーに【キッズ休み】があるその土曜は「お休み(off)」
@@ -12,13 +12,13 @@
 /* ===== 設定エリア（ここだけ変えればOK） ===== */
 var CONFIG = {
   TZ: 'Asia/Tokyo',
-  START_TIME: '16:30',            // キッズクラスの開始時刻
+  START_TIME: '16:30',            // ジュニアクラスの開始時刻
   DURATION_MIN: 90,               // カレンダー上の長さ（分）
   WEEKS: 8,                       // 何週先まで受け付けるか
   SAME_DAY_CUTOFF_HOUR: 12,       // 当日の土曜は、この時刻（時）まで受付
 
   // この言葉がタイトルに含まれる予定がある土曜は「お休み」。あとから増やせます
-  OFF_KEYWORDS: ['【キッズ休み】'],
+  OFF_KEYWORDS: ['【ジュニア休み】', '【キッズ休み】'],  // 旧表記も残してある（すでに入れた予定を無効にしないため）
 
   // 休み予定を探すカレンダー（'' = このスクリプトを実行するアカウントのメインカレンダー）
   // 別のカレンダーに【キッズ休み】を入れる場合は、そのカレンダーのIDをここに足す
@@ -165,7 +165,7 @@ function saveKids_(p) {
 
     // お子さま1人につき、予定1件＋シート1行（予約IDは同じ）
     kids.forEach(function (k, idx) {
-      var title = '【キッズ体験】' + k.name + '様（' + k.grade + '）' + (pax > 1 ? '※きょうだい' + pax + '名' : '');
+      var title = '【ジュニア体験】' + k.name + '様（' + k.grade + '）' + (pax > 1 ? '※きょうだい' + pax + '名' : '');
       var desc = '予約ID: ' + id + '\n保護者: ' + name + '\n電話: ' + phone + '\nメール: ' + email +
         '\n住所: ' + address + '\n同時申込: ' + pax + '名' + (pax > 1 ? '（' + kids.map(function (x) { return x.name; }).join('・') + '）' : '') +
         '\n備考: ' + (note || 'なし') + '\n流入元: ' + (source || '未回答') +
@@ -236,7 +236,7 @@ function sendMails_(id, ds, name, kids, email, phone, address, note, source) {
   // 文字だけのメール（HTMLが表示できない場合用）。1行を短くして改行位置が崩れないようにする
   var lines = [
     name + ' 様', '',
-    'KIDSボクシング体験に', 'お申し込みいただき、ありがとうございます。', '下記の内容でご予約を承りました。', '',
+    'ジュニアボクシング体験に', 'お申し込みいただき、ありがとうございます。', '下記の内容でご予約を承りました。', '',
     '【ご予約内容】',
     '・予約ID：' + id,
     '・日時：' + when,
@@ -260,7 +260,7 @@ function sendMails_(id, ds, name, kids, email, phone, address, note, source) {
   var html =
     '<div style="font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:1.7;color:#222;max-width:520px;">' +
     '<p>' + esc_(name) + ' 様</p>' +
-    '<p>KIDSボクシング体験に<br>お申し込みいただき、ありがとうございます。<br>下記の内容でご予約を承りました。</p>' +
+    '<p>ジュニアボクシング体験に<br>お申し込みいただき、ありがとうございます。<br>下記の内容でご予約を承りました。</p>' +
     h('■ ご予約内容') +
     '<ul style="margin:0;padding-left:20px;">' +
       li('予約ID：<b>' + esc_(id) + '</b>') +
@@ -283,14 +283,14 @@ function sendMails_(id, ds, name, kids, email, phone, address, note, source) {
 
   MailApp.sendEmail({
     to: email,
-    subject: '【ご予約完了】KIDSボクシング体験 ' + jpDate_(ds) + ' ' + CONFIG.START_TIME + '〜（' + CONFIG.GYM_NAME + '）',
+    subject: '【ご予約完了】ジュニアボクシング体験 ' + jpDate_(ds) + ' ' + CONFIG.START_TIME + '〜（' + CONFIG.GYM_NAME + '）',
     body: body, htmlBody: html, name: 'ワンバランスボクシングジム'
   });
 
   if (CONFIG.ADMIN_EMAILS.length) {
-    var adminBody = '【キッズ体験の予約が入りました】\n\n予約ID：' + id + '\n日時：' + when + '\nお子さま（' + pax + '名）：' + kidList.join('、') + '\n体験代：' + total + '円\n' +
+    var adminBody = '【ジュニア体験の予約が入りました】\n\n予約ID：' + id + '\n日時：' + when + '\nお子さま（' + pax + '名）：' + kidList.join('、') + '\n体験代：' + total + '円\n' +
       '保護者：' + name + '\n電話：' + phone + '\nメール：' + email + '\n住所：' + address + '\n備考：' + (note || 'なし') + '\n流入元：' + (source || '未回答') + '\n';
-    MailApp.sendEmail({ to: CONFIG.ADMIN_EMAILS.join(','), subject: '【キッズ体験予約】' + child + '様（' + grade + '）' + pax + '名 ' + jpDate_(ds), body: adminBody, name: 'キッズ体験予約' });
+    MailApp.sendEmail({ to: CONFIG.ADMIN_EMAILS.join(','), subject: '【ジュニア体験予約】' + child + '様（' + grade + '）' + pax + '名 ' + jpDate_(ds), body: adminBody, name: 'キッズ体験予約' });
   }
 }
 
