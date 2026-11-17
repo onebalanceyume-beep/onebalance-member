@@ -32,6 +32,7 @@ var CONFIG = {
   GYM_ADDRESS: '鳥取県米子市車尾6丁目8-59',
   GYM_TEL: '0859-49-5275',
   LINE_URL: 'https://lin.ee/2dtDdkF',
+  MAP_URL: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('鳥取県米子市車尾6丁目8-59 ワンバランスボクシングジム'),   // メールに載せるGoogleマップ
 
   SHEET_TITLE: '【ワンバランス】キッズ体験予約一覧',
   SHEET_NAME: 'キッズ体験予約',
@@ -245,12 +246,17 @@ function sendMails_(id, ds, name, kids, email, phone, address, note, source) {
     '【当日の持ち物】'
   ];
   items.forEach(function (x) { lines.push('・' + x); });
-  lines.push('※動きやすい服装でお越しください', '',
+  lines.push('※動きやすい服装でお越しください', '※グローブはレンタルできます', '',
     '【保護者の方へ】',
     '・体験には、保護者の方の同意が必要です', '',
-    '【変更・キャンセル】',
+    '【場所（Googleマップ）】',
+    '・' + CONFIG.GYM_NAME,
+    '・' + CONFIG.GYM_ADDRESS,
+    '・地図：' + CONFIG.MAP_URL, '',
+    '【変更・キャンセル・困ったときは】',
     '・LINE：' + CONFIG.LINE_URL,
-    '・お電話：' + CONFIG.GYM_TEL, '',
+    '・お電話：' + CONFIG.GYM_TEL,
+    '・道に迷ったとき、遅れそうなとき、持ち物が足りないときなど、何でも気軽にご連絡ください', '',
     CONFIG.GYM_NAME, CONFIG.GYM_ADDRESS, 'TEL ' + CONFIG.GYM_TEL);
   var body = lines.join('\n');
 
@@ -270,13 +276,20 @@ function sendMails_(id, ds, name, kids, email, phone, address, note, source) {
     '</ul>' +
     h('■ 当日の持ち物') +
     '<ul style="margin:0;padding-left:20px;">' + items.map(function (x) { return li(esc_(x)); }).join('') + '</ul>' +
-    '<p style="margin:6px 0 0;">※動きやすい服装でお越しください</p>' +
+    '<p style="margin:6px 0 0;">※動きやすい服装でお越しください<br>※グローブはレンタルできます</p>' +
     h('■ 保護者の方へ') +
     '<ul style="margin:0;padding-left:20px;">' + li('体験には、保護者の方の同意が必要です') + '</ul>' +
-    h('■ 変更・キャンセル') +
+    h('■ 場所（Googleマップ）') +
+    '<ul style="margin:0;padding-left:20px;">' +
+      li(esc_(CONFIG.GYM_NAME)) +
+      li(esc_(CONFIG.GYM_ADDRESS)) +
+      li('地図：<a href="' + esc_(CONFIG.MAP_URL) + '">Googleマップで開く</a>') +
+    '</ul>' +
+    h('■ 変更・キャンセル・困ったときは') +
     '<ul style="margin:0;padding-left:20px;">' +
       li('LINE：<a href="' + esc_(CONFIG.LINE_URL) + '">' + esc_(CONFIG.LINE_URL) + '</a>') +
       li('お電話：' + esc_(CONFIG.GYM_TEL)) +
+      li('道に迷ったとき、遅れそうなとき、持ち物が足りないときなど、何でも気軽にご連絡ください') +
     '</ul>' +
     '<p style="margin-top:24px;border-top:1px solid #ddd;padding-top:12px;">' + esc_(CONFIG.GYM_NAME) + '<br>' + esc_(CONFIG.GYM_ADDRESS) + '<br>TEL ' + esc_(CONFIG.GYM_TEL) + '</p>' +
     '</div>';
@@ -289,8 +302,8 @@ function sendMails_(id, ds, name, kids, email, phone, address, note, source) {
 
   if (CONFIG.ADMIN_EMAILS.length) {
     var adminBody = '【ジュニア体験の予約が入りました】\n\n予約ID：' + id + '\n日時：' + when + '\nお子さま（' + pax + '名）：' + kidList.join('、') + '\n体験代：' + total + '円\n' +
-      '保護者：' + name + '\n電話：' + phone + '\nメール：' + email + '\n住所：' + address + '\n備考：' + (note || 'なし') + '\n流入元：' + (source || '未回答') + '\n';
-    MailApp.sendEmail({ to: CONFIG.ADMIN_EMAILS.join(','), subject: '【ジュニア体験予約】' + child + '様（' + grade + '）' + pax + '名 ' + jpDate_(ds), body: adminBody, name: 'キッズ体験予約' });
+      '保護者：' + name + '\n電話：' + phone + '\nメール：' + email + '\n住所：' + address + '\n備考：' + (note || 'なし') + '\n流入元：' + (source || '未回答') + '\n\n※Googleカレンダーにも登録済みです。変更・キャンセルは、お客さまからLINEかお電話で届きます。\n';
+    MailApp.sendEmail({ to: CONFIG.ADMIN_EMAILS.join(','), subject: '【ジュニア体験予約】' + child + '様（' + grade + '）' + pax + '名 ' + jpDate_(ds), body: adminBody, name: 'ジュニア体験予約' });
   }
 }
 
