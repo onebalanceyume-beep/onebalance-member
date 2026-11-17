@@ -55,6 +55,9 @@ main { max-width:480px; margin:0 auto; padding:18px 14px 100px; }
 .mc.tour { background:#FFECC8; border-color:#B8741A; }
 .mc.junior { background:#FFF2A3; border-color:#C48C00; }
 .mc.join { background:#D6F0DE; border-color:#2E8B57; }
+.jr-pop { display:none; margin:0 12px 12px; pointer-events:none; }
+.jr-pop img { width:100%; height:auto; display:block; border-radius:14px; }
+.sel-junior .jr-pop { display:block; }
 .mc[class*="sel-"] { border-width:5px; box-shadow:0 6px 16px rgba(0,0,0,0.14); }
 .mc-head { display:flex; align-items:center; gap:10px; padding:12px 14px 10px; pointer-events:none; }
 .mc-ico { width:90px; height:68px; border-radius:12px; object-fit:cover; flex-shrink:0; }
@@ -171,8 +174,9 @@ main { max-width:480px; margin:0 auto; padding:18px 14px 100px; }
 <div class="mc-body">カッコいいボクシングをしたい方はこれ！健康×ボクシング！ボクシングの「キツい」「苦しい」を「楽しい」に変えるメインコースで、１番人気のコースです。</div>
 </div>
 <div class="mc junior" id="mc-junior" onclick="pickMenu('junior')">
-<div class="mc-head"><img class="mc-ico" src="images/course-junior.jpg" alt=""><div style="flex:1"><div class="mc-nm">ジュニアボクシング体験</div><div class="mc-badges"><span class="bdg">小学1〜6年生</span><span class="bdg">毎週土曜 16:30</span></div></div><div class="mc-chk" id="chk-junior"></div></div>
+<div class="mc-head"><img class="mc-ico" src="images/course-junior.jpg" alt=""><div style="flex:1"><div class="mc-nm">ジュニアボクシング体験</div><div class="mc-badges"><span class="bdg">小学1〜6年生</span><span class="bdg">毎週土曜 16:30</span><span class="bdg bdg-price">週1回 ¥4,620〜</span></div></div><div class="mc-chk" id="chk-junior"></div></div>
 <div class="mc-body">礼儀・あいさつ・仲間と協力することを、ボクシングを通して学ぶジュニアクラスです。体験には保護者の方の同意が必要です。専用ページへ移動します。</div>
+<div class="jr-pop"><img src="images/junior-price.png?v=20261117" alt="ジュニアボクシングの月会費：週1回コース4,620円、いつでも通えるコース6,380円（税込）"></div>
 </div>
 <div class="mc kick" id="mc-kick" onclick="pickMenu('kick')">
 <div class="mc-head"><img class="mc-ico" src="images/course-kick.jpg" alt=""><div style="flex:1"><div class="mc-nm">キックボクササイズ体験</div><div class="mc-badges"><span class="bdg">体験時間30分</span><span class="bdg bdg-price">¥1,100</span></div></div><div class="mc-chk" id="chk-kick"></div></div>
