@@ -62,6 +62,7 @@ main{max-width:480px;margin:0 auto;padding:18px 14px 60px}
 .mc.kick{border-color:var(--blue);background:#D9F0F5}
 .mc-photo{height:170px;overflow:hidden}
 .mc-photo img{width:100%;height:100%;object-fit:cover;object-position:center 30%}
+.mc.kick .mc-photo img{object-position:center 82%}
 .mc-body{display:flex;align-items:center;gap:10px;padding:12px 16px 14px}
 .mc-nm{font-family:var(--rii);font-size:clamp(17px,5vw,22px);line-height:1.2;flex:1;white-space:nowrap}
 .boxing .mc-nm{color:var(--red-d)} .kick .mc-nm{color:var(--blue-d)}
@@ -74,6 +75,7 @@ main{max-width:480px;margin:0 auto;padding:18px 14px 60px}
 /* ② 1ページ完結フォーム */
 .chosen{display:flex;align-items:center;gap:12px;background:#fff;border:3px solid var(--main);border-radius:var(--r);padding:10px 12px;margin-bottom:16px;transition:border-color .25s}
 .chosen img{width:84px;height:62px;border-radius:12px;object-fit:cover;flex-shrink:0}
+body.kick .chosen img{object-position:center 85%}
 .chosen .nm{font-family:var(--rii);font-size:18px;color:var(--main-d);line-height:1.15}
 .chosen .sb{font-size:11px;color:var(--g600);font-weight:700;margin-top:2px}
 .chosen button{margin-left:auto;font-family:var(--font);font-size:11px;font-weight:800;color:var(--g600);background:var(--g100);border:none;border-radius:14px;padding:8px 12px;cursor:pointer}
@@ -188,7 +190,7 @@ main{max-width:480px;margin:0 auto;padding:18px 14px 60px}
 
   <div class="blk">
     <div class="blk-h"><span class="blk-n">1</span><span class="blk-t">お客様情報</span></div>
-    <div class="fg"><div class="flbl">お名前<span class="freq">必須</span></div><input class="finput" id="name" autocomplete="name" placeholder="長尾 義弘"></div>
+    <div class="fg"><div class="flbl">お名前<span class="freq">必須</span></div><input class="finput" id="name" autocomplete="name" placeholder="長尾 儀弘"></div>
     <div class="fg"><div class="flbl">性別<span class="freq">必須</span></div>
       <div class="opts o3" id="g-list"><button type="button" class="opt" data-v="男性">男性</button><button type="button" class="opt" data-v="女性">女性</button><button type="button" class="opt" data-v="どちらでもない" style="font-size:12px">どちらでもない</button></div></div>
     <div class="fg"><div class="flbl">電話番号<span class="freq">必須</span></div><input class="finput" id="tel" type="tel" inputmode="numeric" autocomplete="tel" placeholder="09012345678"></div>
@@ -287,8 +289,8 @@ var CAL_GAS_URL = '';
 /* ===== ここまで ===== */
 
 var TYPES = {
-  boxing:{label:'ボクシング体験', img:'images/course-boxing.jpg', ph:'長尾 義弘', cls:''},
-  kick:{label:'キックボクササイズ体験', img:'images/course-kick.jpg', ph:'長尾 義子', cls:'kick'}
+  boxing:{label:'ボクシング体験', img:'images/course-boxing.jpg', ph:'長尾 儀弘', cls:''},
+  kick:{label:'キックボクササイズ体験', img:'images/course-kick.jpg', ph:'長尾 儀子', cls:'kick'}
 };
 var S = {type:null, gender:null, kikkake:null, undou:null, images:[]};
 
@@ -309,7 +311,7 @@ function pickType(t){
   var T = TYPES[t];
   document.body.classList.toggle('kick', t==='kick');
   $('ch-img').src = T.img; $('ch-nm').textContent = T.label;
-  $('name').placeholder = T.ph;               // ボクシング=長尾 義弘 / キック=長尾 義子
+  $('name').placeholder = T.ph;               // ボクシング=長尾 儀弘 / キック=長尾 儀子
   show('p2'); render();
 }
 $('mc-boxing').onclick = function(){pickType('boxing')};

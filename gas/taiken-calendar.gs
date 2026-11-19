@@ -81,7 +81,7 @@ function setupOnce() {
 // 動作テスト用（実行するとカレンダーにテスト予定が1件入る）
 function testAdd() {
   Logger.log(JSON.stringify(addTaikenEvent_({
-    taikenType: 'ボクシング体験', name: '長尾 義弘', gender: '男性', tel: '09012345678',
+    taikenType: 'ボクシング体験', name: '長尾 儀弘', gender: '男性', tel: '09012345678',
     address: '米子市車尾6丁目8-59', birthday: '1985-04-01', kikkake: 'YouTube',
     undou: '少しある', images: 'カッコいい,楽しそう'
   })));

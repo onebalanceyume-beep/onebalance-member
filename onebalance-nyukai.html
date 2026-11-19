@@ -50,17 +50,20 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
 .plan-group-title.kick{background:#eaf7fa;color:var(--blue)}
 .plan-group-title.light{background:#fdecee;color:var(--red)}
 .plan-group-title.spar{background:#f0f0f0;color:var(--gray)}
+.plan-group-title.junior{background:#FFF3B0;color:#8A6A00}
 
 .plan{border:2px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:all .2s;background:#fff}
 .plan:active{transform:scale(.98)}
 .plan.selected{border-color:var(--red);background:#fff6f0;box-shadow:0 4px 12px rgba(219,68,76,.15)}
 .plan.kick.selected{border-color:var(--blue);background:#eaf7fa;box-shadow:0 4px 12px rgba(91,185,205,.15)}
+.plan.junior.selected{border-color:#F0C419;background:#FFF8CC;box-shadow:0 4px 12px rgba(240,196,25,.25)}
 .plan.spar.selected{border-color:var(--gray);background:#f5f5f5;box-shadow:0 4px 12px rgba(114,116,116,.15)}
 .plan-top{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
 .plan-top .grade{display:inline-block;padding:2px 8px;font-size:10px;border-radius:4px;background:#eee;color:#555;font-weight:700;flex-shrink:0}
 .plan-top .grade.kick{background:#eaf7fa;color:var(--blue)}
 .plan-top .grade.light{background:#fdecee;color:var(--red)}
 .plan-top .grade.spar{background:#f0f0f0;color:var(--gray)}
+.plan-top .grade.junior{background:#FFF3B0;color:#8A6A00}
 .plan-top .plan-name{font-weight:700;font-size:14px;line-height:1.3;flex:1;min-width:0}
 .plan-bottom{display:flex;justify-content:space-between;align-items:center;padding-left:2px;gap:8px}
 .plan-bottom .plan-sub{font-size:11px;color:var(--sub);font-weight:500}
@@ -561,8 +564,8 @@ const COURSES = {
     {group:'キックボクササイズ', label:'kick', items:[
       {id:'いつでもキックエクササイズ（男性）7,260', name:'いつでもキックボクササイズ', sub:'（男性）', fee:7260, grade:'kick'}
     ]},
-    {group:'ライトボクシング', label:'light', items:[
-      {id:'いつでもライトボクシング（男性）7,260', name:'いつでもライトボクシング', sub:'（男性）', fee:7260, grade:'light'}
+    {group:'ボクシング', label:'light', items:[
+      {id:'いつでもライトボクシング（男性）7,260', name:'いつでもボクシング', sub:'（男性）', fee:7260, grade:'light'}
     ]},
     {group:'スパーリングボクシング', label:'spar', items:[
       {id:'いつでもスパーリングボクシング（男性）7,810', name:'いつでもスパーリング', sub:'（男性）', fee:7810, grade:'spar'}
@@ -572,22 +575,25 @@ const COURSES = {
     {group:'キックボクササイズ', label:'kick', items:[
       {id:'いつでもキックエクササイズ（女性）6,380', name:'いつでもキックボクササイズ', sub:'（女性・小学生）', fee:6380, grade:'kick'}
     ]},
-    {group:'ライトボクシング', label:'light', items:[
-      {id:'いつでもライトボクシング（女性）6,380', name:'いつでもライトボクシング', sub:'（女性・小学生）', fee:6380, grade:'light'}
+    {group:'ボクシング', label:'light', items:[
+      {id:'いつでもライトボクシング（女性）6,380', name:'いつでもボクシング', sub:'（女性・小学生）', fee:6380, grade:'light'}
     ]},
     {group:'スパーリングボクシング', label:'spar', items:[
       {id:'いつでもスパーリングボクシング（女性）6,930', name:'いつでもスパーリング', sub:'（女性・小学生）', fee:6930, grade:'spar'}
     ]}
   ],
   week1: [
-    {group:'キックボクササイズ', label:'kick', items:[
-      {id:'週１キックエクササイズ 4,620', name:'週1キックボクササイズ', sub:'', fee:4620, grade:'kick'}
-    ]},
-    {group:'ライトボクシング', label:'light', items:[
-      {id:'週１ライトボクシング 4,620', name:'週1ライトボクシング', sub:'', fee:4620, grade:'light'}
+    {group:'ボクシング', label:'light', items:[
+      {id:'週１ライトボクシング 4,620', name:'週1ボクシング', sub:'', fee:4620, grade:'light'}
     ]},
     {group:'スパーリングボクシング', label:'spar', items:[
       {id:'週１スパーリングボクシング 4,950', name:'週1スパーリング', sub:'', fee:4950, grade:'spar'}
+    ]},
+    {group:'キックボクササイズ', label:'kick', items:[
+      {id:'週１キックエクササイズ 4,620', name:'週1キックボクササイズ', sub:'', fee:4620, grade:'kick'}
+    ]},
+    {group:'ジュニアボクシング', label:'junior', items:[
+      {id:'週１ジュニアボクシング 4,620', name:'週1ジュニアボクシング', sub:'（小学生・毎週土曜16:30）', fee:4620, grade:'junior'}
     ]}
   ]
 };
@@ -754,7 +760,7 @@ function renderPlans(gender){
       const p = document.createElement('div');
       p.className = `plan ${item.grade}`;
       p.dataset.courseId = item.id;
-      const gradeLabel = item.grade==='kick' ? 'キック' : (item.grade==='light' ? 'ライト' : 'スパー');
+      const gradeLabel = item.grade==='kick' ? 'キック' : (item.grade==='light' ? 'ボクシング' : (item.grade==='junior' ? 'ジュニア' : 'スパー'));
       const subBlock = `<span class="plan-sub">${item.sub||''}</span>`;
       p.innerHTML = `
         <div class="plan-top">
@@ -770,7 +776,7 @@ function renderPlans(gender){
     });
     list.appendChild(grDiv);
   });
-  document.getElementById('weekday-picker').classList.toggle('show', gender==='week1' && state.course);
+  document.getElementById('weekday-picker').classList.toggle('show', gender==='week1' && state.course && state.course.grade!=='junior');
 }
 
 function selectPlan(item,gender){
@@ -778,8 +784,13 @@ function selectPlan(item,gender){
   document.querySelector(`.plan[data-course-id="${item.id}"]`).classList.add('selected');
   state.course = item;
   state.gender = gender;
-  document.getElementById('weekday-picker').classList.toggle('show', gender==='week1');
+  const isJr = item.grade==='junior';
+  document.getElementById('weekday-picker').classList.toggle('show', gender==='week1' && !isJr);
   if(gender!=='week1')state.weeklyDays=[];
+  if(isJr){state.weeklyDays=['土'];}
+  else if(gender==='week1' && state.weeklyDays.length===1 && state.weeklyDays[0]==='土' && state._jrAuto){state.weeklyDays=[];}
+  state._jrAuto = isJr;
+  document.querySelectorAll('.weekday').forEach(w=>w.classList.toggle('selected', state.weeklyDays.includes(w.dataset.day)));
   updateUI();
 }
 
@@ -1016,7 +1027,7 @@ function canProceed(){
   switch(state.currentStep){
     case 1:
       if(!state.course) return false;
-      if(state.gender==='week1' && state.weeklyDays.length!==2) return false;
+      if(state.gender==='week1' && !(state.course.grade==='junior') && state.weeklyDays.length!==2) return false;
       return true;
     case 2:
       const req = ['name','kana','gender','birthday','tel','email','address','bank','account-holder'];
