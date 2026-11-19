@@ -3,6 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="入会申込">
+<meta name="theme-color" content="#FF424E">
+<link rel="apple-touch-icon" href="icons/icon-192x192.png">
+<link rel="icon" href="icons/icon-192x192.png">
 <title>入会申込 | ONE-BALANCE BOXING GYM</title>
 <style>
 :root{
@@ -217,22 +226,112 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
 /* ============================================ */
 #staff-gear{position:fixed;top:calc(env(safe-area-inset-top) + 10px);right:12px;z-index:9990;color:rgba(150,150,150,0.35);cursor:pointer;padding:6px;line-height:0;transition:color .2s;-webkit-tap-highlight-color:transparent}
 #staff-gear:active{color:rgba(150,150,150,0.7)}
+
+/* ============================================ */
+/* 🎨 HPデザイン（体験受付と統一）＋1ページ完結   */
+/* ============================================ */
+@font-face{font-family:'RiiCookie';src:url('fonts/RiiCookieRt.otf?v=20261119') format('opentype');font-display:swap}
+:root{
+  --red:#FF424E; --red-d:#D9303B; --red-l:#FFD9DC; --red-p:#FFEDEE;
+  --bg:#FAF6EE; --border:#E8E4DC; --text:#2A2018; --sub:#7A6E60; --gray:#7A6E60;
+  --rii:'RiiCookie','Helvetica Neue',Helvetica,Arial,sans-serif;
+}
+html,body{font-family:'Helvetica Neue',Helvetica,Arial,'M PLUS Rounded 1c','Hiragino Kaku Gothic ProN',sans-serif;background:var(--bg);overflow-x:hidden;touch-action:manipulation;-webkit-text-size-adjust:100%}
+body{padding-bottom:60px}
+img{max-width:100%}
+header{background:#fff;color:var(--text);padding:0 16px;text-align:left;box-shadow:0 2px 10px rgba(0,0,0,.08);border-bottom:4px solid var(--red)}
+.hd{max-width:480px;margin:0 auto;height:60px;display:flex;align-items:center;justify-content:space-between}
+.hd-img{height:46px;width:auto;object-fit:contain}
+.hd-tag{font-family:var(--rii);font-size:13px;color:#fff;background:var(--red);padding:5px 14px;border-radius:20px;white-space:nowrap}
+.hero{position:relative;overflow:hidden;height:210px;background:#222}
+.hero img{width:100%;height:100%;object-fit:cover;object-position:center 55%;filter:brightness(1.25)}
+.hero-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.6),rgba(0,0,0,0) 65%);display:flex;align-items:flex-end;padding:18px 20px}
+.hero-catch{font-family:var(--rii);font-size:clamp(24px,7vw,34px);color:#fff;line-height:1.35;letter-spacing:1px;text-shadow:0 2px 4px rgba(0,0,0,.7)}
+.hero-catch small{display:inline-block;font-size:.46em;background:#fff;color:var(--red);padding:3px 12px;border-radius:14px;margin-bottom:8px;text-shadow:none;letter-spacing:1px}
+.wrap{max-width:480px;padding:18px 14px 0}
+.stepper{display:none}
+/* 1ページ：全部のパネルを縦に並べる */
+.step-panel{display:block!important;animation:none}
+#panel-done{display:none!important}
+body.finished .step-panel{display:none!important}
+body.finished #panel-done{display:block!important}
+body.finished #hero{display:none}
+.card{border-radius:20px;padding:18px 16px;margin:0 0 16px;border:1.5px solid var(--border);box-shadow:0 3px 10px rgba(0,0,0,.05)}
+.card h2{display:flex;align-items:center;gap:10px;font-family:var(--rii);font-weight:400;font-size:19px;color:var(--red-d);margin-bottom:14px;padding-bottom:10px;border-bottom:2px dashed var(--red-l)}
+.card h2 .num{font-family:var(--rii);width:30px;height:30px;line-height:30px;font-size:15px;margin:0;flex-shrink:0}
+.sub-lbl{font-size:11px;font-weight:800;color:var(--sub);margin:4px 0 8px}
+.tabs{gap:6px;background:#F5F4F0;padding:4px;border-radius:14px}
+.tab{font-family:var(--rii);font-size:14px;font-weight:400;padding:11px 2px;border-radius:11px}
+.tab.active{box-shadow:0 3px 0 var(--red-d)}
+.plan-group-title{display:inline-block;font-family:var(--rii);font-weight:400;font-size:15px;padding:3px 12px;border-radius:14px;margin:6px 0 8px;color:#fff;background:var(--red)}
+.plan-group-title.light{background:var(--red);color:#fff}
+.plan-group-title.spar{background:#2A2018;color:#fff}
+.plan-group-title.kick{background:var(--blue);color:#fff}
+.plan-group-title.junior{background:#F2C94C;color:#5a4300}
+.plan{border:2.5px solid var(--border);border-radius:16px;padding:12px 14px}
+.plan .grade{display:none!important}
+.plan-top{margin-bottom:0}
+.plan-top .plan-name{font-family:var(--rii);font-weight:400;font-size:15px;white-space:nowrap}
+.plan-bottom{margin-top:2px}
+.plan-price{font-family:var(--rii);font-weight:400;font-size:26px;color:var(--red-d);line-height:1}
+.plan.selected{border-color:var(--red);background:var(--red-p);box-shadow:none}
+.plan.kick.selected{border-color:var(--blue);background:#EBF7F9;box-shadow:none}
+.plan.junior{border-color:#F2C94C}
+.plan.junior.selected{background:#FFF8D6;box-shadow:none}
+.plan.spar.selected{border-color:#2A2018;background:#F5F4F0;box-shadow:none}
+.joindate-btn,.people-btn,.weekday{border-radius:12px;border-width:2px;background:#FAF6EE;font-family:inherit}
+.joindate-btn{font-weight:800;font-size:14px;min-height:50px}
+.joindate-btn.active,.weekday.selected{background:var(--red);border-color:var(--red);color:#fff}
+.people-btn.active{background:var(--red);border-color:var(--red)}
+.people-btn .n{font-family:var(--rii);font-weight:400;font-size:26px;line-height:1}
+.people-btn.active .n,.people-btn.active .f{color:#fff}
+.field label{font-size:11px;font-weight:800;color:var(--sub)}
+.field label .req{font-size:9px;font-weight:900;color:var(--red-d);background:var(--red-l);padding:1px 6px;border-radius:5px;margin-left:6px}
+.field input,.field select,.field textarea{background:#FAF6EE;border:2px solid var(--border);border-radius:11px;padding:13px 14px;font-size:16px;-webkit-appearance:none;appearance:none}
+.field select{background-image:linear-gradient(45deg,transparent 50%,#7A6E60 50%),linear-gradient(135deg,#7A6E60 50%,transparent 50%);background-position:calc(100% - 20px) 55%,calc(100% - 14px) 55%;background-size:6px 6px;background-repeat:no-repeat;padding-right:34px}
+.field input:focus,.field select:focus{background:#fff;border-color:var(--red);box-shadow:none}
+.terms-box{background:#FAF6EE;border:1.5px solid var(--border);border-radius:12px}
+.terms-box .terms-cat{color:var(--red-d);border-bottom:1px solid var(--red-l)}
+.chk{background:var(--red-p);border-radius:12px;padding:12px}
+.chk.checked{border-color:var(--red)}
+.chk input{width:22px;height:22px}
+.confirm-row .lbl{font-size:11px;font-weight:800;color:#B0A898}
+.price-summary{background:#fff;border:2px solid var(--red);border-radius:20px;padding:6px 0 0;overflow:hidden}
+.price-row{padding:11px 18px;font-weight:800;font-size:13px;border-bottom:1px solid #F5F4F0;margin:0}
+.price-row.total{background:var(--red-p);border:none;margin:0;padding:12px 18px;font-size:15px;color:var(--text)}
+.price-row.total .amt{font-family:var(--rii);font-weight:400;font-size:30px;color:var(--red-d)}
+.miss{font-size:11px;font-weight:800;color:var(--red-d);text-align:center;margin:12px 0 10px;min-height:16px}
+.btnp{width:100%;padding:17px;border-radius:16px;border:none;background:var(--red);color:#fff;font-family:var(--rii);font-size:19px;letter-spacing:2px;cursor:pointer;box-shadow:0 5px 0 var(--red-d)}
+.btnp:active{transform:translateY(3px);box-shadow:0 2px 0 var(--red-d)}
+.btnp:disabled{background:#E8E4DC;color:#B0A898;box-shadow:0 5px 0 #d6d1c6;cursor:not-allowed}
+.field label .req{font-size:0!important;padding:0!important;margin-left:6px}
+.field label .req::after{content:'必須';font-size:9px;font-weight:900;color:var(--red-d);background:var(--red-l);padding:1px 6px;border-radius:5px}
+.plan{display:grid;grid-template-columns:1fr auto;column-gap:10px;align-items:center}
+.plan-top{grid-column:1;grid-row:1}
+.plan-bottom{display:contents}
+.plan-bottom .plan-sub{grid-column:1;grid-row:2;font-size:10px}
+.plan-bottom .plan-price{grid-column:2;grid-row:1 / span 2}
+.btn-group{display:none!important}
+.complete .icon{background:var(--red)}
+.complete h2{font-family:var(--rii);font-weight:400}
+@media (min-width:900px){
+  .hd{max-width:960px}
+  .hero{height:320px}
+  .hero-catch{font-size:46px;max-width:960px;margin:0 auto;width:100%}
+  .wrap{max-width:620px;padding-top:32px}
+}
 </style>
 </head>
 <body>
 
-<header>
-  <div class="logo-banner">
-    <img src="https://onebalanceyume-beep.github.io/onebalance-member/logo.jpg" alt="ONE-BALANCE BOXING GYM" onerror="this.style.display='none'">
-  </div>
-  <p>入会申込フォーム</p>
-</header>
+<header><div class="hd">
+  <img class="hd-img" src="logo.jpg" alt="ONE-BALANCE BOXING GYM" onerror="this.style.display='none'">
+  <span class="hd-tag">ご入会</span>
+</div></header>
 
-<div class="stepper">
-  <div class="step active" data-step="1"><span class="circle">1</span><span class="lbl">コース</span></div>
-  <div class="step" data-step="2"><span class="circle">2</span><span class="lbl">情報</span></div>
-  <div class="step" data-step="3"><span class="circle">3</span><span class="lbl">規約</span></div>
-  <div class="step" data-step="4"><span class="circle">4</span><span class="lbl">確認</span></div>
+<div class="hero" id="hero">
+  <img src="images/hero.png" alt="ONE-BALANCE BOXING GYM">
+  <div class="hero-ov"><div class="hero-catch"><small>WELCOME!</small><br>ご入会<br>ありがとうございます</div></div>
 </div>
 
 <div class="wrap">
@@ -243,7 +342,7 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
   <div class="tap">タップして変更</div>
 </div>
 
-<div class="welcome" id="welcome">
+<div class="welcome" id="welcome" style="display:none">
   <div class="welcome-logo"><img src="https://onebalanceyume-beep.github.io/onebalance-member/icons/logo-welcome.jpg" alt="ロゴ" onerror="this.style.display='none'"></div>
   <h2>WELCOME!</h2>
   <p>ご入会ありがとうございます<br>まずはコースをお選びください</p>
@@ -276,16 +375,14 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
   </div>
 
   <div class="card">
-    <h2><span class="num">2</span>入会日</h2>
+    <h2><span class="num">2</span>入会日・人数</h2>
     <div class="joindate-btns">
       <button type="button" class="joindate-btn active" data-jd="today">今日から</button>
       <button type="button" class="joindate-btn" data-jd="custom">日付指定</button>
     </div>
-    <input type="date" id="custom-date" style="display:none;margin-top:8px;padding:10px;width:100%;border:1.5px solid var(--border);border-radius:8px">
-  </div>
+    <input type="date" id="custom-date" style="display:none;margin:0 0 14px;padding:10px;width:100%;border:1.5px solid var(--border);border-radius:8px">
 
-  <div class="card">
-    <h2><span class="num">3</span>同時入会人数（いっしょ割）</h2>
+    <div class="sub-lbl">同時入会の人数（いっしょ割）</div>
     <div class="people-btns">
       <div class="people-btn active" data-n="1"><span class="n">1</span><span class="f">¥8,800</span></div>
       <div class="people-btn" data-n="2"><span class="n">2</span><span class="f">¥4,400/人</span></div>
@@ -305,8 +402,8 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
 <div class="step-panel" id="panel2">
   <div class="card">
     <h2><span class="num">1</span>お客様情報</h2>
-    <div class="field"><label>お名前<span class="req">*</span></label><input id="name" placeholder="山田 太郎"></div>
-    <div class="field"><label>フリガナ<span class="req">*</span></label><input id="kana" placeholder="ヤマダ タロウ"></div>
+    <div class="field"><label>お名前<span class="req">*</span></label><input id="name" placeholder="長尾 儀弘"></div>
+    <div class="field"><label>フリガナ<span class="req">*</span></label><input id="kana" placeholder="ナガオ ヨシヒロ"></div>
     <div class="row">
       <div class="field"><label>性別<span class="req">*</span></label>
         <select id="gender"><option value="">選択</option><option>男性</option><option>女性</option><option>その他</option></select>
@@ -321,10 +418,7 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
     <div class="field"><label>メールアドレス<span class="req">*</span></label><input type="email" id="email" placeholder="example@email.com"></div>
     <div class="field"><label>ご住所<span class="req">*</span></label><input id="address" placeholder="鳥取県米子市〇〇"></div>
     <div class="field"><label>勤務先・学校名</label><input id="workplace" placeholder="〇〇株式会社"></div>
-  </div>
-
-  <div class="card">
-    <h2><span class="num">2</span>緊急連絡先</h2>
+    <div class="sub-lbl" style="margin-top:6px">緊急連絡先</div>
     <div class="field"><label>お名前</label><input id="emergency-name" placeholder="山田 花子"></div>
     <div class="row">
       <div class="field"><label>電話番号</label><input type="tel" id="emergency-tel" placeholder="09087654321"></div>
@@ -344,7 +438,7 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
         <option>その他</option>
       </select>
     </div>
-    <div class="field"><label>口座名義(カナ)<span class="req">*</span></label><input id="account-holder" placeholder="ヤマダ タロウ"></div>
+    <div class="field"><label>口座名義(カナ)<span class="req">*</span></label><input id="account-holder" placeholder="ナガオ ヨシヒロ"></div>
   </div>
 </div>
 
@@ -397,7 +491,7 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
 
 <div class="step-panel" id="panel4">
   <div class="card">
-    <h2><span class="num">1</span>お申込内容の確認</h2>
+    <h2><span class="num">1</span>お申しこみ内容の確認</h2>
     <div class="confirm-list" id="confirm-list"></div>
   </div>
 
@@ -419,12 +513,14 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
     ※初回は現金でお支払いください<br>
     ※翌月以降は登録口座から自動引落しとなります
   </p>
+  <div class="miss" id="miss"></div>
+  <button type="button" class="btnp" id="btn-submit" onclick="nextStep()" disabled>この内容で申しこむ</button>
 </div>
 
 <div class="step-panel" id="panel-done">
   <div class="complete">
     <div class="icon">✓</div>
-    <h2>お申込み完了！</h2>
+    <h2>お申しこみ完了！</h2>
     <p>ご入会ありがとうございます。<br>
        ご登録のメールアドレスにマイページURLをお送りしました。</p>
     <div class="id-box" id="done-id">-</div>
@@ -542,11 +638,6 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
       <button class="staff-btn-apply" onclick="applyStaffDiscount()">適用する</button>
     </div>
   </div>
-</div>
-
-<div class="btn-group" id="btn-group">
-  <button type="button" class="btn btn-secondary" id="btn-back" onclick="prevStep()" style="display:none">戻る</button>
-  <button type="button" class="btn btn-primary" id="btn-next" onclick="nextStep()">次へすすむ</button>
 </div>
 
 <div class="loader" id="loader">
@@ -1018,49 +1109,38 @@ function calcFees(){
 }
 
 function updateUI(){
-  document.querySelectorAll('.step').forEach(s=>{
-    const n = Number(s.dataset.step);
-    s.classList.toggle('active', n === state.currentStep);
-    s.classList.toggle('done', n < state.currentStep);
-  });
+  const ok = canProceed();
+  const b = document.getElementById('btn-submit');
+  if(b) b.disabled = !ok;
+  const m = document.getElementById('miss');
+  if(m) m.textContent = ok ? '' : missingText();
+  renderConfirm();
+}
 
-  document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('active'));
-  if(state.currentStep<=4){
-    document.getElementById(`panel${state.currentStep}`).classList.add('active');
-    document.getElementById('welcome').style.display = state.currentStep===1?'block':'none';
-  }
-
-  const btnBack = document.getElementById('btn-back');
-  const btnNext = document.getElementById('btn-next');
-  btnBack.style.display = state.currentStep===1?'none':'block';
-  btnNext.textContent = state.currentStep===4?'この内容で申込む':'次へすすむ';
-  btnNext.disabled = !canProceed();
-
-  if(state.currentStep===4) renderConfirm();
+function missingText(){
+  const lab = {name:'お名前',kana:'フリガナ',gender:'性別',birthday:'生年月日',tel:'電話番号',email:'メールアドレス',address:'ご住所',bank:'口座登録銀行','account-holder':'口座名義'};
+  const miss = [];
+  if(!state.course) miss.push('コース');
+  else if(state.gender==='week1' && state.course.grade!=='junior' && state.weeklyDays.length!==2) miss.push('通う曜日（2つ）');
+  for(const id in lab){ if(!document.getElementById(id).value.trim()) miss.push(lab[id]); }
+  if(document.getElementById('minor-alert').classList.contains('show') && !document.getElementById('parent-consent').checked) miss.push('保護者の同意');
+  if(!document.getElementById('terms-agree').checked) miss.push('規約への同意');
+  return miss.length ? '未入力：' + miss.join('、') : '';
 }
 
 function canProceed(){
-  switch(state.currentStep){
-    case 1:
-      if(!state.course) return false;
-      if(state.gender==='week1' && !(state.course.grade==='junior') && state.weeklyDays.length!==2) return false;
-      return true;
-    case 2:
-      const req = ['name','kana','gender','birthday','tel','email','address','bank','account-holder'];
-      for(const id of req){if(!document.getElementById(id).value.trim())return false}
-      if(document.getElementById('minor-alert').classList.contains('show')){
-        if(!document.getElementById('parent-consent').checked)return false;
-      }
-      return true;
-    case 3:
-      return document.getElementById('terms-agree').checked;
-    case 4: return true;
+  if(!state.course) return false;
+  if(state.gender==='week1' && !(state.course.grade==='junior') && state.weeklyDays.length!==2) return false;
+  const req = ['name','kana','gender','birthday','tel','email','address','bank','account-holder'];
+  for(const id of req){if(!document.getElementById(id).value.trim())return false}
+  if(document.getElementById('minor-alert').classList.contains('show')){
+    if(!document.getElementById('parent-consent').checked)return false;
   }
-  return false;
+  return document.getElementById('terms-agree').checked;
 }
 
-document.addEventListener('input', ()=>{ if(state.currentStep===2 || state.currentStep===3) updateUI(); });
-document.addEventListener('change', ()=>{ if(state.currentStep===2 || state.currentStep===3) updateUI(); });
+document.addEventListener('input', ()=>updateUI());
+document.addEventListener('change', ()=>updateUI());
 
 function renderConfirm(){
   const list = document.getElementById('confirm-list');
@@ -1119,16 +1199,7 @@ function renderConfirm(){
 
 function nextStep(){
   if(!canProceed()){alert('必要な項目を入力してください');return}
-  if(state.currentStep===4){submit();return}
-  state.currentStep++;
-  setTimeout(()=>window.scrollTo(0,0),0);
-  updateUI();
-}
-function prevStep(){
-  if(state.currentStep===1)return;
-  state.currentStep--;
-  setTimeout(()=>window.scrollTo(0,0),0);
-  updateUI();
+  submit();
 }
 
 function jsonp(url, cb){
@@ -1201,10 +1272,9 @@ function submit(){
     document.getElementById('loader').classList.remove('show');
     if(res.success){
       state.memberId = res.memberId;
-      document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('active'));
+      document.body.classList.add('finished');
       document.getElementById('panel-done').classList.add('active');
-      document.getElementById('welcome').style.display='none';
-      document.getElementById('btn-group').style.display='none';
+      window.scrollTo(0,0);
       document.getElementById('done-id').textContent = '会員ID: ' + res.memberId;
       try{
         const yen = n => '¥' + Number(n||0).toLocaleString();
@@ -1263,6 +1333,15 @@ function submit(){
     if(navigator.vibrate) navigator.vibrate(30);
   });
   document.body.appendChild(gear);
+})();
+</script>
+
+<script>
+/* セクション番号を上から順に振り直す／キャッシュ対策 */
+(function(){
+  try{document.querySelectorAll('.step-panel:not(#panel-done) .card h2 .num').forEach(function(n,i){n.textContent=i+1;});}catch(e){}
+  try{if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(rs){rs.forEach(function(r){r.unregister();});});}}catch(e){}
+  try{if(window.caches){caches.keys().then(function(ks){ks.forEach(function(k){caches.delete(k);});});}}catch(e){}
 })();
 </script>
 </body>
