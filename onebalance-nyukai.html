@@ -311,6 +311,26 @@ body.finished #hero{display:none}
 .plan-bottom{display:contents}
 .plan-bottom .plan-sub{grid-column:1;grid-row:2;font-size:10px}
 .plan-bottom .plan-price{grid-column:2;grid-row:1 / span 2}
+/* 🎨 コース枠：選ぶ前から色分け／選ぶと濃く＋太枠＋「えらんだ」バッジ */
+.plan{position:relative;transition:all .15s}
+.plan.light{background:#FFF1F2;border-color:#FFC9CD}
+.plan.kick{background:#EEF8FA;border-color:#BFE3EB}
+.plan.spar{background:#F4F2F0;border-color:#D5D0CA}
+.plan.junior{background:#FFFAE3;border-color:#F7E08A}
+.plan.light .plan-price{color:#D9303B}
+.plan.kick .plan-price{color:#2A7C93}
+.plan.spar .plan-price{color:#2A2018}
+.plan.junior .plan-price{color:#8A6A00}
+.plan.selected{border-width:3px;padding:11px 13px;transform:translateY(-1px)}
+.plan.light.selected{background:#FFD9DC;border-color:#FF424E;box-shadow:0 5px 14px rgba(255,66,78,.28)}
+.plan.kick.selected{background:#CBE9F0;border-color:#3FA6BE;box-shadow:0 5px 14px rgba(63,166,190,.30)}
+.plan.spar.selected{background:#E4E0DA;border-color:#2A2018;box-shadow:0 5px 14px rgba(42,32,24,.25)}
+.plan.junior.selected{background:#FFEE9E;border-color:#E5B800;box-shadow:0 5px 14px rgba(229,184,0,.32)}
+.plan.selected::after{content:'✓ えらんだ';position:absolute;top:-11px;right:12px;font-family:var(--rii);font-size:12px;color:#fff;padding:2px 10px;border-radius:12px}
+.plan.light.selected::after{background:#FF424E}
+.plan.kick.selected::after{background:#3FA6BE}
+.plan.spar.selected::after{background:#2A2018}
+.plan.junior.selected::after{background:#E5B800;color:#4a3a00}
 .btn-group{display:none!important}
 .complete .icon{background:var(--red)}
 .complete h2{font-family:var(--rii);font-weight:400}
@@ -652,25 +672,25 @@ const GAS1_URL = 'https://script.google.com/macros/s/AKfycbxNxYgejS-1NZvt33PuIkh
 
 const COURSES = {
   male: [
-    {group:'キックボクササイズ', label:'kick', items:[
-      {id:'いつでもキックエクササイズ（男性）7,260', name:'いつでもキックボクササイズ', sub:'（男性）', fee:7260, grade:'kick'}
-    ]},
     {group:'ボクシング', label:'light', items:[
       {id:'いつでもライトボクシング（男性）7,260', name:'いつでもボクシング', sub:'（男性）', fee:7260, grade:'light'}
     ]},
     {group:'スパーリングボクシング', label:'spar', items:[
       {id:'いつでもスパーリングボクシング（男性）7,810', name:'いつでもスパーリング', sub:'（男性）', fee:7810, grade:'spar'}
+    ]},
+    {group:'キックボクササイズ', label:'kick', items:[
+      {id:'いつでもキックエクササイズ（男性）7,260', name:'いつでもキックボクササイズ', sub:'（男性）', fee:7260, grade:'kick'}
     ]}
   ],
   female: [
-    {group:'キックボクササイズ', label:'kick', items:[
-      {id:'いつでもキックエクササイズ（女性）6,380', name:'いつでもキックボクササイズ', sub:'（女性・小学生）', fee:6380, grade:'kick'}
-    ]},
     {group:'ボクシング', label:'light', items:[
       {id:'いつでもライトボクシング（女性）6,380', name:'いつでもボクシング', sub:'（女性・小学生）', fee:6380, grade:'light'}
     ]},
     {group:'スパーリングボクシング', label:'spar', items:[
       {id:'いつでもスパーリングボクシング（女性）6,930', name:'いつでもスパーリング', sub:'（女性・小学生）', fee:6930, grade:'spar'}
+    ]},
+    {group:'キックボクササイズ', label:'kick', items:[
+      {id:'いつでもキックエクササイズ（女性）6,380', name:'いつでもキックボクササイズ', sub:'（女性・小学生）', fee:6380, grade:'kick'}
     ]}
   ],
   week1: [
