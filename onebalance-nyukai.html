@@ -644,15 +644,17 @@ function openStaffModal(){
   document.getElementById('staff-custom-amount').value = '';
 
   if(state.staffDiscount){
-    const el = document.querySelector(`[data-staff-toggle="${state.staffDiscount.id}"]`);
-    if(el){
-      el.checked = true;
-      el.closest('.staff-coupon-item').classList.add('active');
-      if(state.staffDiscount.id === 'custom'){
-        document.getElementById('staff-custom-input').classList.add('show');
-        document.getElementById('staff-custom-amount').value = state.staffDiscount.customAmount || '';
+    (state.staffDiscount.ids || []).forEach(id=>{
+      const el = document.querySelector(`[data-staff-toggle="${id}"]`);
+      if(el){
+        el.checked = true;
+        el.closest('.staff-coupon-item').classList.add('active');
+        if(id === 'custom'){
+          document.getElementById('staff-custom-input').classList.add('show');
+          document.getElementById('staff-custom-amount').value = state.staffDiscount.customAmount || '';
+        }
       }
-    }
+    });
   }
 
   document.getElementById('staff-modal-bg').classList.add('show');
@@ -663,13 +665,15 @@ function closeStaffModal(){
 }
 
 function onStaffToggle(id, checked){
-  // 他のトグルを全部OFFにする（排他制御）
-  document.querySelectorAll('[data-staff-toggle]').forEach(el=>{
-    if(el.dataset.staffToggle !== id){
-      el.checked = false;
-      el.closest('.staff-coupon-item').classList.remove('active');
+  // 複数選択OK。ただし「1ヶ月無料」と「2ヶ月無料」だけは同時に選べない
+  if(checked && (id === 'm1' || id === 'm2')){
+    const other = (id === 'm1') ? 'm2' : 'm1';
+    const oel = document.querySelector(`[data-staff-toggle="${other}"]`);
+    if(oel){
+      oel.checked = false;
+      oel.closest('.staff-coupon-item').classList.remove('active');
     }
-  });
+  }
   const item = document.querySelector(`[data-staff-id="${id}"]`);
   if(checked){
     item.classList.add('active');
@@ -687,13 +691,13 @@ function onStaffToggle(id, checked){
 }
 
 function applyStaffDiscount(){
-  // どのトグルが入ってるかチェック
-  let activeId = null;
+  // ONになっているトグルを全部集めて合算する（複数選択）
+  const ids = [];
   document.querySelectorAll('[data-staff-toggle]').forEach(el=>{
-    if(el.checked) activeId = el.dataset.staffToggle;
+    if(el.checked) ids.push(el.dataset.staffToggle);
   });
 
-  if(!activeId){
+  if(ids.length === 0){
     state.staffDiscount = null;
     updateStaffBadge();
     closeStaffModal();
@@ -701,21 +705,37 @@ function applyStaffDiscount(){
     return;
   }
 
-  if(activeId === 'entry0'){
-    state.staffDiscount = {id:'entry0', label:'入会金0円キャンペーン', entryOff:99999, freeMonths:0, customAmount:0, totalOff:0};
-  }else if(activeId === 'm1'){
-    state.staffDiscount = {id:'m1', label:'月会費1ヶ月無料', entryOff:0, freeMonths:1, customAmount:0, totalOff:0};
-  }else if(activeId === 'm2'){
-    state.staffDiscount = {id:'m2', label:'月会費2ヶ月無料', entryOff:0, freeMonths:2, customAmount:0, totalOff:0};
-  }else if(activeId === 'taiken1100'){
-    state.staffDiscount = {id:'taiken1100', label:'体験料金1,100円無料', entryOff:0, freeMonths:0, customAmount:0, totalOff:1100};
-  }else if(activeId === 'half'){
-    state.staffDiscount = {id:'half', label:'月会費半額', entryOff:0, freeMonths:0, customAmount:0, totalOff:0, halfFee:true};
-  }else if(activeId === 'custom'){
+  const sd = {ids:ids, label:'', entryOff:0, freeMonths:0, customAmount:0, totalOff:0, halfFee:false};
+  const labels = [];
+  if(ids.includes('entry0')){
+    sd.entryOff = 99999;
+    labels.push('入会金0円');
+  }
+  if(ids.includes('m1')){
+    sd.freeMonths = 1;
+    labels.push('月会費1ヶ月無料');
+  }
+  if(ids.includes('m2')){
+    sd.freeMonths = 2;
+    labels.push('月会費2ヶ月無料');
+  }
+  if(ids.includes('taiken1100')){
+    sd.totalOff += 1100;
+    labels.push('体験料金1,100円無料');
+  }
+  if(ids.includes('half')){
+    sd.halfFee = true;
+    labels.push('月会費半額');
+  }
+  if(ids.includes('custom')){
     const amt = Number(document.getElementById('staff-custom-amount').value) || 0;
     if(amt <= 0){alert('割引金額を入力してください');return}
-    state.staffDiscount = {id:'custom', label:`自由割引 ¥${amt.toLocaleString()}`, entryOff:0, freeMonths:0, customAmount:amt, totalOff:amt};
+    sd.customAmount = amt;
+    sd.totalOff += amt;
+    labels.push(`自由割引 ¥${amt.toLocaleString()}`);
   }
+  sd.label = labels.join('＋');
+  state.staffDiscount = sd;
   updateStaffBadge();
   closeStaffModal();
   updateUI();
@@ -959,12 +979,8 @@ function calcFees(){
   let staffTotalOff = 0;  // 合計から引く割引（体験1100円・自由割引）
   if(state.staffDiscount){
     const sd = state.staffDiscount;
-    if(sd.id === 'entry0'){
-      // 入会金を完全0円に
-      staffEntryDiscount = entry;
-      entry = 0;
-    }else if(sd.entryOff > 0){
-      // 入会金から割引（即時）
+    if(sd.entryOff > 0){
+      // 入会金から割引（即時）。入会金0円は99999指定で全額引く
       staffEntryDiscount = Math.min(sd.entryOff, entry);
       entry = Math.max(0, entry - sd.entryOff);
     }
@@ -977,12 +993,12 @@ function calcFees(){
         freeStartMonth = `${startDate3.getFullYear()}年${startDate3.getMonth()+1}月`;
       }
     }
+    // 合計から引く割引：月会費半額（初月会費の50%OFF）＋体験1100円＋自由割引を合算
     if(sd.halfFee){
-      // 月会費半額（初月会費の50%OFF）
-      staffTotalOff = Math.round(firstMonth * 0.5);
-    }else if(sd.totalOff > 0){
-      // 合計から割引（体験1100円・自由割引）
-      staffTotalOff = sd.totalOff;
+      staffTotalOff += Math.round(firstMonth * 0.5);
+    }
+    if(sd.totalOff > 0){
+      staffTotalOff += sd.totalOff;
     }
   }
 
@@ -1078,14 +1094,11 @@ function renderConfirm(){
   }
 
   // 🔒 スタッフ割引行
-  if(state.staffDiscount && f.staffEntryDiscount > 0){
+  const staffYenOff = (f.staffEntryDiscount || 0) + (f.staffTotalOff || 0);
+  if(state.staffDiscount && staffYenOff > 0){
     document.getElementById('summary-staff-discount-row').style.display='flex';
     document.getElementById('summary-staff-label').textContent = '🎟 ' + state.staffDiscount.label;
-    document.getElementById('summary-staff-discount').textContent = '-¥'+f.staffEntryDiscount.toLocaleString();
-  }else if(state.staffDiscount && f.staffTotalOff > 0){
-    document.getElementById('summary-staff-discount-row').style.display='flex';
-    document.getElementById('summary-staff-label').textContent = '🎟 ' + state.staffDiscount.label;
-    document.getElementById('summary-staff-discount').textContent = '-¥'+f.staffTotalOff.toLocaleString();
+    document.getElementById('summary-staff-discount').textContent = '-¥'+staffYenOff.toLocaleString();
   }else if(state.staffDiscount && f.staffFreeMonths > 0){
     document.getElementById('summary-staff-discount-row').style.display='flex';
     document.getElementById('summary-staff-label').textContent = '🎟 ' + state.staffDiscount.label;
