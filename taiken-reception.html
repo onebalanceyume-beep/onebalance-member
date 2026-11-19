@@ -384,6 +384,7 @@ function jsonp(url, cb){
   var name='cb_'+Date.now()+'_'+Math.floor(Math.random()*10000), s=document.createElement('script'), done=false;
   function fin(d){ if(done) return; done=true; try{delete window[name]}catch(e){window[name]=undefined} if(s.parentNode) s.parentNode.removeChild(s); cb(d); }
   window[name]=fin;
+  s.crossOrigin = 'anonymous'; // 複数のGoogleアカウントでログイン中でも「ページが見つかりません」にならないよう、Cookieなしで呼ぶ
   s.src = url+(url.indexOf('?')>=0?'&':'?')+'callback='+name;
   s.onerror=function(){fin({success:false,message:'通信エラー'})};
   document.body.appendChild(s);
