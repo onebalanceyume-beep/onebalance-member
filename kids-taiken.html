@@ -9,7 +9,7 @@
 <title>ジュニア体験予約（小学生・土曜16:30）| ONE-BALANCE BOXING GYM</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="ジュニア体験予約">
-<meta name="theme-color" content="#F7C21B">
+<meta name="theme-color" content="#DB444C">
 <link rel="apple-touch-icon" href="icons/icon-192x192.png">
 <link rel="icon" href="icons/icon-192x192.png">
 <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800;900&display=swap" rel="stylesheet">
@@ -251,6 +251,55 @@ body{background:#FFF8DC url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 @media (min-width:900px){.burstC{left:max(24px,calc((100% - 960px)/2));top:18px;width:104px;height:104px;font-size:26px}}
 }/* PC: 顔が顎まで全部見える高さ／タグは左右の隅 */
 @media (min-width:900px){.hero-img{height:525px!important;object-position:center 24%!important}.tagB{left:24px!important;bottom:18px!important}.tagB2{right:24px!important;bottom:20px!important}}
+
+/* ===== ワンバランスカラー化（赤 #DB444C / 水色 #5BB9CD / クリーム）※見た目のみ・機能は変更なし ===== */
+@font-face{font-family:'RiiCookie';src:url('fonts/RiiCookieRt.otf?v=20261119') format('opentype');font-display:swap}
+:root{--ky:#DB444C;--ky-d:#B8323A;--ky-l:#F9D9DB;--ky-p:#f4efdb;--ink:#333;--gr:#5BB9CD;--gr-d:#3A9DB3;--gr-l:#DDF1F6;--cream:#f4efdb}
+body,body{background:#f4efdb!important}
+header{border-bottom:5px solid #DB444C}
+.hd-tag{background:#DB444C;color:#fff;border-color:#DB444C;font-family:'RiiCookie',var(--font)}
+.step-bar{background:#fff;border-bottom:3px solid #DB444C}
+.si.active .sn,.si.done .sn{background:#DB444C;color:#fff}
+.si.done .sn{background:#5BB9CD}
+.si.done:not(:last-child)::after{background:#5BB9CD}
+.si.active .sn{box-shadow:0 0 0 4px #F9D9DB}
+.si.active .sl{color:#DB444C}
+.hero{background:#DB444C}
+.hero-ov,.hero-ov:where(*){background:#DB444C!important;border:0!important}
+.hero-ov::before{display:none!important}
+.hero::after{background:#5BB9CD!important;height:8px!important}
+.hero-catch{color:#fff;font-family:'RiiCookie',var(--font);font-weight:400;letter-spacing:1px}
+.hero-catch small{background:#fff;color:#DB444C;font-family:'RiiCookie',var(--font);font-weight:400}
+.hero-catch::after{color:#fff!important;opacity:.9!important;text-shadow:none!important}
+.kidsbadge{background:#fff;color:#DB444C;box-shadow:0 3px 0 #B8323A}
+.burstC{background:#5BB9CD!important;color:#fff!important;font-family:'RiiCookie',var(--font)!important}
+.tagB{background:#fff;color:#DB444C;border-color:#DB444C;box-shadow:3px 3px 0 #DB444C}
+.tagB2{background:#5BB9CD!important;box-shadow:2px 2px 0 #DB444C}
+.stk-a{background:#fff;color:#333;border-color:#5BB9CD}
+.stk-b{background:#5BB9CD;color:#fff}
+.stk-c{background:#fff;color:#DB444C}
+.stk-c small{color:#333}
+.course{border-color:#DB444C}
+.course .nm{color:#DB444C;font-family:'RiiCookie',var(--font);font-weight:400}
+.course::before{background:#5BB9CD!important}
+.bdg{background:#F9D9DB;color:#DB444C}
+.bdg.price{background:#5BB9CD;color:#fff}
+.day.sel{border-color:#DB444C;background:#F9D9DB}
+.day.sel .st,.day .st{color:#DB444C}
+.freq{background:#F9D9DB;color:#DB444C}
+.grade-btn.on,.src-btn.on{background:#DB444C;border-color:#B8323A;color:#fff}
+.finput:focus{border-color:#5BB9CD}
+.pax-arrow{border-color:#DB444C;color:#DB444C}
+.minor-box.on{border-color:#DB444C;background:#F9D9DB}
+.minor-box input{accent-color:#DB444C}
+.notice{border-left-color:#5BB9CD;background:#fff}
+.conf-hdr{background:#DB444C;color:#fff;border-bottom:4px solid #5BB9CD}
+.btnp{background:#DB444C;color:#fff;box-shadow:0 5px 0 #B8323A;font-family:'RiiCookie',var(--font);font-weight:400;letter-spacing:1px}
+.btnp:active{box-shadow:0 2px 0 #B8323A}
+.btnp:disabled{background:#E8E4DC;color:#B0A898;box-shadow:none}
+.spin{border-top-color:#DB444C}
+.line-box{background:#DDF1F6;border-color:#5BB9CD}
+#p1 .pc-2col>div:first-child .sec::before,#p1 .pc-2col>div:nth-child(2) .sec::before{color:#DB444C!important}
 </style>
 </head>
 <body>
