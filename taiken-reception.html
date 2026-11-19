@@ -12,10 +12,12 @@
 <meta name="theme-color" content="#FF424E">
 <link rel="apple-touch-icon" href="icons/icon-192x192.png">
 <link rel="icon" href="icons/icon-192x192.png">
+<link rel="preload" as="image" href="images/hero.jpg" fetchpriority="high">
+<link rel="preload" as="font" type="font/woff" href="fonts/RiiCookieRt-sub.woff?v=20261119" crossorigin>
 <title>体験受付 | ONE-BALANCE BOXING GYM</title>
 <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800;900&display=swap" rel="stylesheet">
 <style>
-@font-face{font-family:'RiiCookie';src:url('fonts/RiiCookieRt.otf?v=20261119') format('opentype');font-display:swap}
+@font-face{font-family:'RiiCookie';src:url('fonts/RiiCookieRt-sub.woff?v=20261119') format('woff');font-display:swap}
 :root{
   --red:#FF424E; --red-d:#D9303B; --red-l:#FFD9DC; --red-p:#FFEDEE;
   --blue:#5BB9CD; --blue-d:#2A7C93; --blue-l:#CEEAF0; --blue-p:#EBF7F9;
@@ -153,12 +155,12 @@ body.kick .chosen img{object-position:center 85%}
 <body>
 
 <header><div class="hd">
-  <img class="hd-img" src="logo.jpg" alt="ONE-BALANCE BOXING GYM" onerror="this.style.display='none'">
+  <img class="hd-img" src="images/logo-header.jpg" alt="ONE-BALANCE BOXING GYM" onerror="this.style.display='none'">
   <span class="hd-tag">30分体験受付</span>
 </div></header>
 
 <div class="hero">
-  <img src="images/hero.png" alt="ONE-BALANCE BOXING GYM">
+  <img src="images/hero.jpg" fetchpriority="high" decoding="async" alt="ONE-BALANCE BOXING GYM">
   <div class="hero-ov"><div class="hero-catch"><small>WELCOME!</small><br>ご来店<br>ありがとうございます</div></div>
 </div>
 

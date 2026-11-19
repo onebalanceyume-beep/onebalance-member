@@ -12,6 +12,8 @@
 <meta name="theme-color" content="#FF424E">
 <link rel="apple-touch-icon" href="icons/icon-192x192.png">
 <link rel="icon" href="icons/icon-192x192.png">
+<link rel="preload" as="image" href="images/hero.jpg" fetchpriority="high">
+<link rel="preload" as="font" type="font/woff" href="fonts/RiiCookieRt-sub.woff?v=20261119" crossorigin>
 <title>入会申込 | ONE-BALANCE BOXING GYM</title>
 <style>
 :root{
@@ -230,7 +232,7 @@ header p{font-size:12px;opacity:.95;margin-top:4px;letter-spacing:.05em}
 /* ============================================ */
 /* 🎨 HPデザイン（体験受付と統一）＋1ページ完結   */
 /* ============================================ */
-@font-face{font-family:'RiiCookie';src:url('fonts/RiiCookieRt.otf?v=20261119') format('opentype');font-display:swap}
+@font-face{font-family:'RiiCookie';src:url('fonts/RiiCookieRt-sub.woff?v=20261119') format('woff');font-display:swap}
 :root{
   --red:#FF424E; --red-d:#D9303B; --red-l:#FFD9DC; --red-p:#FFEDEE;
   --bg:#FAF6EE; --border:#E8E4DC; --text:#2A2018; --sub:#7A6E60; --gray:#7A6E60;
@@ -345,12 +347,12 @@ body.finished #hero{display:none}
 <body>
 
 <header><div class="hd">
-  <img class="hd-img" src="logo.jpg" alt="ONE-BALANCE BOXING GYM" onerror="this.style.display='none'">
+  <img class="hd-img" src="images/logo-header.jpg" alt="ONE-BALANCE BOXING GYM" onerror="this.style.display='none'">
   <span class="hd-tag">ご入会</span>
 </div></header>
 
 <div class="hero" id="hero">
-  <img src="images/hero.png" alt="ONE-BALANCE BOXING GYM">
+  <img src="images/hero.jpg" fetchpriority="high" decoding="async" alt="ONE-BALANCE BOXING GYM">
   <div class="hero-ov"><div class="hero-catch"><small>WELCOME!</small><br>ご入会<br>ありがとうございます</div></div>
 </div>
 
