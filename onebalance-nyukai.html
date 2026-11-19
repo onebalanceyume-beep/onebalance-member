@@ -627,7 +627,7 @@ body.finished #hero{display:none}
     <div class="staff-coupon-item" data-staff-id="half">
       <div class="staff-coupon-info">
         <div class="staff-coupon-label">月会費半額</div>
-        <div class="staff-coupon-desc">選んだコースの初月会費が50%OFF</div>
+        <div class="staff-coupon-desc">選んだコースの月会費1ヶ月分（日割りではなく満額）の半額を割引</div>
       </div>
       <label class="toggle">
         <input type="checkbox" data-staff-toggle="half" onchange="onStaffToggle('half', this.checked)">
@@ -1106,9 +1106,9 @@ function calcFees(){
         freeStartMonth = `${startDate3.getFullYear()}年${startDate3.getMonth()+1}月`;
       }
     }
-    // 合計から引く割引：月会費半額（初月会費の50%OFF）＋体験1100円＋自由割引を合算
+    // 合計から引く割引：月会費半額（日割りではなく、1ヶ月分の満額の半額）＋体験1100円＋自由割引を合算
     if(sd.halfFee){
-      staffTotalOff += Math.round(firstMonth * 0.5);
+      staffTotalOff += state.course ? Math.round(state.course.fee * 0.5) : 0;
     }
     if(sd.totalOff > 0){
       staffTotalOff += sd.totalOff;
