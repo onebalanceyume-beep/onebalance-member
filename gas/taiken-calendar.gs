@@ -5,6 +5,7 @@
  * ※既存の受付GAS（submitTaiken）には触らない、カレンダー専用の別GAS。
  */
 
+// デプロイ済みURL（ジムのアカウント）：https://script.google.com/macros/s/AKfycbxRTIb7WrjO7wvG7WYOCGw-lfClIWLpsb-If0wD8ucO2Eml7hxQNvdvJl0yb1LX6tQ/exec
 // ===== 設定エリア =====
 var CAL_CONFIG = {
   CALENDAR_ID: '',        // 空ならこのGASを作ったアカウントのメインカレンダー。別カレンダーに入れたい時だけIDを入れる
