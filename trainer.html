@@ -398,7 +398,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8f
     <div class="card-title">アプリ情報</div>
     <div style="font-size:13px;color:var(--text2);line-height:2.2">
       <div>アプリ名：one-BALANCE トレーナー管理</div>
-      <div>バージョン：2.0.2（名義共有の照合対応）</div>
+      <div>バージョン：2.0.3（会社名義の照合対応）</div>
       <div>赤 #DB444C / 青 #5BB9CD</div>
     </div>
   </div>
@@ -1395,7 +1395,10 @@ function nk(s){
   t=t.replace(/[ぁ-ゖ]/g,c=>String.fromCharCode(c.charCodeAt(0)+0x60));
   const small='ァィゥェォッャュョヮ',big='アイウエオツヤユヨワ';
   t=t.replace(/[ァィゥェォッャュョヮ]/g,c=>big[small.indexOf(c)]);
-  return t.replace(/[\s　ー\-・.]/g,'').toUpperCase();
+  t=t.replace(/[\s　ー\-・.]/g,'').toUpperCase();
+  /* 会社名義：銀行CSVは「ｶ)」と略されるため、「カブシキガイシャ」「ｶ)」「(株)」「株式会社」を取り除いて照合（直すときの検索ワード：会社名義） */
+  t=t.replace(/(カブシキガイシヤ|カフシキガイシヤ|カブシキカイシヤ|カフシキカイシヤ|株式会社|\(株\)|㈱|カ\)|\(カ\)|\(カ)/g,'');
+  return t;
 }
 
 async function loadFreeMonth(){
